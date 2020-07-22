@@ -13,10 +13,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
-import mock
-MOCK_MODULES = ['tabula']
-for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.Mock()
+
 
 # -- Project information -----------------------------------------------------
 
@@ -53,3 +50,4 @@ html_theme = 'sphinx_rtd_theme'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 master_doc = 'index'
+autodoc_mock_imports = ['tabula']
