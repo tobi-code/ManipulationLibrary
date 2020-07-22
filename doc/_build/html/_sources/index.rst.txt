@@ -5,20 +5,34 @@
 
 Welcome to ManipulationLibrary's documentation!
 ===============================================
+A library to work with ESEC tables. Especially to do statistical analysis and improvements. 
+
 Depends on Librabies:
+---------------------
 
-Contents:
+* tabula
 
-.. automodule:: ESEC
-	:members:
+* pandas
+
+* numpy
+
+* matplotlib
+
+* itertools
+
+* scipy
+
+* PIL
+
+* seaborn
+
+
+Code
+----
 	
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   
+   code
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`search`
