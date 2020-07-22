@@ -27,11 +27,10 @@ Depends on Librabies:
 * seaborn
 
 
-Codiap
+Code
 ======
 
-.. automodule:: ESEC
-	:members:
+	codi
 
 .. toctree::
    :maxdepth: 2
