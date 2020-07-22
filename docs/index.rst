@@ -27,16 +27,13 @@ Depends on Librabies:
 * seaborn
 
 
-Code
-----
-Code
-====
+Codias
+======
 
 .. automodule:: ESEC
 	:members:
 
-.. toctree::
-   :maxdepth: 2
+
    
 
 

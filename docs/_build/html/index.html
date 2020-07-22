@@ -35,8 +35,7 @@
 
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Code" href="code.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -81,10 +80,15 @@
               
             
             
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="code.html">Code</a></li>
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Welcome to ManipulationLibrary’s documentation!</a><ul>
+<li><a class="reference internal" href="#depends-on-librabies">Depends on Librabies:</a></li>
 </ul>
-
+</li>
+<li><a class="reference internal" href="#module-ESEC">Codias</a></li>
+</ul>
+</div>
             
           
         </div>
@@ -164,14 +168,95 @@
 <li><p>seaborn</p></li>
 </ul>
 </div>
-<div class="section" id="code">
-<h2>Code<a class="headerlink" href="#code" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="code.html">Code</a></li>
+</div>
+<div class="section" id="module-ESEC">
+<span id="codias"></span><h1>Codias<a class="headerlink" href="#module-ESEC" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="ESEC.checkSimilarRows">
+<code class="sig-prename descclassname">ESEC.</code><code class="sig-name descname">checkSimilarRows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">esec_dict</span></em>, <em class="sig-param"><span class="n">combinations</span></em>, <em class="sig-param"><span class="n">rows</span><span class="o">=</span><span class="default_value">[3, 2, 5, 7, 9]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ESEC.checkSimilarRows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if ESEC tables are similar for multiple combinations.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><ul class="simple">
+<li><p>esec_dict: dictionary with the ESEC tables (dict)</p></li>
+<li><p>combinations: which type of combination (int)</p></li>
+<li><p>rows: rows that will be removed (array)</p></li>
 </ul>
-</div>
-</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ESEC.plotDendroDissimi">
+<code class="sig-prename descclassname">ESEC.</code><code class="sig-name descname">plotDendroDissimi</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rows</span></em>, <em class="sig-param"><span class="n">save</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ESEC.plotDendroDissimi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the dendrogram and the dissimilarity matrix for specific rows for the .npy arrays.
+Warning: needs the output from removeCobinationRowsSave()</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><ul class="simple">
+<li><p>rows: indicates which rows will be considered (int, tuple)</p></li>
+<li><p>save: paramter if figure need to be saved (bool)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ESEC.plotRowRanking">
+<code class="sig-prename descclassname">ESEC.</code><code class="sig-name descname">plotRowRanking</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">esec_dict</span></em>, <em class="sig-param"><span class="n">savefig</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ESEC.plotRowRanking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the ranking of the different rows.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><ul class="simple">
+<li><p>esec_dict: dictionary with the ESEC tables (dict)</p></li>
+<li><p>savefig: paramter if figure need to be saved (bool)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ESEC.readPDF">
+<code class="sig-prename descclassname">ESEC.</code><code class="sig-name descname">readPDF</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">PDFpath</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ESEC.readPDF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read PDF in a specific foramt and outputs a dict of the ESEC matrix.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><ul class="simple">
+<li><p>PDFpath: path of the PDF file (PDF)</p></li>
+</ul>
+</dd>
+<dt>Returns:</dt><dd><p>python dictionary with the ESEC matrices</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ESEC.removeCobinationRowsSave">
+<code class="sig-prename descclassname">ESEC.</code><code class="sig-name descname">removeCobinationRowsSave</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">esec_dict</span></em>, <em class="sig-param"><span class="n">rows</span><span class="o">=</span><span class="default_value">[3, 2, 5, 7, 9]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ESEC.removeCobinationRowsSave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the rows from the input in every combination and saves it in the folder “array”. First removes
+single then combinations of tuple, triple, quadruple and quintuple rows.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><ul class="simple">
+<li><p>esec_dict: dictionary with the ESEC tables (dict)</p></li>
+<li><p>rows: rows that will be removed (array)</p></li>
+</ul>
+</dd>
+<dt>Returns:</dt><dd><p>folder structure with .npy files</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ESEC.removeRows">
+<code class="sig-prename descclassname">ESEC.</code><code class="sig-name descname">removeRows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">esec_dict</span></em>, <em class="sig-param"><span class="n">row</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ESEC.removeRows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the rows from the ESEC tables.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><ul class="simple">
+<li><p>esec_dict: dictionary with the ESEC tables (dict)</p></li>
+<li><p>row: indicated which rows will be deleted (int, tuple)</p></li>
+</ul>
+</dd>
+<dt>Returns:</dt><dd><p>Dictionary with removed rows.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
@@ -179,13 +264,6 @@
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="code.html" class="btn btn-neutral float-right" title="Code" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-    </div>
   
 
   <hr/>
