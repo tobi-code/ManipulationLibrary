@@ -1,6 +1,0 @@
-Code
-====
-
-.. automodule:: ESEC
-	:members:
-	
