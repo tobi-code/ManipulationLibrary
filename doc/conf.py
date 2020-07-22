@@ -11,10 +11,12 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
-on_rtd = os.environ.get('READTHEDOCS') == 'True'
 import sys
 sys.path.insert(0, os.path.abspath('..'))
-
+import mock
+MOCK_MODULES = ['tabula']
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock()
 
 # -- Project information -----------------------------------------------------
 
