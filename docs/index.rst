@@ -29,10 +29,15 @@ Depends on Librabies:
 
 Code
 ----
-	
+Code
+====
+
+.. automodule:: ESEC
+	:members:
+
 .. toctree::
    :maxdepth: 2
    
-   code
+
 
 
