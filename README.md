@@ -1,2 +1,3 @@
 # ManipulationLibrary
-A library to work create and work with ESEC tables
+
+A library to work with point clouds and ESEC tables.
