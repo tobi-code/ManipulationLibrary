@@ -19,12 +19,10 @@ def readPDF(PDFpath):
 	and 30 rows in total.
 	
 	Parameters:
-	-----------
 		* PDFpath: string
 			path of the PDF file
 		
 	Returns:
-	--------
 	* dict
 		python dictionary with the eSEC matrices where the index correponds to the eSEC table
 	'''
