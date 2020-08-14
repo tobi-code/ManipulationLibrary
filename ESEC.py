@@ -14,15 +14,21 @@ import seaborn as sn
 
 def readPDF(PDFpath):
 	'''
-	Read PDF in a specific foramt and outputs a dict of the ESEC matrix.
+	Read PDF in a specific foramt and outputs a dict of the eSEC matrix. 
+	Each page in the PDF contains an eSEC table with the fist colum containing relation labels(H,1; H,2;...) 
+	and 30 rows in total.
 	
 	Parameters:
+	-----------
 		* PDFpath: path of the PDF file (PDF)
+			Description
 		
 	Returns:
-		python dictionary with the ESEC matrices
+	--------
+	dict
+		python dictionary with the eSEC matrices where the index correponds to the eSEC table
 	'''
-	pdf_path = "esec_marti.pdf"
+	pdf_path = PDFpath
 	df = tabula.read_pdf(pdf_path, pages='all', pandas_options={'header': None})
 	liste_array = {}
 	for i in range(len(df)):
@@ -39,7 +45,7 @@ def plotRowRanking(esec_dict, savefig = False):
 	Plots the ranking of the different rows.
 	
 	Parameters:
-		* esec_dict: dictionary with the ESEC tables (dict)
+		* esec_dict: dictionary with the eSEC tables (dict)
 		* savefig: paramter if figure need to be saved (bool)
  	
     """
@@ -97,10 +103,10 @@ def plotRowRanking(esec_dict, savefig = False):
 	
 def removeRows(esec_dict, row):
 	'''
-	Removes the rows from the ESEC tables.
+	Removes the rows from the eSEC tables.
 	
 	Parameters:
-		* esec_dict: dictionary with the ESEC tables (dict)
+		* esec_dict: dictionary with the eSEC tables (dict)
 		* row: indicated which rows will be deleted (int, tuple)
 	
 	Returns:
@@ -131,7 +137,7 @@ def removeCobinationRowsSave(esec_dict, rows = [3, 2, 5, 7, 9]):
 	single then combinations of tuple, triple, quadruple and quintuple rows.
 	
 	Parameters:
-		* esec_dict: dictionary with the ESEC tables (dict)
+		* esec_dict: dictionary with the eSEC tables (dict)
 		* rows: rows that will be removed (array) 
 	
 	Returns:
@@ -180,10 +186,10 @@ def removeCobinationRowsSave(esec_dict, rows = [3, 2, 5, 7, 9]):
 		
 def checkSimilarRows(esec_dict, combinations, rows = [3, 2, 5, 7, 9]):
 	'''
-	Check if ESEC tables are similar for multiple combinations.
+	Check if eSEC tables are similar for multiple combinations.
 	
 	Parameters:
-		* esec_dict: dictionary with the ESEC tables (dict)
+		* esec_dict: dictionary with the eSEC tables (dict)
 		* combinations: which type of combination (int)
 		* rows: rows that will be removed (array) 
 		
