@@ -23,8 +23,8 @@ def readPDF(PDFpath):
 			path of the PDF file
 		
 	Returns:
-	* dict
-		python dictionary with the eSEC matrices where the index correponds to the eSEC table
+		dict
+			python dictionary with the eSEC matrices where the index correponds to the eSEC tables
 	'''
 	pdf_path = PDFpath
 	df = tabula.read_pdf(pdf_path, pages='all', pandas_options={'header': None})
@@ -40,11 +40,13 @@ def readPDF(PDFpath):
 
 def plotRowRanking(esec_dict, savefig = False):
 	"""
-	Plots the ranking of the different rows.
+	Plots the ranking of the different rows. All eSEC tables from the dict are taken into consideration.
 	
 	Parameters:
-		* esec_dict: dictionary with the eSEC tables (dict)
-		* savefig: paramter if figure need to be saved (bool)
+		* esec_dict: dict
+			dictionary with the eSEC tables from readPDF()
+		* savefig: bool
+			parameter if figure need to be saved in current folder
  	
     """
 	matrix = []
@@ -101,14 +103,17 @@ def plotRowRanking(esec_dict, savefig = False):
 	
 def removeRows(esec_dict, row):
 	'''
-	Removes the rows from the eSEC tables.
+	Removes the defined rows from all eSEC tables. Row 0 corresponds to the first row in the eSEC table.
 	
 	Parameters:
-		* esec_dict: dictionary with the eSEC tables (dict)
-		* row: indicated which rows will be deleted (int, tuple)
+		* esec_dict: dict
+			dictionary with the eSEC tables
+		* row: int, tuple
+			indicated which row(s) will be deleted
 	
 	Returns:
-		Dictionary with removed rows.
+		dict
+			python dictionary with removed rows
 	'''
 	new_dict = copy.copy(esec_dict)
 	if (isinstance(row, int) and not(isinstance(row, tuple))):
@@ -133,10 +138,18 @@ def removeCobinationRowsSave(esec_dict, rows = [3, 2, 5, 7, 9]):
 	'''
 	Removes the rows from the input in every combination and saves it in the folder "array". First removes
 	single then combinations of tuple, triple, quadruple and quintuple rows.
-	
+	Example:	rows = [3, 2, 5, 7, 9]
+				single combinations: 3; 2; 5; 7; 9
+				tuple combinations: 3,2; 3,5; 5,7; ...
+				triple combinations: 3,2,5; 2,5,7; ...
+				quadruple combinations: 3,2,5,7; 2,5,7,9; ...
+				quintuple combinations: 3,2,5,7,9
+		
 	Parameters:
-		* esec_dict: dictionary with the eSEC tables (dict)
-		* rows: rows that will be removed (array) 
+		* esec_dict: dict
+			dictionary with the eSEC tables (e.g. from readPDF())
+		* rows: array
+			rows that will be removed in all single, tuple, triple, quadruple and quintuple combinations
 	
 	Returns:
 		folder structure with .npy files
@@ -184,13 +197,18 @@ def removeCobinationRowsSave(esec_dict, rows = [3, 2, 5, 7, 9]):
 		
 def checkSimilarRows(esec_dict, combinations, rows = [3, 2, 5, 7, 9]):
 	'''
-	Check if eSEC tables are similar for multiple combinations.
+	Check if any eSEC tables are not distinguishable from each other if rows are removed. 
+	To do so, the array *rows* is defined and with *combinations* it can be set if single, tuple, triple, quadruple and quintuple relations should be checked.
 	
 	Parameters:
-		* esec_dict: dictionary with the eSEC tables (dict)
-		* combinations: which type of combination (int)
-		* rows: rows that will be removed (array) 
-		
+		* esec_dict: dict
+			dictionary with the eSEC tables (e.g. from readPDF())
+		* combinations: int (1-5)
+			set if single, tuple, triple, quadruple and quintuple relations should be checked
+		* rows: array
+			rows that are used for analysis
+	Returns:
+		if eSEC tables are not distinguishable from each other the corresponding rows are plotted, otherwise 'No other equalities' will be printed 
 	'''
 	if cobinations == 1:
 		for values in rows:
@@ -243,16 +261,20 @@ def checkSimilarRows(esec_dict, combinations, rows = [3, 2, 5, 7, 9]):
 						if(compare_manipulations(delete_rows_three(values, liste_array[i]), delete_rows_three(values, liste_array[j]))):
 							print(values)
 		print('No other equalities')
+	else:
+		print('Please use a number between 1-5 for combinations.')
 		
 
 def plotDendroDissimi(rows, save = False): 
 	'''
-	Plots the dendrogram and the dissimilarity matrix for specific rows for the .npy arrays.
-	Warning: needs the output from removeCobinationRowsSave()
+	Plots the dendrogram and the dissimilarity matrix for specific rows for the .npy arrays from removeCobinationRowsSave().
+	Example: rows = 3,4; plots the dendrogram and the dissimilarity matrix for the case that rows 3 and 4 are removed which can be done by using removeCobinationRowsSave()
 	
 	Parameters:
-		* rows: indicates which rows will be considered (int, tuple) 
-		* save: paramter if figure need to be saved (bool)
+		* rows: int, tuple
+			indicates which rows will be considered
+		* save: bool
+			paramter if figure need to be saved
 	'''
 	if (isinstance(rows, int) and not(isinstance(rows, tuple))):
 		D_shaped = np.load("arrays/single/matrix_removed_%d.npy"%rows)
