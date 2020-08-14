@@ -20,12 +20,12 @@ def readPDF(PDFpath):
 	
 	Parameters:
 	-----------
-		* PDFpath: path of the PDF file (PDF)
-			Description
+		* PDFpath: string
+			path of the PDF file
 		
 	Returns:
 	--------
-	dict
+	* dict
 		python dictionary with the eSEC matrices where the index correponds to the eSEC table
 	'''
 	pdf_path = PDFpath
