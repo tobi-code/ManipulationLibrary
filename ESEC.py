@@ -14,7 +14,6 @@ import seaborn as sn
 
 def readPDF(PDFpath):
 	'''
-<<<<<<< HEAD
 	Read PDF in a specific foramt and outputs a dict of the ESEC matrix.
 	
 	Parameters:
@@ -24,19 +23,6 @@ def readPDF(PDFpath):
 		python dictionary with the ESEC matrices
 	'''
 	pdf_path = "esec_marti.pdf"
-=======
-	Read PDF in a specific foramt and outputs a dict of the eSEC matrix. Each page in the PDF contains an eSEC table with the fist colum containing relation labels(H,1; H,2;...) and 30 rows in total.
-	
-	Parameters:
-		* PDFpath: string
-			path of the PDF file
-		
-	Returns:
-		dict
-			python dictionary with the eSEC matrices where the index correponds to the eSEC tables
-	'''
-	pdf_path = PDFpath
->>>>>>> e55cc2526221a8124c1bfda63023a5d138fcc796
 	df = tabula.read_pdf(pdf_path, pages='all', pandas_options={'header': None})
 	liste_array = {}
 	for i in range(len(df)):
@@ -48,7 +34,6 @@ def readPDF(PDFpath):
 				liste_array[j][i][k] = liste_array[j][i][k].upper()
 	return liste_array
 
-<<<<<<< HEAD
 def plotRowRanking(esec_dict, savefig = False, e2sec = False):
 	"""
 	Plots the ranking of the different rows.
@@ -57,40 +42,19 @@ def plotRowRanking(esec_dict, savefig = False, e2sec = False):
 		* esec_dict: dictionary with the ESEC tables (dict)
 		* savefig: paramter if figure need to be saved (bool)
 		* e2sec: if matrices are e2sec (bool)
-=======
-def plotRowRanking(esec_dict, savefig = False):
-	"""
-	Plots the ranking of the different rows. All eSEC tables from the dict are taken into consideration.
-	
-	Parameters:
-		* esec_dict: dict
-			dictionary with the eSEC tables from readPDF()
-		* savefig: bool
-			parameter if figure need to be saved in current folder
->>>>>>> e55cc2526221a8124c1bfda63023a5d138fcc796
  	
     """
 	matrix = []
 	k = 0
-<<<<<<< HEAD
 	for j in range(1, len(esec_dict)+1):
 		k += 1
 		for i in range(k, len(esec_dict)+1):
-=======
-	for j in range(1, 36):
-		k += 1
-		for i in range(k, 36):
->>>>>>> e55cc2526221a8124c1bfda63023a5d138fcc796
 			if(j != i):
 				man_1 = j
 				man_2 = i
 				matrix = np.append(matrix,_dissimilarity_array_new(man_1, man_2, esec_dict))
 								   
-<<<<<<< HEAD
 	matrix = np.reshape(matrix, ((len(esec_dict)*len(esec_dict)-1)/2, esec_dict[0].shape[0]))
-=======
-	matrix = np.reshape(matrix, (595, 30))
->>>>>>> e55cc2526221a8124c1bfda63023a5d138fcc796
 	place = np.argsort(matrix, axis = 1)
 	matrix_ranked = np.zeros_like(matrix)
 	for j in range(595):
@@ -106,7 +70,6 @@ def plotRowRanking(esec_dict, savefig = False):
 				matrix_ranked[j][place[j][i]] = rank
 	matrix_ranked_mean = np.mean(matrix_ranked, axis = 0)
 	matrix_ranked_median = np.median(matrix_ranked, axis = 0)
-<<<<<<< HEAD
 	if e2sec == False:
 		x = ['H, 1', 'H, 2', 'H, 3', \
 		 'H, G', "1, 2", '1,3 ',\
@@ -171,47 +134,6 @@ def removeRows(esec_dict, row):
 	
 	Returns:
 		Dictionary with removed rows.
-=======
-	x = ['H, 1', 'H, 2', 'H, 3', \
-	 'H, G', "1, 2", '1,3 ',\
-	 '1, G', '2, 3', '2, G', '3, G']
-	fig, axs = plt.subplots(1,3, figsize = (30,5))
-	axs[0].bar(x, matrix_ranked_mean[0:10], color='r')
-	axs[0].set_title("SEC", fontsize=32)
-	axs[0].set_xlabel("Row",  fontsize=25)
-	axs[0].tick_params(axis='x', labelsize=15)
-	axs[0].tick_params(axis='y', labelsize=15)
-	axs[0].set_ylabel("Rank (mean)",  fontsize=25)
-
-	axs[1].bar(x, matrix_ranked_mean[10:20], color = 'b')
-	axs[1].set_title("SSR", fontsize=32)
-	axs[1].set_xlabel("Row",  fontsize=25)
-	axs[1].tick_params(axis='x', labelsize=15)
-	axs[1].tick_params(axis='y', labelsize=15)
-
-	axs[2].bar(x, matrix_ranked_mean[20:30], color = 'g')
-	axs[2].set_title("DSR", fontsize=32)
-	axs[2].set_xlabel("Row",  fontsize=25)
-	axs[2].tick_params(axis='x', labelsize=15)
-	axs[2].tick_params(axis='y', labelsize=15)
-	if(savefig == True):
-		plt.savefig("ranked_rows.png", bbox_inches='tight')
-	plt.show()
-	
-def removeRows(esec_dict, row):
-	'''
-	Removes the defined rows from all eSEC tables. Row 0 corresponds to the first row in the eSEC table.
-	
-	Parameters:
-		* esec_dict: dict
-			dictionary with the eSEC tables
-		* row: int, tuple
-			indicated which row(s) will be deleted
-	
-	Returns:
-		dict
-			python dictionary with removed rows
->>>>>>> e55cc2526221a8124c1bfda63023a5d138fcc796
 	'''
 	new_dict = copy.copy(esec_dict)
 	if (isinstance(row, int) and not(isinstance(row, tuple))):
@@ -234,7 +156,6 @@ def removeRows(esec_dict, row):
 	
 def removeCobinationRowsSave(esec_dict, rows = [3, 2, 5, 7, 9]):
 	'''
-<<<<<<< HEAD
 	Removes the rows from the input in every combination and saves it in the folder "array". First removes
 	single then combinations of tuple, triple, quadruple and quintuple rows. If rows == None the Dissimilarity 
 	matrix is calculated without removing rows.
@@ -242,27 +163,10 @@ def removeCobinationRowsSave(esec_dict, rows = [3, 2, 5, 7, 9]):
 	Parameters:
 		* esec_dict: dictionary with the ESEC tables (dict)
 		* rows: rows that will be removed (array) 
-=======
-	Removes the rows from the input in every combination and saves it in the folder "array". First removes single then combinations of tuple, triple, quadruple and quintuple rows.
-	
-	Example:	rows = [3, 2, 5, 7, 9]
-				single combinations: 3; 2; 5; 7; 9
-				tuple combinations: 3,2; 3,5; 5,7; ...
-				triple combinations: 3,2,5; 2,5,7; ...
-				quadruple combinations: 3,2,5,7; 2,5,7,9; ...
-				quintuple combinations: 3,2,5,7,9
-		
-	Parameters:
-		* esec_dict: dict
-			dictionary with the eSEC tables (e.g. from readPDF())
-		* rows: array
-			rows that will be removed in all single, tuple, triple, quadruple and quintuple combinations
->>>>>>> e55cc2526221a8124c1bfda63023a5d138fcc796
 	
 	Returns:
 		folder structure with .npy files
 	'''
-<<<<<<< HEAD
 	if rows == None:
 		liste_array = esec_dict
 		np.save("d_shaped", _calc_D_shaped(_make_triple(liste_array)))
@@ -318,62 +222,6 @@ def checkSimilarRows(esec_dict, combinations, rows = [3, 2, 5, 7, 9]):
 		* combinations: which type of combination (int)
 		* rows: rows that will be removed (array) 
 		
-=======
-	if not(os.path.exists("arrays/single")):
-		os.makedirs("arrays/single/")
-		os.mkdir("arrays/tuple/")
-		os.mkdir("arrays/triple/")
-		os.mkdir("arrays/quadruple/")
-		os.mkdir("arrays/quintuple/")
-	liste_array = esec_dict
-	for value in rows:
-		array = {}
-		for i in range(35):
-			array[i] = _delete_rows(value, liste_array[i])
-		np.save("arrays/single/matrix_removed_%d"%value, _calc_D_shaped(_make_triple(array)))
-	
-	combis_two = list(combinations(rows, 2))
-	for values in combis_two:
-		array = {}
-		for i in range(35):
-			array[i] = _delete_rows_two(values, liste_array[i])
-		np.save("arrays/tuple/matrix_removed_%d,%d"%(values[0], values[1]), _calc_D_shaped(_make_triple(array)))
-	
-	combis_three = list(combinations(rows, 3))
-	for values in combis_three:
-		array = {}
-		for i in range(35):
-			array[i] = _delete_rows_three(values, liste_array[i])
-		np.save("arrays/triple/matrix_removed_%d,%d,%d"%(values[0], values[1], values[2]), _calc_D_shaped(_make_triple(array)))
-
-	combis_four = list(combinations(rows, 4))
-	for values in combis_four:
-		array = {}
-		for i in range(35):
-			array[i] = _delete_rows_four(values, liste_array[i])
-		np.save("arrays/quadruple/matrix_removed_%d,%d,%d,%d"%(values[0], values[1], values[2], values[3]), _calc_D_shaped(_make_triple(array)))
-
-	combis_five = list(combinations(rows, 5))
-	for values in combis_five:
-		array = {}
-		for i in range(35):
-			array[i] = _delete_rows_five(values, liste_array[i])
-		np.save("arrays/quintuple/matrix_removed_%d,%d,%d,%d,%d"%(values[0], values[1], values[2], values[3], values[4]), _calc_D_shaped(_make_triple(array)))
-		
-def checkSimilarRows(esec_dict, combinations, rows = [3, 2, 5, 7, 9]):
-	'''
-	Check if any eSEC tables are not distinguishable from each other if rows are removed. To do so, the array *rows* is defined and with *combinations* it can be set if single, tuple, triple, quadruple and quintuple relations should be checked.
-	
-	Parameters:
-		* esec_dict: dict
-			dictionary with the eSEC tables (e.g. from readPDF())
-		* combinations: int (1-5)
-			set if single, tuple, triple, quadruple and quintuple relations should be checked
-		* rows: array
-			rows that are used for analysis
-	Returns:
-		if eSEC tables are not distinguishable from each other the corresponding rows are plotted, otherwise 'No other equalities' will be printed 
->>>>>>> e55cc2526221a8124c1bfda63023a5d138fcc796
 	'''
 	if cobinations == 1:
 		for values in rows:
@@ -426,32 +274,16 @@ def checkSimilarRows(esec_dict, combinations, rows = [3, 2, 5, 7, 9]):
 						if(compare_manipulations(delete_rows_three(values, liste_array[i]), delete_rows_three(values, liste_array[j]))):
 							print(values)
 		print('No other equalities')
-<<<<<<< HEAD
-=======
-	else:
-		print('Please use a number between 1-5 for combinations.')
->>>>>>> e55cc2526221a8124c1bfda63023a5d138fcc796
 		
 
 def plotDendroDissimi(rows, save = False): 
 	'''
-<<<<<<< HEAD
 	Plots the dendrogram and the dissimilarity matrix for specific rows for the .npy arrays.
 	Warning: needs the output from removeCobinationRowsSave()
 	
 	Parameters:
 		* rows: indicates which rows will be considered (int, tuple) 
 		* save: paramter if figure need to be saved (bool)
-=======
-	Plots the dendrogram and the dissimilarity matrix for specific rows for the .npy arrays from removeCobinationRowsSave(). Example: rows = 3,4; plots the dendrogram and the dissimilarity matrix for the case that rows 3 and 4 are removed which can be done by using removeCobinationRowsSave()
-	
-	Parameters:
-		* rows: int, tuple
-			indicates which rows will be considered
-		* save: bool
-			paramter if figure need to be saved
-			
->>>>>>> e55cc2526221a8124c1bfda63023a5d138fcc796
 	'''
 	if (isinstance(rows, int) and not(isinstance(rows, tuple))):
 		D_shaped = np.load("arrays/single/matrix_removed_%d.npy"%rows)
@@ -488,7 +320,6 @@ def plotDendroDissimi(rows, save = False):
 	if save == True:
 		plt.savefig("Dissimilarity.png", bbox_inches = 'tight', pad_inches = 0)
 	plt.show()
-<<<<<<< HEAD
 
 def esec_to_e2sec(pdf_path):
     '''
@@ -573,9 +404,6 @@ def esec_to_e2sec(pdf_path):
     
     #return e2sec and esec dict
     return e2sec_array, liste_array
-=======
-	
->>>>>>> e55cc2526221a8124c1bfda63023a5d138fcc796
 def _compare_triple_matrics(manipulation_1, manipulation_2):
 	
 	if (len(manipulation_1) > len(manipulation_2)):
@@ -686,11 +514,7 @@ def _dissimilarity_array_new(manipulation_1, manipulation_2, liste_array):
 			new_array = np.column_stack((new_array, new_array[:, i-1]))
 
 		##compare entries 
-<<<<<<< HEAD
 		for i in range(liste_array[0].shape[0]):
-=======
-		for i in range(30):
->>>>>>> e55cc2526221a8124c1bfda63023a5d138fcc796
 			c = liste_array[a][i, 0:new_array.shape[1]] == new_array[i]
 			array = np.append(array, liste_array[a].shape[1] - np.sum(c))
 		array /= np.sum(array)
@@ -704,11 +528,7 @@ def _dissimilarity_array_new(manipulation_1, manipulation_2, liste_array):
 			new_array = np.column_stack((new_array, new_array[:, i-1]))
 			
 		##compare entries   
-<<<<<<< HEAD
 		for i in range(liste_array[0].shape[0]):
-=======
-		for i in range(30):
->>>>>>> e55cc2526221a8124c1bfda63023a5d138fcc796
 			c = new_array[i] == liste_array[b][i, 0:new_array.shape[1]]
 			array = np.append(array, (liste_array[b].shape[1] - np.sum(c)))
 		array /= np.sum(array)
@@ -716,21 +536,14 @@ def _dissimilarity_array_new(manipulation_1, manipulation_2, liste_array):
 
 	else:
 		#print("man_1 = man_2")
-<<<<<<< HEAD
 		for i in range(liste_array[0].shape[0]):
-=======
-		for i in range(30):
->>>>>>> e55cc2526221a8124c1bfda63023a5d138fcc796
 			c = liste_array[a][i] == liste_array[b][i]
 			array = np.append(array, (liste_array[a].shape[1] - np.sum(c)))
 		array /= np.sum(array)
 		return(array)
-<<<<<<< HEAD
 		
 #https://stackoverflow.com/questions/33272588/appending-elements-to-an-empty-dictionary-of-lists-in-python
 def _add_element(dict, key, value):
     if key not in dict:
         dict[key] = []
     dict[key].append(value)
-=======
->>>>>>> e55cc2526221a8124c1bfda63023a5d138fcc796
