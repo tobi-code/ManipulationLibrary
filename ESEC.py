@@ -54,7 +54,7 @@ def plotRowRanking(esec_dict, savefig = False, e2sec = False):
 				man_2 = i
 				matrix = np.append(matrix,_dissimilarity_array_new(man_1, man_2, esec_dict))
 								   
-	matrix = np.reshape(matrix, ((len(esec_dict)*len(esec_dict)-1)/2, esec_dict[0].shape[0]))
+	matrix = np.reshape(matrix, (int((len(esec_dict)*(len(esec_dict)-1))/2), esec_dict[0].shape[0]))
 	place = np.argsort(matrix, axis = 1)
 	matrix_ranked = np.zeros_like(matrix)
 	for j in range(595):
