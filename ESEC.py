@@ -34,26 +34,27 @@ def readPDF(PDFpath):
 				liste_array[j][i][k] = liste_array[j][i][k].upper()
 	return liste_array
 
-def plotRowRanking(esec_dict, savefig = False):
+def plotRowRanking(esec_dict, savefig = False, e2sec = False):
 	"""
 	Plots the ranking of the different rows.
 	
 	Parameters:
 		* esec_dict: dictionary with the ESEC tables (dict)
 		* savefig: paramter if figure need to be saved (bool)
+		* e2sec: if matrices are e2sec (bool)
  	
     """
 	matrix = []
 	k = 0
-	for j in range(1, 36):
+	for j in range(1, len(esec_dict)+1):
 		k += 1
-		for i in range(k, 36):
+		for i in range(k, len(esec_dict)+1):
 			if(j != i):
 				man_1 = j
 				man_2 = i
 				matrix = np.append(matrix,_dissimilarity_array_new(man_1, man_2, esec_dict))
 								   
-	matrix = np.reshape(matrix, (595, 30))
+	matrix = np.reshape(matrix, ((len(esec_dict)*len(esec_dict)-1)/2, esec_dict[0].shape[0]))
 	place = np.argsort(matrix, axis = 1)
 	matrix_ranked = np.zeros_like(matrix)
 	for j in range(595):
@@ -69,31 +70,59 @@ def plotRowRanking(esec_dict, savefig = False):
 				matrix_ranked[j][place[j][i]] = rank
 	matrix_ranked_mean = np.mean(matrix_ranked, axis = 0)
 	matrix_ranked_median = np.median(matrix_ranked, axis = 0)
-	x = ['H, 1', 'H, 2', 'H, 3', \
-	 'H, G', "1, 2", '1,3 ',\
-	 '1, G', '2, 3', '2, G', '3, G']
-	fig, axs = plt.subplots(1,3, figsize = (30,5))
-	axs[0].bar(x, matrix_ranked_mean[0:10], color='r')
-	axs[0].set_title("SEC", fontsize=32)
-	axs[0].set_xlabel("Row",  fontsize=25)
-	axs[0].tick_params(axis='x', labelsize=15)
-	axs[0].tick_params(axis='y', labelsize=15)
-	axs[0].set_ylabel("Rank (mean)",  fontsize=25)
+	if e2sec == False:
+		x = ['H, 1', 'H, 2', 'H, 3', \
+		 'H, G', "1, 2", '1,3 ',\
+		 '1, G', '2, 3', '2, G', '3, G']
+		fig, axs = plt.subplots(1,3, figsize = (30,5))
+		axs[0].bar(x, matrix_ranked_mean[0:10], color='r')
+		axs[0].set_title("SEC", fontsize=32)
+		axs[0].set_xlabel("Row",  fontsize=25)
+		axs[0].tick_params(axis='x', labelsize=15)
+		axs[0].tick_params(axis='y', labelsize=15)
+		axs[0].set_ylabel("Rank (mean)",  fontsize=25)
 
-	axs[1].bar(x, matrix_ranked_mean[10:20], color = 'b')
-	axs[1].set_title("SSR", fontsize=32)
-	axs[1].set_xlabel("Row",  fontsize=25)
-	axs[1].tick_params(axis='x', labelsize=15)
-	axs[1].tick_params(axis='y', labelsize=15)
+		axs[1].bar(x, matrix_ranked_mean[10:20], color = 'b')
+		axs[1].set_title("SSR", fontsize=32)
+		axs[1].set_xlabel("Row",  fontsize=25)
+		axs[1].tick_params(axis='x', labelsize=15)
+		axs[1].tick_params(axis='y', labelsize=15)
 
-	axs[2].bar(x, matrix_ranked_mean[20:30], color = 'g')
-	axs[2].set_title("DSR", fontsize=32)
-	axs[2].set_xlabel("Row",  fontsize=25)
-	axs[2].tick_params(axis='x', labelsize=15)
-	axs[2].tick_params(axis='y', labelsize=15)
-	if(savefig == True):
-		plt.savefig("ranked_rows.png", bbox_inches='tight')
-	plt.show()
+		axs[2].bar(x, matrix_ranked_mean[20:30], color = 'g')
+		axs[2].set_title("DSR", fontsize=32)
+		axs[2].set_xlabel("Row",  fontsize=25)
+		axs[2].tick_params(axis='x', labelsize=15)
+		axs[2].tick_params(axis='y', labelsize=15)
+		if(savefig == True):
+			plt.savefig("ranked_rows.png", bbox_inches='tight')
+		plt.show()
+	
+	if e2sec == True:
+		x = ['H, 1', 'H, 2', 'H, 3', \
+		  "1, 2", '1,3 ',\
+		 '1, G', '2, 3', '2, G']
+		fig, axs = plt.subplots(1,3, figsize = (30,5))
+		axs[0].bar(x, matrix_ranked_mean[0:8], color='r')
+		axs[0].set_title("SEC", fontsize=32)
+		axs[0].set_xlabel("Row",  fontsize=25)
+		axs[0].tick_params(axis='x', labelsize=15)
+		axs[0].tick_params(axis='y', labelsize=15)
+		axs[0].set_ylabel("Rank (mean)",  fontsize=25)
+
+		axs[1].bar(x, matrix_ranked_mean[8:16], color = 'b')
+		axs[1].set_title("SSR", fontsize=32)
+		axs[1].set_xlabel("Row",  fontsize=25)
+		axs[1].tick_params(axis='x', labelsize=15)
+		axs[1].tick_params(axis='y', labelsize=15)
+
+		axs[2].bar(x, matrix_ranked_mean[16:24], color = 'g')
+		axs[2].set_title("DSR", fontsize=32)
+		axs[2].set_xlabel("Row",  fontsize=25)
+		axs[2].tick_params(axis='x', labelsize=15)
+		axs[2].tick_params(axis='y', labelsize=15)
+		if(savefig == True):
+			plt.savefig("ranked_rows.png", bbox_inches='tight')
+		plt.show()
 	
 def removeRows(esec_dict, row):
 	'''
@@ -128,7 +157,8 @@ def removeRows(esec_dict, row):
 def removeCobinationRowsSave(esec_dict, rows = [3, 2, 5, 7, 9]):
 	'''
 	Removes the rows from the input in every combination and saves it in the folder "array". First removes
-	single then combinations of tuple, triple, quadruple and quintuple rows.
+	single then combinations of tuple, triple, quadruple and quintuple rows. If rows == None the Dissimilarity 
+	matrix is calculated without removing rows.
 	
 	Parameters:
 		* esec_dict: dictionary with the ESEC tables (dict)
@@ -137,47 +167,52 @@ def removeCobinationRowsSave(esec_dict, rows = [3, 2, 5, 7, 9]):
 	Returns:
 		folder structure with .npy files
 	'''
-	if not(os.path.exists("arrays/single")):
-		os.makedirs("arrays/single/")
-		os.mkdir("arrays/tuple/")
-		os.mkdir("arrays/triple/")
-		os.mkdir("arrays/quadruple/")
-		os.mkdir("arrays/quintuple/")
-	liste_array = esec_dict
-	for value in rows:
-		array = {}
-		for i in range(35):
-			array[i] = _delete_rows(value, liste_array[i])
-		np.save("arrays/single/matrix_removed_%d"%value, _calc_D_shaped(_make_triple(array)))
+	if rows == None:
+		liste_array = esec_dict
+		np.save("d_shaped", _calc_D_shaped(_make_triple(liste_array)))
 	
-	combis_two = list(combinations(rows, 2))
-	for values in combis_two:
-		array = {}
-		for i in range(35):
-			array[i] = _delete_rows_two(values, liste_array[i])
-		np.save("arrays/tuple/matrix_removed_%d,%d"%(values[0], values[1]), _calc_D_shaped(_make_triple(array)))
-	
-	combis_three = list(combinations(rows, 3))
-	for values in combis_three:
-		array = {}
-		for i in range(35):
-			array[i] = _delete_rows_three(values, liste_array[i])
-		np.save("arrays/triple/matrix_removed_%d,%d,%d"%(values[0], values[1], values[2]), _calc_D_shaped(_make_triple(array)))
-
-	combis_four = list(combinations(rows, 4))
-	for values in combis_four:
-		array = {}
-		for i in range(35):
-			array[i] = _delete_rows_four(values, liste_array[i])
-		np.save("arrays/quadruple/matrix_removed_%d,%d,%d,%d"%(values[0], values[1], values[2], values[3]), _calc_D_shaped(_make_triple(array)))
-
-	combis_five = list(combinations(rows, 5))
-	for values in combis_five:
-		array = {}
-		for i in range(35):
-			array[i] = _delete_rows_five(values, liste_array[i])
-		np.save("arrays/quintuple/matrix_removed_%d,%d,%d,%d,%d"%(values[0], values[1], values[2], values[3], values[4]), _calc_D_shaped(_make_triple(array)))
+	if rows != None:
+		if not(os.path.exists("arrays/single")):
+			os.makedirs("arrays/single/")
+			os.mkdir("arrays/tuple/")
+			os.mkdir("arrays/triple/")
+			os.mkdir("arrays/quadruple/")
+			os.mkdir("arrays/quintuple/")
+		liste_array = esec_dict
+		for value in rows:
+			array = {}
+			for i in range(35):
+				array[i] = _delete_rows(value, liste_array[i])
+			np.save("arrays/single/matrix_removed_%d"%value, _calc_D_shaped(_make_triple(array)))
 		
+		combis_two = list(combinations(rows, 2))
+		for values in combis_two:
+			array = {}
+			for i in range(35):
+				array[i] = _delete_rows_two(values, liste_array[i])
+			np.save("arrays/tuple/matrix_removed_%d,%d"%(values[0], values[1]), _calc_D_shaped(_make_triple(array)))
+		
+		combis_three = list(combinations(rows, 3))
+		for values in combis_three:
+			array = {}
+			for i in range(35):
+				array[i] = _delete_rows_three(values, liste_array[i])
+			np.save("arrays/triple/matrix_removed_%d,%d,%d"%(values[0], values[1], values[2]), _calc_D_shaped(_make_triple(array)))
+
+		combis_four = list(combinations(rows, 4))
+		for values in combis_four:
+			array = {}
+			for i in range(35):
+				array[i] = _delete_rows_four(values, liste_array[i])
+			np.save("arrays/quadruple/matrix_removed_%d,%d,%d,%d"%(values[0], values[1], values[2], values[3]), _calc_D_shaped(_make_triple(array)))
+
+		combis_five = list(combinations(rows, 5))
+		for values in combis_five:
+			array = {}
+			for i in range(35):
+				array[i] = _delete_rows_five(values, liste_array[i])
+			np.save("arrays/quintuple/matrix_removed_%d,%d,%d,%d,%d"%(values[0], values[1], values[2], values[3], values[4]), _calc_D_shaped(_make_triple(array)))
+			
 def checkSimilarRows(esec_dict, combinations, rows = [3, 2, 5, 7, 9]):
 	'''
 	Check if ESEC tables are similar for multiple combinations.
@@ -285,7 +320,90 @@ def plotDendroDissimi(rows, save = False):
 	if save == True:
 		plt.savefig("Dissimilarity.png", bbox_inches = 'tight', pad_inches = 0)
 	plt.show()
-	
+
+def esec_to_e2sec(pdf_path):
+    '''
+    Takes an pdf file with eSEC matrices as input and return these matrices as e2SEC matrices dict.
+    
+    Parameters:
+        * pdf_path: path of the pdf file which contains eSEC matrices
+        
+    Returns:
+        dict of e2SEC matrices
+    '''
+    
+    #read PDF file and save in liste_array dict
+    df = tabula.read_pdf(pdf_path, pages='all', pandas_options={'header': None})
+    liste_array = {}
+    for i in range(len(df)):
+        liste_array[i] = df[i].loc[:, 1:].to_numpy()
+    #----------------------------------------------------------------  
+    
+    #uppercase every entry
+    for j in range(len(liste_array)):
+        for i in range(liste_array[j].shape[0]):
+            for k in range(liste_array[j].shape[1]):
+                liste_array[j][i][k] = liste_array[j][i][k].upper()
+    #----------------------------------------------------------------  
+    
+    #copy esec matrix 
+    e2sec_array = copy.deepcopy(liste_array)            
+    for j in range(len(e2sec_array)):
+        
+    #----------------------------------------------------------------
+        #find index of sematics to merge
+        replace_Ab_1, replace_Ab_2 = np.where(e2sec_array[j] == "AB") #VAr
+        replace_Be_1, replace_Be_2 = np.where(e2sec_array[j] == "BE") #VAr
+
+        replace_To_1, replace_To_2 = np.where(e2sec_array[j] == "TO") #TVAr
+        replace_Bo_1, replace_Bo_2 = np.where(e2sec_array[j] == "BO") #TVAr
+
+        replace_Ar_1, replace_Ar_2 = np.where(e2sec_array[j] == "AR") #HAr
+        replace_ArT_1, replace_ArT_2 = np.where(e2sec_array[j] == "ART") #THAr
+        
+        replace_MT_1, replace_MT_2 = np.where(e2sec_array[j] == "MT")
+        replace_FMT_1, replace_FMT_2 = np.where(e2sec_array[j] == "FMT")
+    #----------------------------------------------------------------
+        
+        #replace old semantics with merged ones
+        for i in range(len(replace_Ab_1)):
+            e2sec_array[j][replace_Ab_1[i]][replace_Ab_2[i]] = 'VAR'
+        for i in range(len(replace_Be_1)):
+            e2sec_array[j][replace_Be_1[i]][replace_Be_2[i]] = 'VAR'
+
+        for i in range(len(replace_To_1)):
+            e2sec_array[j][replace_To_1[i]][replace_To_2[i]] = 'VART'
+        for i in range(len(replace_Bo_1)):
+            e2sec_array[j][replace_Bo_1[i]][replace_Bo_2[i]] = 'VART'
+
+        for i in range(len(replace_Ar_1)):
+            e2sec_array[j][replace_Ar_1[i]][replace_Ar_2[i]] = 'HAR'
+        for i in range(len(replace_ArT_1)):
+            e2sec_array[j][replace_ArT_1[i]][replace_ArT_2[i]] = 'HART'
+
+        for i in range(len(replace_MT_1)):
+            e2sec_array[j][replace_MT_1[i]][replace_MT_2[i]] = 'MT'
+        for i in range(len(replace_FMT_1)):
+            e2sec_array[j][replace_FMT_1[i]][replace_FMT_2[i]] = 'MT'
+    #----------------------------------------------------------------  
+    #remove rows 4 and 10 in T/N, SSR, DSR
+    for i in range(len(e2sec_array)):
+        e2sec_array[i] = np.delete(e2sec_array[i], [3,9,13,19,23,29], 0)
+    #----------------------------------------------------------------  
+    
+    #find columns that are same due to e2SEC and remove them
+    k = {}
+    for i in range(len(e2sec_array)):
+        for j in range(e2sec_array[i].shape[1]-1):
+            if(np.array_equal(e2sec_array[i][:,j], e2sec_array[i][:,j+1])):
+                _add_element(k, i, j+1)
+
+    for i in range(len(e2sec_array)):
+        e2sec_array[i] = np.delete(e2sec_array[i], k[i], 1)
+    #----------------------------------------------------------------  
+    
+    #return e2sec and esec dict
+    return e2sec_array, liste_array
 def _compare_triple_matrics(manipulation_1, manipulation_2):
 	
 	if (len(manipulation_1) > len(manipulation_2)):
@@ -396,7 +514,7 @@ def _dissimilarity_array_new(manipulation_1, manipulation_2, liste_array):
 			new_array = np.column_stack((new_array, new_array[:, i-1]))
 
 		##compare entries 
-		for i in range(30):
+		for i in range(liste_array[0].shape[0]):
 			c = liste_array[a][i, 0:new_array.shape[1]] == new_array[i]
 			array = np.append(array, liste_array[a].shape[1] - np.sum(c))
 		array /= np.sum(array)
@@ -410,7 +528,7 @@ def _dissimilarity_array_new(manipulation_1, manipulation_2, liste_array):
 			new_array = np.column_stack((new_array, new_array[:, i-1]))
 			
 		##compare entries   
-		for i in range(30):
+		for i in range(liste_array[0].shape[0]):
 			c = new_array[i] == liste_array[b][i, 0:new_array.shape[1]]
 			array = np.append(array, (liste_array[b].shape[1] - np.sum(c)))
 		array /= np.sum(array)
@@ -418,8 +536,14 @@ def _dissimilarity_array_new(manipulation_1, manipulation_2, liste_array):
 
 	else:
 		#print("man_1 = man_2")
-		for i in range(30):
+		for i in range(liste_array[0].shape[0]):
 			c = liste_array[a][i] == liste_array[b][i]
 			array = np.append(array, (liste_array[a].shape[1] - np.sum(c)))
 		array /= np.sum(array)
 		return(array)
+		
+#https://stackoverflow.com/questions/33272588/appending-elements-to-an-empty-dictionary-of-lists-in-python
+def _add_element(dict, key, value):
+    if key not in dict:
+        dict[key] = []
+    dict[key].append(value)
