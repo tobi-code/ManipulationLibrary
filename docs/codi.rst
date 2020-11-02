@@ -1,4 +1,4 @@
-Code
+eSEC analyser
 ====
 
 .. automodule:: codi
