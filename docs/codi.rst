@@ -1,4 +1,4 @@
-eSEC_analyser
+eSEC analyser
 =============
 
 .. automodule:: eSEC_analyser
