@@ -1,4 +1,4 @@
-eSEC_analyser
+Code
 ====
 
 .. automodule:: eSEC_analyser
