@@ -1,9 +1,7 @@
 Code
 ====
 
-.. automodule:: eSEC_analyser
+.. automodule:: codi
 	:members:
-	
-.. automodule:: manipulation_analyser
-	:members:
+
 	
