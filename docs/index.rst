@@ -26,6 +26,8 @@ Depends on Librabies:
 
 * seaborn
 
+* test
+
 
 eSEC_analyser
 ====
