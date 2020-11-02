@@ -9,6 +9,7 @@ A library to work with ESEC tables. Especially to do statistical analysis and im
 
 Depends on Librabies:
 ---------------------
+* test
 
 * tabula
 
@@ -26,7 +27,6 @@ Depends on Librabies:
 
 * seaborn
 
-* test
 
 
 Code
