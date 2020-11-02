@@ -1,7 +1,7 @@
 eSEC analyser
 =============
 
-.. automodule:: codi
+.. automodule:: eSEC_analyser
 	:members:
 
 	
