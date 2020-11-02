@@ -28,8 +28,8 @@ Depends on Librabies:
 
 
 
-eSEC analyser
-=============
+Code
+====
 
 	
 .. toctree::
