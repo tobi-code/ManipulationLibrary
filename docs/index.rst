@@ -29,7 +29,7 @@ Depends on Librabies:
 
 
 eSEC analyser
-====
+=============
 
 	
 .. toctree::
