@@ -1,7 +1,7 @@
 manipulation analyser
 =====================
 
-.. automodule:: manipulation analyser
+.. automodule:: manipulation_analyser
 	:members:
 
 
