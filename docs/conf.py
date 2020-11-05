@@ -14,7 +14,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.append('/home/sazu/ownCloud/ManipulationLibrary/')
-autodoc_mock_imports = ["tabula", "pandas", "numpy", "matplotlib", "scipy", "itertools", "seaborn", "open3d"]
+autodoc_mock_imports = ["tabula", "pandas", "numpy", "matplotlib", "scipy", "itertools", "seaborn", "open3d", "cv2"]
 
 # -- Project information -----------------------------------------------------
 
