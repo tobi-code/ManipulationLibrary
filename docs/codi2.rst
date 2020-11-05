@@ -1,6 +1,8 @@
 manipulation analyser
-=============
+=====================
 
-* to be continued...
+.. automodule:: manipulation analyser
+	:members:
+
 
 	
