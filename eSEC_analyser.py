@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created 2020
+
+@author: Tobias Strübing
+"""
 import tabula
 import pandas as pd
 import numpy as np
@@ -203,13 +210,14 @@ def removeCobinationRowsSave(esec_dict, rows = [3, 2, 5, 7, 9]):
 		#create folder structure if not existent
 		if not(os.path.exists("arrays/single")):
 			os.makedirs("arrays/single/")
+			os.mkdir("arrays/nothing_removed/")
 			os.mkdir("arrays/tuple/")
 			os.mkdir("arrays/triple/")
 			os.mkdir("arrays/quadruple/")
 			os.mkdir("arrays/quintuple/")
 
 		liste_array = copy.deepcopy(esec_dict)
-
+		np.save("arrays/nothing_removed/nothing_removed.npy", _calc_D_shaped(_make_triple(liste_array)))
 		#remove all combinations of single rows and saves the array as .npy files in array/single
 		for value in rows:
 			array = {}
@@ -257,8 +265,13 @@ def checkSimilarRows(esec_dict, combination, rows = [3, 2, 5, 7, 9]):
 	Parameters:
 		* esec_dict: dictionary with the ESEC tables (dict)
 		* combination: which type of combination (int)
-		* rows: rows that will be removed (array) 
+		* rows: rows that will be removed (array) (from 0 for row 1 to 9 for row 10)
 	'''
+	temp = 0
+	value = []
+	if (combination > len(rows)):
+		print("combination parameter must be <= len(rows)")
+		return 
 	#for combination == 1 only single rows are removed and if two manipulations are same it prints out
 	#the rows where manipulations are same otherwise it prints 'No other equalities'
 	liste_array = copy.deepcopy(esec_dict)
@@ -268,8 +281,14 @@ def checkSimilarRows(esec_dict, combination, rows = [3, 2, 5, 7, 9]):
 				for j in range(len(liste_array)):
 					if(i != j):
 						if(_compare_manipulations(_delete_rows(values, liste_array[i]), _delete_rows(values, liste_array[j]))):
-							print(values)
-		print('No other equalities')
+							print("equalities bettween manipulation %d and %d"%(i+1, j+1))
+							if values not in value:
+								value.append(values)
+							temp += 1
+		if temp == 0:
+			print('No manipulations are same for %d combinations'%combination)
+		else:
+			print("Same manipulations due to removement of row(s)", value)
 	
 	#for combination == 2 only two rows are removed and if two manipulations are same it prints out
 	#the combination of rows where manipulations are same otherwise it prints 'No other equalities'
@@ -280,8 +299,14 @@ def checkSimilarRows(esec_dict, combination, rows = [3, 2, 5, 7, 9]):
 				for j in range(len(liste_array)):
 					if(i != j):
 						if(_compare_manipulations(_delete_rows_two(values, liste_array[i]), _delete_rows_two(values, liste_array[j]))):
-							print(values)
-		print('No other equalities')
+							print("equalities bettween manipulation %d and %d"%(i+1, j+1))
+							if values not in value:
+								value.append(values)
+							temp += 1
+		if temp == 0:
+			print('No manipulations are same for %d combinations'%combination)
+		else:
+			print("Same manipulations due to removement of row(s)", value)
 
 	#for combination == 3 only three rows are removed and if two manipulations are same it prints out
 	#the combination of rows where manipulations are same otherwise it prints 'No other equalities'
@@ -293,8 +318,14 @@ def checkSimilarRows(esec_dict, combination, rows = [3, 2, 5, 7, 9]):
 				for j in range(len(liste_array)):
 					if(i != j):
 						if(_compare_manipulations(_delete_rows_three(values, liste_array[i]), _delete_rows_three(values, liste_array[j]))):
-							print(values)
-		print('No other equalities')
+							print("equalities bettween manipulation %d and %d"%(i+1, j+1))
+							if values not in value:
+								value.append(values)
+							temp += 1
+		if temp == 0:
+			print('No manipulations are same for %d combinations'%combination)
+		else:
+			print("Same manipulations due to removement of row(s)", value)
 	
 	#for combination == 2 only four rows are removed and if two manipulations are same it prints out
 	#the combination of rows where manipulations are same otherwise it prints 'No other equalities'
@@ -306,8 +337,14 @@ def checkSimilarRows(esec_dict, combination, rows = [3, 2, 5, 7, 9]):
 				for j in range(len(liste_array)):
 					if(i != j):
 						if(_compare_manipulations(_delete_rows_four(values, liste_array[i]), _delete_rows_four(values, liste_array[j]))):
-							print(values)
-		print('No other equalities')
+							print("equalities bettween manipulation %d and %d"%(i+1, j+1))
+							if values not in value:
+								value.append(values)
+							temp += 1
+		if temp == 0:
+			print('No manipulations are same for %d combinations'%combination)
+		else:
+			print("Same manipulations due to removement of row(s)", value)
 
 	#for combination == 2 only five rows are removed and if two manipulations are same it prints out
 	#the combination of rows where manipulations are same otherwise it prints 'No other equalities'			
@@ -319,19 +356,42 @@ def checkSimilarRows(esec_dict, combination, rows = [3, 2, 5, 7, 9]):
 				for j in range(len(liste_array)):
 					if(i != j):
 						if(_compare_manipulations(_delete_rows_five(values, liste_array[i]), _delete_rows_five(values, liste_array[j]))):
-							print(values)
-		print('No other equalities')
+							print("equalities bettween manipulation %d and %d"%(i+1, j+1))
+							if values not in value:
+								value.append(values)
+							temp += 1
+		if temp == 0:
+			print('No manipulations are same for %d combinations'%combination)
+		else:
+			print("Same manipulations due to removement of row(s)", value)
 		
-def plot_dendrogram(D_shaped, labels, name_of_plot = ""):
+def plotDendrogram(rows, labels, threshold = 0.4, save = False):
 	'''
 	Plots the dendrogram for specific rows for the .npy arrays.
 	Warning: needs the output from removeCobinationRowsSave()
 
 	Parameters:
-		* D_shaped: dissimilarity matrix of all manipulations from function removeCobinationRowsSave() (numpy array)
-		* labels: name of the manipulations in the right order [string array]
-		* name_of_plot: name of the plot that will be saved
+		* rows: indicates which rows will be considered (int, tuple) 
+		* label: name of the manipulations in the right order [string array]
+		* threshold: color threshold for the dendrogram (float)
+		* save: paramter if figure need to be saved (bool)
 	'''
+	if (isinstance(rows, int) and not(isinstance(rows, tuple))):
+		D_shaped = np.load("arrays/single/matrix_removed_%d.npy"%rows)
+		indexes = "%d"%rows
+	elif (len(rows) == 2):
+		D_shaped = np.load("arrays/tuple/matrix_removed_%d,%d.npy"%(rows[0], rows[1]))
+		indexes = "%d,%d"%(rows[0], rows[1])
+	elif (len(rows) == 3):
+		D_shaped = np.load("arrays/triple/matrix_removed_%d,%d,%d.npy"%(rows[0], rows[1], rows[2]))
+		indexes = "%d,%d,%d"%(rows[0], rows[1], rows[2])
+	elif (len(rows) == 4):
+		D_shaped = np.load("arrays/quadruple/matrix_removed_%d,%d,%d,%d.npy"%(rows[0], rows[1], rows[2], rows[3]))
+		indexes = "%d,%d,%d,%d"%(rows[0], rows[1], rows[2], rows[3])
+	elif (len(rows) == 5):
+		D_shaped = np.load("arrays/quintuple/matrix_removed_%d,%d,%d,%d,%d.npy"%(rows[0], rows[1], rows[2], rows[3], rows[4]))
+		indexes = "%d,%d,%d,%d,%d"%(rows[0], rows[1], rows[2], rows[3], rows[4])
+
 	fig = plt.figure(figsize=(30,16))
 
 	#reshape the D_shaped matrix in squareform
@@ -339,7 +399,6 @@ def plot_dendrogram(D_shaped, labels, name_of_plot = ""):
 
 	#define the linkage, color threshold and produce dendrogram
 	Z = hierarchy.linkage(dissimilarity, method = 'complete', optimal_ordering = True)
-	threshold = 0.4
 	ax = fig.add_subplot(1, 1, 1)
 	dn = hierarchy.dendrogram(Z,orientation='right', labels = labels, ax = ax, count_sort = 'ascending', color_threshold = threshold)
 
@@ -348,9 +407,87 @@ def plot_dendrogram(D_shaped, labels, name_of_plot = ""):
 	ax.tick_params(axis='y', which='major', labelsize=27)
 	ax.set_xlabel('Dissimilarity', fontsize=40)
 	plt.tight_layout()
-	plt.savefig(name_of_plot+"_dendro")
+	if save == True:
+		plt.savefig("dendrogram_rows_%s.png"%indexes, bbox_inches = 'tight')
 
-def plot_dissi(D_shaped, label, name_of_plot = ""):
+def plotDendrogramFromMatrix(D_shaped, labels, threshold = 0.4, save = False, name_of_plot = ""):
+	'''
+	Plots the dendrogram for specific rows for the .npy arrays.
+	Warning: needs the output from removeCobinationRowsSave()
+
+	Parameters:
+		* D_shaped: dissimilarity matrix of all manipulations from function removeCobinationRowsSave() (numpy array)
+		* labels: name of the manipulations in the right order [string array]
+		* threshold: color threshold for the dendrogram (float)
+		* save: paramter if figure need to be saved (bool)
+		* name_of_plot: name of the plot that will be saved (string)
+	'''
+	
+	fig = plt.figure(figsize=(30,16))
+
+	#reshape the D_shaped matrix in squareform
+	dissimilarity = distance.squareform(D_shaped)
+
+	#define the linkage, color threshold and produce dendrogram
+	Z = hierarchy.linkage(dissimilarity, method = 'complete', optimal_ordering = True)
+	ax = fig.add_subplot(1, 1, 1)
+	dn = hierarchy.dendrogram(Z,orientation='right', labels = labels, ax = ax, count_sort = 'ascending', color_threshold = threshold)
+
+	#define plot parameters				
+	ax.tick_params(axis='x', which='major', labelsize=27)
+	ax.tick_params(axis='y', which='major', labelsize=27)
+	ax.set_xlabel('Dissimilarity', fontsize=40)
+	plt.tight_layout()
+	if save == True:
+		plt.savefig("dendrogram_%s.png"%name_of_plot, bbox_inches = 'tight')
+
+
+def plotDissi(rows, label, save = False):
+	'''
+	Plots the dissimilarity matrix for specific rows for the .npy arrays.
+	Warning: needs the output from removeCobinationRowsSave()
+
+	Parameters:
+		* rows: indicates which rows will be considered (int, tuple) 
+		* label: name of the manipulations in the right order [string array]
+		* save: paramter if figure need to be saved (bool)
+	'''
+	#load the dissimilarity matrix
+	if (isinstance(rows, int) and not(isinstance(rows, tuple))):
+		D_shaped = np.load("arrays/single/matrix_removed_%d.npy"%rows)
+		indexes = "%d"%rows
+	elif (len(rows) == 2):
+		D_shaped = np.load("arrays/tuple/matrix_removed_%d,%d.npy"%(rows[0], rows[1]))
+		indexes = "%d,%d"%(rows[0], rows[1])
+	elif (len(rows) == 3):
+		D_shaped = np.load("arrays/triple/matrix_removed_%d,%d,%d.npy"%(rows[0], rows[1], rows[2]))
+		indexes = "%d,%d,%d"%(rows[0], rows[1], rows[2])
+	elif (len(rows) == 4):
+		D_shaped = np.load("arrays/quadruple/matrix_removed_%d,%d,%d,%d.npy"%(rows[0], rows[1], rows[2], rows[3]))
+		indexes = "%d,%d,%d,%d"%(rows[0], rows[1], rows[2], rows[3])
+	elif (len(rows) == 5):
+		D_shaped = np.load("arrays/quintuple/matrix_removed_%d,%d,%d,%d,%d.npy"%(rows[0], rows[1], rows[2], rows[3], rows[4]))
+		indexes = "%d,%d,%d,%d,%d"%(rows[0], rows[1], rows[2], rows[3], rows[4])
+	#round the numbers in D_shaped for better visualization 
+	D_shaped_rounded = np.around(D_shaped, decimals=2)
+
+	#create pandas dataframe with rounded D_shaped and input labels
+	df_cm = pd.DataFrame(D_shaped_rounded, index = label, columns = label)
+	fig, ax = plt.subplots(figsize = (35,26))
+
+	#define plot parameters
+	sn.set(font_scale=3)
+	ax.xaxis.tick_top() # x axis on top
+	ax.xaxis.set_label_position('top')
+	ax.tick_params(labelsize=29)
+	ax.tick_params(labelsize=29)
+	sn.heatmap(df_cm, annot=True, annot_kws={'size':18})#, linewidths=.5)
+	plt.tight_layout()
+	plt.show()
+	if save == True:
+		plt.savefig("dissimilarity_rows_%s.eps"%indexes, format = "eps", dpi = 350, bbox_inches= 'tight')
+
+def plotDissiFromMatrix(D_shaped, label, save = False, name_of_plot = ""):
 	'''
 	Plots the dissimilarity matrix for specific rows for the .npy arrays.
 	Warning: needs the output from removeCobinationRowsSave()
@@ -358,7 +495,8 @@ def plot_dissi(D_shaped, label, name_of_plot = ""):
 	Parameters:
 		* D_shaped: dissimilarity matrix of all manipulations from function removeCobinationRowsSave() (numpy array)
 		* labels: name of the manipulations in the right order [string array]
-		* name_of_plot: name of the plot that will be saved
+		* save: paramter if figure need to be saved (bool)
+		* name_of_plot: name of the plot that will be saved (string)
 	'''
 
 	#round the numbers in D_shaped for better visualization 
@@ -377,9 +515,10 @@ def plot_dissi(D_shaped, label, name_of_plot = ""):
 	sn.heatmap(df_cm, annot=True, annot_kws={'size':18})#, linewidths=.5)
 	plt.tight_layout()
 	plt.show()
-	plt.savefig(name_of_plot+".eps", format = "eps", dpi = 350, bbox_inches= 'tight')
+	if save == True:
+		plt.savefig("dissimilarity_%s.eps"%name_of_plot, format = "eps", dpi = 350, bbox_inches= 'tight')
 
-def plotDendroDissimi(rows,  label, save = False): 
+def plotDendroDissimi(rows,  label, threshold = 0.4, save = False): 
 	'''
 	Plots the dendrogram and the dissimilarity matrix for specific rows for the .npy arrays.
 	e.g. rows=[3,4,5] will plot the dendrogram and dissimilarity matrix with removed rows 3,4 and 5
@@ -388,20 +527,26 @@ def plotDendroDissimi(rows,  label, save = False):
 	Parameters:
 		* rows: indicates which rows will be considered (int, tuple) 
 		* label: name of the manipulations in the right order [string array]
+		* threshold: color threshold for the dendrogram (float)
 		* save: paramter if figure need to be saved (bool)
 	'''
 
 	#load the dissimilarity matrix
 	if (isinstance(rows, int) and not(isinstance(rows, tuple))):
 		D_shaped = np.load("arrays/single/matrix_removed_%d.npy"%rows)
+		indexes = "%d"%rows
 	elif (len(rows) == 2):
 		D_shaped = np.load("arrays/tuple/matrix_removed_%d,%d.npy"%(rows[0], rows[1]))
+		indexes = "%d,%d"%(rows[0], rows[1])
 	elif (len(rows) == 3):
 		D_shaped = np.load("arrays/triple/matrix_removed_%d,%d,%d.npy"%(rows[0], rows[1], rows[2]))
+		indexes = "%d,%d,%d"%(rows[0], rows[1], rows[2])
 	elif (len(rows) == 4):
 		D_shaped = np.load("arrays/quadruple/matrix_removed_%d,%d,%d,%d.npy"%(rows[0], rows[1], rows[2], rows[3]))
+		indexes = "%d,%d,%d,%d"%(rows[0], rows[1], rows[2], rows[3])
 	elif (len(rows) == 5):
 		D_shaped = np.load("arrays/quintuple/matrix_removed_%d,%d,%d,%d,%d.npy"%(rows[0], rows[1], rows[2], rows[3], rows[4]))
+		indexes = "%d,%d,%d,%d,%d"%(rows[0], rows[1], rows[2], rows[3], rows[4])
 	
 	#label = ["Hit/Flick", "Poke", "Bore, Rub, Rotate", "Lay", "Push/ Pull", "Stir", "Knead", "Lever", "Cut", "Draw", "Scoop", "Take down", "Push down", "Break", "Uncover(Pick & Place)", "Uncover(Push)", "Put on top", "Put inside", "Push on top", "Put over", "Push over", "Push from x to y", "Push together", "Push apart", "Take & invert", "Shake", "Rotate align", "Pour to ground(v1)", "Pour to ground(v2)", "Pour to cup(v1)", "Pour to cup(v2)", "Pick & place", "Chop", "Scratch", "Squash"]
 	
@@ -421,7 +566,7 @@ def plotDendroDissimi(rows,  label, save = False):
 	#define plot parameters
 	f = plt.figure(figsize=(40,31))
 	ax = f.add_subplot(221)
-	hierarchy.dendrogram(Z, orientation='right', labels = label, ax = ax)#, color_threshold = threshold)
+	hierarchy.dendrogram(Z, orientation='right', labels = label, ax = ax, count_sort = 'ascending', color_threshold = threshold)#, color_threshold = threshold)
 	ax.tick_params(axis='x', which='major', labelsize=25)
 	ax.tick_params(axis='y', which='major', labelsize=25)
 	ax.set_xlabel('Dissimilarity', fontsize=35)
@@ -434,8 +579,110 @@ def plotDendroDissimi(rows,  label, save = False):
 	sn.heatmap(df_cm, annot=True, linewidths=.5, annot_kws={'size':12})
 	plt.tight_layout()
 	if save == True:
-		plt.savefig("Dissimilarity.png", bbox_inches = 'tight', pad_inches = 0)
+		plt.savefig("sissimilarity_dendrogram_rows_%s.png"%indexes, bbox_inches = 'tight', pad_inches = 0)
 	plt.show()
+
+def _plotDendroDissimiFromMatrix(D_shaped,  label, threshold = 0.4, save = False, name_of_plot = ""): 
+	'''
+	Plots the dendrogram and the dissimilarity matrix for specific rows for the .npy arrays.
+	e.g. rows=[3,4,5] will plot the dendrogram and dissimilarity matrix with removed rows 3,4 and 5
+	Warning: needs the folder structure from removeCobinationRowsSave()
+	
+	Parameters:
+		* rows: indicates which rows will be considered (int, tuple) 
+		* label: name of the manipulations in the right order [string array]
+		* threshold: color threshold for the dendrogram (float)
+		* save: paramter if figure need to be saved (bool)
+	'''
+	#label = ["Hit/Flick", "Poke", "Bore, Rub, Rotate", "Lay", "Push/ Pull", "Stir", "Knead", "Lever", "Cut", "Draw", "Scoop", "Take down", "Push down", "Break", "Uncover(Pick & Place)", "Uncover(Push)", "Put on top", "Put inside", "Push on top", "Put over", "Push over", "Push from x to y", "Push together", "Push apart", "Take & invert", "Shake", "Rotate align", "Pour to ground(v1)", "Pour to ground(v2)", "Pour to cup(v1)", "Pour to cup(v2)", "Pick & place", "Chop", "Scratch", "Squash"]
+	
+	#transforms the dissimilarity matrix into squareform
+	dissimilarity = distance.squareform(D_shaped)
+
+	#define the linkage, color threshold and produce dendrogram
+	Z = hierarchy.linkage(dissimilarity, 'complete')
+
+	#round the numbers in D_shaped for better visualization 
+	D_shaped_rounded = np.around(D_shaped, decimals=2)
+
+	#create pandas dataframe with rounded D_shaped and input labels
+	df_cm = pd.DataFrame(D_shaped_rounded, index = label,
+					  columns = label)
+	
+	#define plot parameters
+	f = plt.figure(figsize=(40,31))
+	ax = f.add_subplot(221)
+	hierarchy.dendrogram(Z, orientation='right', labels = label, ax = ax, count_sort = 'ascending', color_threshold = threshold)#, color_threshold = threshold)
+	ax.tick_params(axis='x', which='major', labelsize=25)
+	ax.tick_params(axis='y', which='major', labelsize=25)
+	ax.set_xlabel('Dissimilarity', fontsize=35)
+	
+	ax2 = f.add_subplot(223)
+	ax2.xaxis.tick_top() # x axis on top
+	ax2.xaxis.set_label_position('top')
+	ax2.tick_params(labelsize=15)
+	ax2.tick_params(labelsize=15)
+	sn.heatmap(df_cm, annot=True, linewidths=.5, annot_kws={'size':12})
+	plt.tight_layout()
+	if save == True:
+		plt.savefig("%s"%name_of_plot, bbox_inches = 'tight', pad_inches = 0)
+	#plt.show()
+
+def plotAllMatrices(path, label):
+	'''
+    Plots the dendrogram and dissimilarity matrix for all combinations of removed rows in the "array" folder structure.
+	Warning: Needs folder structure from function removeCobinationRowsSave()
+    
+    Parameters:
+        * path: path to the "array" folder from function removeCobinationRowsSave()
+		* label: name of the manipulations in the right order [string array]
+        
+    Returns:
+        plots of dendrogram and dissimilarity matrices
+    '''
+	if not(os.path.exists("plots/single")):
+			os.makedirs("plots/single/")
+			os.mkdir("plots/nothing_removed/")
+			os.mkdir("plots/tuple/")
+			os.mkdir("plots/triple/")
+			os.mkdir("plots/quadruple/")
+			os.mkdir("plots/quintuple/")
+
+	##plots for non removed rows
+	path = "arrays/nothing_removed/"
+	for filename in os.listdir(path):
+		D_shaped = np.load(path+filename)
+		_plotDendroDissimiFromMatrix(D_shaped, label, save=True, name_of_plot = "plots/nothing_removed/"+os.path.splitext(filename)[0]+".png")
+
+	##plots for single removed rows
+	path = "arrays/single/"
+	for filename in os.listdir(path):
+		D_shaped = np.load(path+filename)
+		_plotDendroDissimiFromMatrix(D_shaped, label, save=True, name_of_plot = "plots/single/"+os.path.splitext(filename)[0]+".png")
+
+	##plots for tuple removed rows
+	path = "arrays/tuple/"
+	for filename in os.listdir(path):
+		D_shaped = np.load(path+filename)
+		_plotDendroDissimiFromMatrix(D_shaped, label, save=True, name_of_plot ="plots/tuple/"+os.path.splitext(filename)[0]+".png")
+
+	##plots for tripe removed rows
+	path = "arrays/triple/"
+	for filename in os.listdir(path):
+		D_shaped = np.load(path+filename)
+		_plotDendroDissimiFromMatrix(D_shaped, label, save=True, name_of_plot ="plots/triple/"+os.path.splitext(filename)[0]+".png")
+
+	##plots for quadruple removed rows
+	path = "arrays/quadruple/"
+	for filename in os.listdir(path):
+		D_shaped = np.load(path+filename)
+		_plotDendroDissimiFromMatrix(D_shaped, label, save=True, name_of_plot ="plots/quadruple/"+os.path.splitext(filename)[0]+".png")
+
+	##plots for quintuple removed rows
+	path = "arrays/quintuple/"
+	for filename in os.listdir(path):
+		D_shaped = np.load(path+filename)
+		_plotDendroDissimiFromMatrix(D_shaped, label, save=True, name_of_plot ="plots/quintuple/"+os.path.splitext(filename)[0]+".png")
 
 def esec_to_e2sec(pdf_path):
     '''
@@ -521,6 +768,18 @@ def esec_to_e2sec(pdf_path):
     #return e2sec and esec dict
     return e2sec_array, liste_array
 
+def getDissimilarityMatrix(eSEC_matrices):
+	'''
+    Takes a dict of eSEC matrices as input to calculate the dissimilarity matrix from paper.
+    
+    Parameters:
+        * eSEC_matrices: dict contains eSEC matrices
+        
+    Returns:
+        dissimilarity matrix
+    '''
+	return _calc_D_shaped(_make_triple(eSEC_matrices))
+
 def _compare_manipulations(manipulation_1, manipulation_2):
     '''
     Compares manipulations
@@ -570,7 +829,6 @@ def _make_triple(liste_array):
 	table_triples = {}
 	frames_triples = {}
 	opal = int(liste_array[0].shape[0]/3)
-	#print(int(liste_array[0].shape/3))
 	triple_frame = np.chararray((opal,3), itemsize=7)
 	for k in range(len(liste_array)):
 		for j in range(liste_array[k][1].size):

@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created 2020
+
+@author: Tobias Strübing
+"""
 import open3d as o3d
 import numpy as np
 import cv2
@@ -10,6 +17,7 @@ import copy
 from operator import xor
 import math
 import json
+import shutil
 
 ##define global variables
 #o1,o2,o3 are the three main objects of the manipulation
@@ -39,7 +47,7 @@ absent_o1, absent_o2, absent_03 = False, False, False
 
 def esec_to_e2sec(esec_array):
     '''
-    Takes an eSEC array from function process as input and outputs these matrices as e2SEC matrices.
+    Takes an eSEC matrix as input and outputs the calculated e2SEC matrix.
     
     Parameters:
         * esec_array: eSEC array
@@ -1015,9 +1023,9 @@ def _fillDSR(hand, ground, previous_array, thresh, table):
     else:
         table[29][0] = 'Q'
 
-def process(pcd_file, label_file, ground_label, hand_label, 
+def _process(pcd_file, label_file, ground_label, hand_label, 
                 support_hand, rotation, frame, fps, ESEC_table, 
-                relations, replace = False, old = [], new = [], ignored_labels = [], thresh = 0.1):
+                relations, replace = False, old = [], new = [], ignored_labels = [], thresh = 0.1, debug = False):
     '''
     Creates raw eSEC table from a point cloud with corresponding label file. 
     
@@ -1384,6 +1392,46 @@ def process(pcd_file, label_file, ground_label, hand_label,
                 else:
                     ESEC_table = np.column_stack((ESEC_table,add))
                     #save image of manipulation in this frame
+                    if debug == True:
+                        if count_ground > 0:
+    #                         mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(
+    #                          size=0.6, origin=[0,0,0])
+                            #o3d.visualization.draw_geometries([ground, hand, mesh_frame])
+                            fig, (ax1, ax2) = plt.subplots(1, 2, figsize = (20,10))
+                            ax1.set_title("x-y-view")
+                            ax2.set_title("y-z-view")
+                            #ax1.set_ylim(0.7,1.5)
+                            ax2.set_ylim(0.7,1.5)
+                            #ax1.set_xlim(-1,1)
+                            ax2.set_xlim(-1,1)
+
+                            #ax1.plot(np.array(mesh_frame)[:,0], np.array(mesh_frame)[:,1], ".g", label = 'hand')
+                            ax1.plot(np.array(hand.points)[:,0], np.array(hand.points)[:,1], ".g", label = 'hand')
+                            ax2.plot(np.array(hand.points)[:,1], np.array(hand.points)[:,2], ".g", label = 'hand')
+        #                     ax1.plot(np.array(ground2.points)[:,0], np.array(ground2.points)[:,2], ".r", label = 'ground frame %d (unfiltered)'%frame)
+        #                     ax2.plot(np.array(ground2.points)[:,1], np.array(ground2.points)[:,2], ".r", label = 'ground frame %d (unfiltered)'%frame)
+                            ax1.plot(np.array(ground.points)[:,0], np.array(ground.points)[:,1], ".k", label = 'ground frame 0 (filtered)')
+                            ax2.plot(np.array(ground.points)[:,1], np.array(ground.points)[:,2], ".k", label = 'ground frame 0 (filtered)')
+
+                            if(count1 == 1):
+        #                         hand.paint_uniform_color([1, 0, 0])
+        #                         o1.paint_uniform_color([0, 1, 0])
+        #                         ground.paint_uniform_color([0, 0, 0])
+        #                         o3d.visualization.draw_geometries([o1, hand,ground])
+                                ax1.plot(np.array(o1.points)[:,0], np.array(o1.points)[:,1], ".r", label = 'o1 label:%d'%total_unique_labels[o1_label])
+                                ax2.plot(np.array(o1.points)[:,1], np.array(o1.points)[:,2], ".r", label = 'o1 label:%d'%total_unique_labels[o1_label])
+                                if(count2 == 1):
+                                    ax1.plot(np.array(o2.points)[:,0], np.array(o2.points)[:,1], ".b", label = 'o2 label:%d'%total_unique_labels[o2_label])
+                                    ax2.plot(np.array(o2.points)[:,1], np.array(o2.points)[:,2], ".b", label = 'o2 label:%d'%total_unique_labels[o2_label])
+                                    if count3 == 1:
+                                        ax1.plot(np.array(o3.points)[:,0], np.array(o3.points)[:,1], ".y", label = 'o3 label:%d'%total_unique_labels[o3_label])
+                                        ax2.plot(np.array(o3.points)[:,1], np.array(o3.points)[:,2], ".y", label = 'o3 label:%d'%total_unique_labels[o3_label])
+                        ax1.legend(loc = 'upper right')
+                        ax2.legend(loc = 'upper right')
+                        #plt.axis('off')
+                        #plt.savefig("debug/%d.png"%frame)
+                        plt.savefig("debug_images/%d.png"%(count_esec+1), bbox_inches='tight')
+                        plt.clf()  
                     plt.imsave("event_images/%s.png"%label_file[-21:-16], label)
                     count_esec += 1
 
@@ -1391,9 +1439,12 @@ def process(pcd_file, label_file, ground_label, hand_label,
     return rotation, ESEC_table
 
 def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, support_hand, relations,
-                                replace, old, new, ignored_labels, thresh):
+                                replace, old, new, ignored_labels, thresh, debug = False):
     '''
-    Creates and saves an e2SEC tables of a maniac manipulation.
+    Analyses a complete manipulation from the MANIAC dataset. Therefore, it needs the path
+    of the folder that contains all the .pcd files (pcl_path) and the label files(label_path). 
+    The other parameters are listed below.
+    This functions returns and saves the calculated e2SEC matrix.
     
     Parameters:
         * pcl_path: path to pcl files (string)
@@ -1401,19 +1452,29 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
         * ground_label: label of the ground (int)
         * hand_label: label of the hand (int)
         * support_hand: label of the support hand (int)
-        * relations: relations to proceed in the computation 1:T/N; 2:T/N, SSR; 3:T/N, SSR, DSR
-        * replace: True if labels should be replaces, False otherwise
+        * relations: relations to proceed in the computation 1:T/N; 2:T/N, SSR; 3:T/N, SSR, DSR (int)
+        * replace: True if labels should be replaces, False otherwise (bool)
         * old: old labels to raplace [int]
         * new: new labels that will replace old labels [int]
         * ignored_labels: labels that will be ignored in this manipulation [int]
-        * thresh: threshold that defines distance for touching
+        * thresh: threshold that defines distance for touching (float)
     
     Returns:
         e2SEC matrix in the current folder as "e2sec_matrix.npy"
     '''
+
     #create folder for event images in case it does not exist yet
     if not os.path.exists("event_images"):
         os.makedirs("event_images")
+    else:
+        shutil.rmtree("event_images")
+        os.makedirs("event_images")
+    if debug == True:
+        if not os.path.exists("debug_images"):
+            os.makedirs("debug_images")
+        else:
+            shutil.rmtree("debug_images")
+            os.makedirs("debug_images")
 
     ##define global variables
     global o1, o2, o3, count1, count2, count3, o1_label, o2_label, o3_label, previous_array, internal_count, total_unique_labels, hand_label_inarray, count_esec, ground, count_ground, absent_o1, absent_o2, absent_o3
@@ -1461,13 +1522,13 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
 
     for file in progressbar.progressbar(sorted(os.listdir(pcl_path))):
         if(i%frames == 0):
-            rotation, table = process(pcl_path+file[0:-7]+"_pc.pcd",
+            rotation, table = _process(pcl_path+file[0:-7]+"_pc.pcd",
                                label_path+file[0:-7]+"_left-labels.dat",
                                ground_label = ground_label ,hand_label = hand_label, support_hand = support_hand, rotation = rotation,frame = i, fps=fps,
                                 ESEC_table = table, relations = relations,
                                 replace = replace, old = old, new = new, 
                                 ignored_labels = ignored_labels,
-                                thresh = thresh)
+                                thresh = thresh,  debug = debug)
         i+=1
 
     e2sec, esec = esec_to_e2sec(table)
