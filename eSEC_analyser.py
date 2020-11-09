@@ -520,7 +520,7 @@ def plotDissiFromMatrix(D_shaped, label, save = False, name_of_plot = ""):
 def plotDendroDissimi(rows,  label, threshold = 0.4, save = False): 
 	'''
 	| Plots the dendrogram and the dissimilarity matrix for specific rows for the .npy arrays.
-	e.g. rows=[3,4,5] will plot the dendrogram and dissimilarity matrix with removed rows 3,4 and 5
+	| e.g. rows=[3,4,5] will plot the dendrogram and dissimilarity matrix with removed rows 3,4 and 5
 	| Warning: needs the folder structure from removeCobinationRowsSave()
 	
 	Parameters:
