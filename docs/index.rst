@@ -7,10 +7,15 @@ Welcome to ManipulationLibrary's documentation!
 ===============================================
 A library to work with ESEC matrices. 
 The eSEC analyser is used to analyse existing eSEC matrices and is capable of:
+
 * read a list of eSEC matrices
+
 * find the importance of up to 5 rows
+
 * remove rows 
+
 * calculate dissimilarity matrices and dendrograms
+
 * measure the group dissimilarity
 
 The manipulation analyser is used calculate e2SEC matrices using the MANIAC dataset.
