@@ -18,7 +18,7 @@ The eSEC analyser is used to analyse existing eSEC matrices and is capable of:
 
 * measure the group dissimilarity
 
-The manipulation analyser is used calculate e2SEC matrices using the MANIAC dataset.
+The manipulation analyser is used calculate e^2SEC matrices using the MANIAC dataset.
 
 You can find examples on how to use this library in the "example" folder in GitHub.
 
