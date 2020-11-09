@@ -15,7 +15,6 @@ import os
 from scipy.spatial.distance import pdist
 from scipy.cluster import hierarchy
 from scipy.spatial import distance
-from PIL import Image
 import seaborn as sn
 
 
@@ -367,8 +366,8 @@ def checkSimilarRows(esec_dict, combination, rows = [3, 2, 5, 7, 9]):
 		
 def plotDendrogram(rows, labels, threshold = 0.4, save = False):
 	'''
-	Plots the dendrogram for specific rows for the .npy arrays.
-	Warning: needs the output from removeCobinationRowsSave()
+	| Plots the dendrogram for specific rows for the .npy arrays.
+	| Warning: needs the output from removeCobinationRowsSave()
 
 	Parameters:
 		* rows: indicates which rows will be considered (int, tuple) 
@@ -412,8 +411,8 @@ def plotDendrogram(rows, labels, threshold = 0.4, save = False):
 
 def plotDendrogramFromMatrix(D_shaped, labels, threshold = 0.4, save = False, name_of_plot = ""):
 	'''
-	Plots the dendrogram for specific rows for the .npy arrays.
-	Warning: needs the output from removeCobinationRowsSave()
+	| Plots the dendrogram for specific rows for the .npy arrays.
+	| Warning: needs the output from removeCobinationRowsSave()
 
 	Parameters:
 		* D_shaped: dissimilarity matrix of all manipulations from function removeCobinationRowsSave() (numpy array)
@@ -444,8 +443,8 @@ def plotDendrogramFromMatrix(D_shaped, labels, threshold = 0.4, save = False, na
 
 def plotDissi(rows, label, save = False):
 	'''
-	Plots the dissimilarity matrix for specific rows for the .npy arrays.
-	Warning: needs the output from removeCobinationRowsSave()
+	| Plots the dissimilarity matrix for specific rows for the .npy arrays.
+	| Warning: needs the output from removeCobinationRowsSave()
 
 	Parameters:
 		* rows: indicates which rows will be considered (int, tuple) 
@@ -489,8 +488,8 @@ def plotDissi(rows, label, save = False):
 
 def plotDissiFromMatrix(D_shaped, label, save = False, name_of_plot = ""):
 	'''
-	Plots the dissimilarity matrix for specific rows for the .npy arrays.
-	Warning: needs the output from removeCobinationRowsSave()
+	| Plots the dissimilarity matrix for specific rows for the .npy arrays.
+	| Warning: needs the output from removeCobinationRowsSave()
 
 	Parameters:
 		* D_shaped: dissimilarity matrix of all manipulations from function removeCobinationRowsSave() (numpy array)
@@ -520,9 +519,9 @@ def plotDissiFromMatrix(D_shaped, label, save = False, name_of_plot = ""):
 
 def plotDendroDissimi(rows,  label, threshold = 0.4, save = False): 
 	'''
-	Plots the dendrogram and the dissimilarity matrix for specific rows for the .npy arrays.
+	| Plots the dendrogram and the dissimilarity matrix for specific rows for the .npy arrays.
 	e.g. rows=[3,4,5] will plot the dendrogram and dissimilarity matrix with removed rows 3,4 and 5
-	Warning: needs the folder structure from removeCobinationRowsSave()
+	| Warning: needs the folder structure from removeCobinationRowsSave()
 	
 	Parameters:
 		* rows: indicates which rows will be considered (int, tuple) 
@@ -584,9 +583,9 @@ def plotDendroDissimi(rows,  label, threshold = 0.4, save = False):
 
 def _plotDendroDissimiFromMatrix(D_shaped,  label, threshold = 0.4, save = False, name_of_plot = ""): 
 	'''
-	Plots the dendrogram and the dissimilarity matrix for specific rows for the .npy arrays.
+	| Plots the dendrogram and the dissimilarity matrix for specific rows for the .npy arrays.
 	e.g. rows=[3,4,5] will plot the dendrogram and dissimilarity matrix with removed rows 3,4 and 5
-	Warning: needs the folder structure from removeCobinationRowsSave()
+	| Warning: needs the folder structure from removeCobinationRowsSave()
 	
 	Parameters:
 		* rows: indicates which rows will be considered (int, tuple) 
@@ -630,11 +629,11 @@ def _plotDendroDissimiFromMatrix(D_shaped,  label, threshold = 0.4, save = False
 
 def plotAllMatrices(path, label):
 	'''
-    Plots the dendrogram and dissimilarity matrix for all combinations of removed rows in the "array" folder structure.
-	Warning: Needs folder structure from function removeCobinationRowsSave()
-    
-    Parameters:
-        * path: path to the "array" folder from function removeCobinationRowsSave()
+	| Plots the dendrogram and dissimilarity matrix for all combinations of removed rows in the "array" folder structure.
+	| Warning: Needs folder structure from function removeCobinationRowsSave()
+
+	Parameters:
+		* path: path to the "array" folder from function removeCobinationRowsSave()
 		* label: name of the manipulations in the right order [string array]
         
     Returns:
