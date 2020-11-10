@@ -18,6 +18,8 @@ from operator import xor
 import math
 import json
 import shutil
+import sys
+import filter_cython
 
 ##define global variables
 #o1,o2,o3 are the three main objects of the manipulation
@@ -110,7 +112,10 @@ def _replace_labels(label_resized, old, new):
             new_labels = np.where(new_labels == old[i], new[i], new_labels) 
             
     return new_labels
-   
+
+def _distance(p1, p2):
+    return np.sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2 + (p1[2]-p2[2])**2)
+
 def _rotateSceneNewNew(pcd_file, label_file, ground_label):
     '''
     Calculates the rotation of the scene by using oriented bounding boxes 
@@ -1023,9 +1028,49 @@ def _fillDSR(hand, ground, previous_array, thresh, table):
     else:
         table[29][0] = 'Q'
 
+def _region_filter(pcd):
+    #get center of point cloud
+    center = pcd.get_center()
+
+    #transorfm point cloud to numpy
+    pcd_array = np.asarray(pcd.points)
+
+    #define dist dummy for calculation
+    dist = sys.maxsize
+    
+    #find the nearest point in the point cloud from middle point
+    for i in range(len(pcd_array)):
+        dist_temp = _distance(pcd_array[i], center)
+        if dist_temp < dist:
+            dist = dist_temp
+            first_point = pcd_array[i]
+
+    #calculate mean distance between points
+    mean_distance = 0
+    for i in range(len(pcd_array)):
+        mean_distance += _distance(pcd_array[i], center)
+    mean_distance /= i
+    new_cloud = copy.deepcopy(first_point)
+
+    next_point = False
+    for i in range(len(pcd_array)):
+        if isinstance(next_point, bool):
+            dist_temp = _distance(pcd_array[i], first_point)
+        else:
+            dist_temp = _distance(pcd_array[i], next_point)
+        if dist_temp <= mean_distance:
+            next_point = pcd_array[i]
+            new_cloud = np.row_stack((new_cloud,next_point))
+            i = 0
+
+    new_cloudi = o3d.geometry.PointCloud()
+    new_cloudi.points = o3d.utility.Vector3dVector(new_cloud)
+
+    return new_cloudi
+
 def _process(pcd_file, label_file, ground_label, hand_label, 
                 support_hand, rotation, frame, fps, ESEC_table, 
-                relations, replace = False, old = [], new = [], ignored_labels = [], thresh = 0.1, debug = False):
+                relations, replace = False, old = [], new = [], ignored_labels = [], thresh = 0.1, debug = False, cython = False):
     '''
     Creates raw eSEC table from a point cloud with corresponding label file. 
     
@@ -1043,6 +1088,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         * new: new labels that will replace old labels [int]
         * ignored_labels: labels that will be ignored in this manipulation [int]
         * threshold that defines distance for touching
+        * cython: if true a self created filter will be used (experimental)
     
     Returns:
         * rotation: rotation of the scene
@@ -1172,15 +1218,20 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             #convert arrays to point clouds
             pcd[i] = o3d.geometry.PointCloud()
             pcd[i].points = o3d.utility.Vector3dVector(objects[i])
-
-            #filter objects with statistical filter except ground and label 0 (borders)
-            if  i != ground_label and i != 0:
-                filtered_pcd_voxel[i], _ = pcd[i].remove_statistical_outlier(nb_neighbors=20, std_ratio=1)
-                if len(filtered_pcd_voxel[i].points)  == 0 and len(objects[i]) < 3:
-                    filtered_pcd_voxel[i] = pcd[i]
-
+            if cython == True:
+                center = np.array(pcd[i].get_center())
+                filtered_pcd_voxel_array = filter_cython.region_filter_cython(center, objects[i])
+                filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
+                filtered_pcd_voxel[i].points = o3d.utility.Vector3dVector(filtered_pcd_voxel_array)
             else:
-                filtered_pcd_voxel[i] = pcd[i]
+                #filter objects with statistical filter except ground and label 0 (borders)
+                if  i != ground_label and i != 0:
+                    filtered_pcd_voxel[i], _ = pcd[i].remove_statistical_outlier(nb_neighbors=20, std_ratio=1)
+                    if len(filtered_pcd_voxel[i].points)  == 0 and len(objects[i]) < 3:
+                        filtered_pcd_voxel[i] = pcd[i]
+
+                else:
+                    filtered_pcd_voxel[i] = pcd[i]
 
         else:
             filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
@@ -1331,7 +1382,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             add = np.chararray((20,1), itemsize=5)
             
             #find TNR and fill the table
-            _fillTN(hand, ground, thresh, add)
+            _fillTN_absent(hand, ground, thresh, add)
             
             #find SSR and fill the table
             _fillSSR_2(hand, ground, add)
@@ -1439,7 +1490,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     return rotation, ESEC_table
 
 def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, support_hand, relations,
-                                replace, old, new, ignored_labels, thresh, debug = False):
+                                replace, old, new, ignored_labels, thresh, debug = False, cython = False):
     '''
     Analyses a complete manipulation from the MANIAC dataset. Therefore, it needs the path
     of the folder that contains all the .pcd files (pcl_path) and the label files(label_path). 
@@ -1458,6 +1509,7 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
         * new: new labels that will replace old labels [int]
         * ignored_labels: labels that will be ignored in this manipulation [int]
         * thresh: threshold that defines distance for touching (float)
+        * cython: if true a self created filter will be used (experimental)
     
     Returns:
         e2SEC matrix in the current folder as "e2sec_matrix.npy"
@@ -1528,7 +1580,7 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
                                 ESEC_table = table, relations = relations,
                                 replace = replace, old = old, new = new, 
                                 ignored_labels = ignored_labels,
-                                thresh = thresh,  debug = debug)
+                                thresh = thresh,  debug = debug, cython = cython)
         i+=1
 
     e2sec, esec = esec_to_e2sec(table)
