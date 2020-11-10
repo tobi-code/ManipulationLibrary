@@ -1490,7 +1490,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     return rotation, ESEC_table
 
 def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, support_hand, relations,
-                                replace, old, new, ignored_labels, thresh, debug = False, cython = False):
+                                replace, old, new, ignored_labels, thresh, debug = False, cython = False, savename = ""):
     '''
     Analyses a complete manipulation from the MANIAC dataset. Therefore, it needs the path
     of the folder that contains all the .pcd files (pcl_path) and the label files(label_path). 
@@ -1510,6 +1510,7 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
         * ignored_labels: labels that will be ignored in this manipulation [int]
         * thresh: threshold that defines distance for touching (float)
         * cython: if true a self created filter will be used (experimental)
+        * savename: name of the saved e2SEC file
     
     Returns:
         e2SEC matrix in the current folder as "e2sec_matrix.npy"
@@ -1584,4 +1585,4 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
         i+=1
 
     e2sec, esec = esec_to_e2sec(table)
-    np.save("e2sec_matrix.npy",e2sec)
+    np.save("e2sec_%s.npy"%savename,e2sec)
