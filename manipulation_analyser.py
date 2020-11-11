@@ -19,7 +19,8 @@ import math
 import json
 import shutil
 import sys
-import filter_cython
+from ManipulationLibrary.cython_filter import filter_cython
+
 
 ##define global variables
 #o1,o2,o3 are the three main objects of the manipulation
