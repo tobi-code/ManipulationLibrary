@@ -3,10 +3,11 @@ import numpy as np
 from libc.math cimport sqrt
 
 cpdef double distance_cython(double[:] p1, double[:] p2):
+	#calculate distance between points in 3d
     return sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2 + (p1[2]-p2[2])**2)
 
-cpdef double[:,::1] region_filter_cython(double[:] center, double[:,::1] pcd):
-
+cpdef region_filter_cython(double[:] center, double[:,::1] pcd):
+	
     #define dist dummy for calculation
     cdef float dist = 50000
     cdef int length = pcd.shape[0]
@@ -25,6 +26,8 @@ cpdef double[:,::1] region_filter_cython(double[:] center, double[:,::1] pcd):
     cdef float mean_distance = 0
     for i in range(length):
         mean_distance += distance_cython(pcd[i], center)
+    if i == 0:
+        return -1
     mean_distance /= i
 
     cdef double[:] next_point

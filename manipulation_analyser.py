@@ -1219,20 +1219,25 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             #convert arrays to point clouds
             pcd[i] = o3d.geometry.PointCloud()
             pcd[i].points = o3d.utility.Vector3dVector(objects[i])
-            if cython == True:
-                center = np.array(pcd[i].get_center())
-                filtered_pcd_voxel_array = filter_cython.region_filter_cython(center, objects[i])
-                filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
-                filtered_pcd_voxel[i].points = o3d.utility.Vector3dVector(filtered_pcd_voxel_array)
-            else:
-                #filter objects with statistical filter except ground and label 0 (borders)
-                if  i != ground_label and i != 0:
+            if  i != ground_label and i != 0:
+                if cython == True:
+                    center = np.array(pcd[i].get_center())
+                    filtered_pcd_voxel_array = filter_cython.region_filter_cython(center, objects[i])
+                    if isinstance(filtered_pcd_voxel_array, int):
+                        filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
+                    else:
+                        filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
+                        filtered_pcd_voxel[i].points = o3d.utility.Vector3dVector(filtered_pcd_voxel_array)
+                else:
+                    #filter objects with statistical filter except ground and label 0 (borders)
                     filtered_pcd_voxel[i], _ = pcd[i].remove_statistical_outlier(nb_neighbors=20, std_ratio=1)
                     if len(filtered_pcd_voxel[i].points)  == 0 and len(objects[i]) < 3:
                         filtered_pcd_voxel[i] = pcd[i]
 
-                else:
-                    filtered_pcd_voxel[i] = pcd[i]
+                    else:
+                        filtered_pcd_voxel[i] = pcd[i]
+            else:
+                filtered_pcd_voxel[i] = pcd[i]
 
         else:
             filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
