@@ -5,7 +5,7 @@
 
 Welcome to ManipulationLibrary's documentation!
 ===============================================
-A library to work with ESEC matrices. 
+A module for Python 3 to produce and work with eSEC matrices. 
 The eSEC analyser is used to analyse existing eSEC matrices and is capable of:
 
 * read a list of eSEC matrices
@@ -43,11 +43,13 @@ Depends on external librabies:
 
 * OpenCV
 
+* Cython
+
 Installation of librabies:
 --------------------------
 
 To install these librabies use the following command:
-	``pip install tabula, matplotlib, pandas, numpy, scipy, seaborn, open3d, opencv-python``
+	``pip3 install tabula, matplotlib, pandas, numpy, scipy, seaborn, open3d, opencv-python, cython``
 
 Code
 ====
