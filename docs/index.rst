@@ -49,7 +49,7 @@ Installation of librabies:
 --------------------------
 
 To install these librabies use the following command:
-	``pip3 install tabula, matplotlib, pandas, numpy, scipy, seaborn, open3d, opencv-python, cython``
+	``pip3 install tabula matplotlib pandas numpy scipy seaborn open3d opencv-python cython``
 
 Code
 ====
