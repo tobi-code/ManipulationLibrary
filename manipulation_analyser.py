@@ -19,7 +19,7 @@ import math
 import json
 import shutil
 import sys
-from ManipulationLibrary.cython_filter import filter_cython
+from cython_filter import filter_cython
 
 
 ##define global variables
