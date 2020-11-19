@@ -22,6 +22,8 @@ The manipulation analyser is used calculate e²SEC matrices using the MANIAC dat
 
 You can find examples on how to use this library in the "example" folder in GitHub.
 
+	``Disclaimer: This module is tested on Ubuntu 20.04.1 LTS with Python 3.8.5``
+
 Depends on external librabies:
 ------------------------------
 
@@ -51,7 +53,7 @@ Installation of librabies:
 --------------------------
 
 To install these librabies use the following command:
-	``pip3 install tabula matplotlib pandas numpy scipy seaborn open3d opencv-python cython cython3 progressbar2``
+	``pip3 install tabula matplotlib pandas numpy scipy seaborn open3d opencv-python cython progressbar2``
 
 Code
 ====
