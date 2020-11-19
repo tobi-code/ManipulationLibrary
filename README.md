@@ -27,7 +27,7 @@ Depends on external librabies:
 
 * tabula
 
-*progressbar
+* progressbar
 
 * pandas
 
