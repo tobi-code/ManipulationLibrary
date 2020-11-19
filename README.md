@@ -17,7 +17,7 @@ The manipulation analyser is used calculate e²SEC matrices using the MANIAC dat
 
 You can find examples on how to use this library in the "example" folder in GitHub.
 
-	``Disclaimer: This module is tested on Ubuntu 20.04.1 LTS with Python 3.8.5``
+	Disclaimer: This module is tested on Ubuntu 20.04.1 LTS with Python 3.8.5
 
 If you have trouble with the "filter_cython" function you can try to compile it with the following command in the"cython_filter" folder: ``python3 setup.py build_ext --inplace``
 
