@@ -212,13 +212,16 @@ def _getTranslation(ground_cloud):
     '''
     pcd = ground_cloud
     pcd_voxel = pcd.voxel_down_sample(voxel_size=0.02)
-    rangi = pcd_voxel.get_max_bound() - pcd_voxel.get_min_bound()
+
+    pcd_voxel_box = o3d.geometry.OrientedBoundingBox.create_from_points(pcd_voxel.points)
+    pcd_voxel_box_extend = pcd_voxel_box.extent
+
     middle = pcd_voxel.get_center()
     pcd_z = np.mean(np.asarray(pcd_voxel.points)[:,2])
-    plane_array = np.array([[middle[0] + rangi[0]/2, middle[1] + rangi[1]/2, pcd_z], 
-                            [middle[0] + rangi[0]/2, middle[1] - rangi[1]/2, pcd_z],
-                            [middle[0] - rangi[0]/2, middle[1] - rangi[1]/2, pcd_z],
-                            [middle[0] - rangi[0]/2, middle[1] + rangi[1]/2, pcd_z]])
+    plane_array = np.array([[middle[0] + pcd_voxel_box_extend[0]/2, middle[1] + pcd_voxel_box_extend[1]/2, pcd_z], 
+                            [middle[0] + pcd_voxel_box_extend[0]/2, middle[1] - pcd_voxel_box_extend[1]/2, pcd_z],
+                            [middle[0] - pcd_voxel_box_extend[0]/2, middle[1] - pcd_voxel_box_extend[1]/2, pcd_z],
+                            [middle[0] - pcd_voxel_box_extend[0]/2, middle[1] + pcd_voxel_box_extend[1]/2, pcd_z]])
     plain = np.zeros_like(np.asarray(pcd_voxel.points))
     pcd_array_length = len(np.asarray(pcd_voxel.points))
     min_x = np.min(plane_array[:,0])
