@@ -19,6 +19,7 @@ import math
 import json
 import shutil
 import sys
+import random
 from cython_filter import filter_cython
 
 
@@ -199,6 +200,46 @@ def _rotateSceneNewNew(pcd_file, label_file, ground_label):
     
     return rotation
 
+def _getTranslation(ground_cloud):
+    '''
+    Calculates the translation of the scene by using ICP Registration.
+    
+    Parameters:
+        * ground_cloud: point cloud of the ground
+        
+    Returns:
+        * translation: translation of the scene
+    '''
+    pcd = ground_cloud
+    pcd_voxel = pcd.voxel_down_sample(voxel_size=0.02)
+    rangi = pcd_voxel.get_max_bound() - pcd_voxel.get_min_bound()
+    middle = pcd_voxel.get_center()
+    pcd_z = np.mean(np.asarray(pcd_voxel.points)[:,2])
+    plane_array = np.array([[middle[0] + rangi[0]/2, middle[1] + rangi[1]/2, pcd_z], 
+                            [middle[0] + rangi[0]/2, middle[1] - rangi[1]/2, pcd_z],
+                            [middle[0] - rangi[0]/2, middle[1] - rangi[1]/2, pcd_z],
+                            [middle[0] - rangi[0]/2, middle[1] + rangi[1]/2, pcd_z]])
+    plain = np.zeros_like(np.asarray(pcd_voxel.points))
+    pcd_array_length = len(np.asarray(pcd_voxel.points))
+    min_x = np.min(plane_array[:,0])
+    max_X = np.max(plane_array[:,0])
+    min_y = np.min(plane_array[:,1])
+    max_y = np.max(plane_array[:,1])
+    for i in range(pcd_array_length):
+        number_x = random.uniform(min_x, max_X)
+        number_y = random.uniform(min_y, max_y)
+        number_z = random.uniform(pcd_z-0.001, pcd_z+0.001)
+        added_array = [number_x, number_y, number_z]
+        plain[i] = added_array
+    plane_cloud = o3d.geometry.PointCloud()
+    plane_cloud.points = o3d.utility.Vector3dVector(plain)
+    trans_init = np.asarray([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
+    reg_p2p = o3d.pipelines.registration.registration_icp(
+        pcd_voxel, plane_cloud, 0.2, trans_init,
+        o3d.pipelines.registration.TransformationEstimationPointToPoint())
+
+    return reg_p2p.transformation
+
 def _getGroundiNew(pcd_file, label_file, ground_label, rotation):
     #load pcd file with nan points to map lables 
     pcd = o3d.io.read_point_cloud(pcd_file, remove_nan_points=False)
@@ -255,6 +296,85 @@ def _getGroundiNew(pcd_file, label_file, ground_label, rotation):
     rotated_cloud = o3d.geometry.PointCloud()
     rotated_cloud.points = o3d.utility.Vector3dVector(pcd_array_sorted)
     rotated_cloud = rotated_cloud.rotate(R=rotation.T, center=rotated_cloud.get_center())
+
+    #extract points from rotated cloud
+    pcd_array_sorted = np.asarray(rotated_cloud.points)
+
+    #create objects dict
+    objects = pcd_array_sorted[index_0:index_1]
+
+    #empty dict for point clouds of single objects, 
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(objects)
+
+      
+    #use RANSAC algorithm to extract ground plane, create obb and extract the rotation to return
+    plane_model, inliers = pcd.segment_plane(distance_threshold=0.01,
+                                         ransac_n=3,
+                                         num_iterations=100)
+    [a, b, c, d] = plane_model
+
+    #select inliers as ground cloud and voxel down the ground plane
+    filtered_pcd_voxel = pcd.select_by_index(inliers)
+    filtered_pcd_voxel = filtered_pcd_voxel.voxel_down_sample(voxel_size=0.02)
+
+    return filtered_pcd_voxel
+
+def _getGroundiNewNew(pcd_file, label_file, ground_label):
+    #load pcd file with nan points to map lables 
+    pcd = o3d.io.read_point_cloud(pcd_file, remove_nan_points=False)
+    #cast cloud to numpy array and replace nan values with int value -100
+    cloud = np.asarray(pcd.points)
+    cloud = np.nan_to_num(cloud, nan=-100)
+    
+    #resize labels to point cloud size
+    my_mat = np.zeros((640, 480))
+    label = np.loadtxt(label_file)
+    label_resized = cv2.resize(label, my_mat.shape, interpolation = cv2.INTER_NEAREST)
+    label_resized = label_resized.flatten()
+
+    #load pcd file with nan points to map lables  
+    
+    pcd = o3d.io.read_point_cloud(pcd_file, remove_nan_points=False)
+    #cast cloud to numpy array and replace nan values with int value -100
+    cloud = np.asarray(pcd.points)
+    cloud = np.nan_to_num(cloud, nan=-100)
+   
+    
+    
+    #add labels to points from the cloud
+    pcd_array = np.column_stack((cloud, label_resized))
+    pcd_array_sorted = pcd_array[pcd_array[:, 3].argsort()]
+
+    #search for -100 values and delete them
+    result_1 = np.where(pcd_array_sorted == -100)
+    pcd_array_sorted = np.delete(pcd_array_sorted, np.unique(result_1[0]), 0)
+
+    #assign unique labels 
+    unique_labels = np.unique(label)
+    
+    #define index_0 as lower limit of ground cloud(i.e. cloud[lower_limit:upper_limit])
+    #this loop is nessesary to find the lower limit, sometimes the ground_label-1 is not
+    #assigned in labels so it finds the next lower label from ground_label
+    #i.e. best case gound_point_cloud = raw_point_cloud[ground_label-1:ground_label]
+    i = 1
+    index_0 = None
+    while(index_0 == None):
+        if(float(unique_labels[np.where(unique_labels == ground_label)[0][0]-i]) in pcd_array_sorted[:,3]):
+            index_0 = np.max(np.where(pcd_array_sorted[:,3] == float(unique_labels[np.where(unique_labels == ground_label)[0][0]-i])))
+        else:
+            i += 1
+                
+    #define index_1 as upper limit of ground cloud(i.e. cloud[lower_limit:upper_limit])
+    index_1 = np.max(np.where(pcd_array_sorted[:,3] == float(ground_label)))
+    
+    #delete the labels from cloud array
+    pcd_array_sorted = np.delete(pcd_array_sorted, 3,1)
+    
+    
+    #rotate the point cloud with calculated rotation
+    rotated_cloud = o3d.geometry.PointCloud()
+    rotated_cloud.points = o3d.utility.Vector3dVector(pcd_array_sorted)
 
     #extract points from rotated cloud
     pcd_array_sorted = np.asarray(rotated_cloud.points)
@@ -1069,7 +1189,7 @@ def _region_filter(pcd):
 
     return new_cloudi
 
-def _process(pcd_file, label_file, ground_label, hand_label, 
+def _process_rotation(pcd_file, label_file, ground_label, hand_label, 
                 support_hand, rotation, frame, fps, ESEC_table, 
                 relations, replace = False, old = [], new = [], ignored_labels = [], thresh = 0.1, debug = False, cython = False):
     '''
@@ -1495,6 +1615,434 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     
     return rotation, ESEC_table
 
+def _process(pcd_file, label_file, ground_label, hand_label, 
+                support_hand, translation, frame, fps, ESEC_table, 
+                relations, replace = False, old = [], new = [], ignored_labels = [], thresh = 0.1, debug = False, cython = False):
+    '''
+    Creates raw eSEC table from a point cloud with corresponding label file. 
+    
+    Parameters:
+        * pcd_file: pcd file to process (.pcd)
+        * label_file: label file corresponding to pcd file (.dat)
+        * ground_label: label of the ground (int)
+        * hand_label: label of the hand (int)
+        * translation: translation of the scene, will be retured from function (start with 0)
+        * frame: frame of manipulation, start with zero and count (int)
+        * ESEC_table: empty chararray 10x1 for T/N; 20x1 for T/N, SSR; 30x1 for T/N, SSR, DSR
+        * relations: relations to proceed in the computation 1:T/N; 2:T/N, SSR; 3:T/N, SSR, DSR
+        * replace: True if labels should be replaces, False otherwise
+        * old: old labels to raplace [int]
+        * new: new labels that will replace old labels [int]
+        * ignored_labels: labels that will be ignored in this manipulation [int]
+        * threshold that defines distance for touching
+        * cython: if true a self created filter will be used (experimental)
+    
+    Returns:
+        * translation: translation of the scene
+        * table: ESEC table
+    '''
+ 
+    
+    #resize labels to point cloud size
+    my_mat = np.zeros((640, 480))
+    label = pd.read_csv(label_file,delim_whitespace=True, dtype =np.float64, header=None)
+    label = label.to_numpy()
+
+    #get global variables
+    global hand_label_inarray, total_unique_labels
+    
+    if (frame == 0):
+        #calculate the translation with the first frame and define ground
+        global count_ground, ground
+        #rotation = _rotateSceneNewNew(pcd_file, label_file, ground_label)
+        ground = _getGroundiNewNew(pcd_file, label_file, ground_label)
+        translation = _getTranslation(ground)
+        ground = ground.transform(translation)
+        count_ground = 1
+        #find unique labels and replace old with new if replace == True
+        unique_labels = np.unique(label)
+        total_unique_labels = unique_labels
+        if replace == True:
+            for values in old:
+                total_unique_labels = np.delete(total_unique_labels, np.where(total_unique_labels == old))
+
+        #remove ignored labels from total_unique_labels array
+        for values in ignored_labels:
+            if values in total_unique_labels:
+                total_unique_labels = np.delete(total_unique_labels, np.where(total_unique_labels == values))
+
+        #add hand label if not in total_unique_labels else append total_unique_labels by hand label
+        if hand_label not in total_unique_labels:
+            total_unique_labels = np.append(total_unique_labels, hand_label)
+            hand_label_inarray = 0
+        else:
+            hand_label_inarray = np.where(total_unique_labels == hand_label)[0][0]
+            
+    #if hand is missing return roation and eSEC table      
+    if hand_label not in np.unique(label):
+        return translation, ESEC_table
+    
+    #resize the label file to point cloud size
+    label_resized = cv2.resize(label, my_mat.shape, interpolation = cv2.INTER_NEAREST)
+    if replace == True:
+        label_resized = _replace_labels(label_resized, old, new)
+    label_resized = label_resized.flatten()
+    
+    #load pcd file with nan points to map lables     
+    pcd = o3d.io.read_point_cloud(pcd_file, remove_nan_points=False)
+    
+    #cast cloud to numpy array and replace nan values with int value -100
+    cloud = np.asarray(pcd.points)
+    cloud = np.nan_to_num(cloud, nan=-100)
+
+    #add labels to points from the cloud and sort
+    pcd_array =  np.column_stack((cloud, label_resized))
+    pcd_array_sorted = pcd_array[pcd_array[:, 3].argsort()]
+    
+    #search for -100 values and delete them
+    result_1 = np.where(pcd_array_sorted == -100)
+    pcd_array_sorted = np.delete(pcd_array_sorted, np.unique(result_1[0]), 0)
+
+    #calculate the array index for the labels
+    index = {}
+    i = 0
+    empty_index = []
+    for value in total_unique_labels:
+            #if no hand label is defined previous hand must be the last entry in total_unique_labels
+            if(hand_label_inarray == 0):
+                hand_label_inarray = np.where(total_unique_labels == np.max(total_unique_labels))[0][0]
+                
+            #find the index of the different objects in the scene
+            if float(value) in pcd_array_sorted[:,3]:
+                index[i] = np.where(pcd_array_sorted[:,3] == float(value))
+            
+            #if an value from total_unique_labels is not in the cloud then index is defined as -1
+            else:
+                index[i] = -1
+                empty_index.append(i)
+            i += 1
+
+    #if hand is missing in scene return translation and eSEC table
+    if hand_label_inarray in empty_index:
+        return translation, ESEC_table
+    
+    #delete the labels from cloud array
+    pcd_array_sorted = np.delete(pcd_array_sorted, 3,1)
+    
+    #rotate the point cloud with calculated translation
+    rotated_cloud = o3d.geometry.PointCloud()
+    rotated_cloud.points = o3d.utility.Vector3dVector(pcd_array_sorted)
+    rotated_cloud = rotated_cloud.transform(translation)
+    
+    #extract points from rotated cloud
+    pcd_array_sorted = np.asarray(rotated_cloud.points)
+
+    #create objects dict
+    objects = {}
+
+    j = 0
+    #define single objects in the manipulation
+    while(j < len(total_unique_labels)):
+        #if an label has no point cloud assigned sat its value to -1
+        if(j in empty_index):
+            objects[j] = -1
+            j += 1
+            
+        #otherwise assign the point cloud of this label to objects dict
+        else:
+            objects[j] = pcd_array_sorted[index[j]]
+            j += 1
+    
+    #get global counts, lables, previous point cloud and counts
+    global count1, count2, count3
+    global o1_label, o2_label, o3_label, previous_array, internal_count
+
+    #empty dict for point clouds of single objects, 
+    pcd = {}
+    filtered_pcd_voxel = {}
+    j = 0
+    for i in range(len(total_unique_labels)):
+        #if label has a point cloud (i.e. objects[i] != -1) proceed
+        if not isinstance(objects[i], int):
+            #convert arrays to point clouds
+            pcd[i] = o3d.geometry.PointCloud()
+            pcd[i].points = o3d.utility.Vector3dVector(objects[i])
+            if  i != ground_label and i != 0:
+                if cython == True:
+                    center = np.array(pcd[i].get_center())
+                    filtered_pcd_voxel_array = filter_cython.region_filter_cython(center, objects[i])
+                    if isinstance(filtered_pcd_voxel_array, int):
+                        filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
+                    else:
+                        filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
+                        filtered_pcd_voxel[i].points = o3d.utility.Vector3dVector(filtered_pcd_voxel_array)
+                else:
+                    #filter objects with statistical filter except ground and label 0 (borders)
+                    filtered_pcd_voxel[i], _ = pcd[i].remove_statistical_outlier(nb_neighbors=20, std_ratio=1)
+                    if len(filtered_pcd_voxel[i].points)  == 0 and len(objects[i]) < 3:
+                        filtered_pcd_voxel[i] = pcd[i]
+
+                    else:
+                        filtered_pcd_voxel[i] = pcd[i]
+            else:
+                filtered_pcd_voxel[i] = pcd[i]
+
+        else:
+            filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
+            
+    #define hand variable as hand point cloud
+    hand = filtered_pcd_voxel[hand_label_inarray]
+
+    #if hand has no points return translation and eSEC table
+    if len(hand.points) == 0:
+        #print('Hand is misssing 3')
+        return translation, ESEC_table
+    
+    #get global objects 1,2 and 3
+    global o1, o2, o3
+    
+    #get possible combinations of objects, threshold and an empty char 
+    list_ = np.arange(1, len(objects))
+    combis_two = list(combinations(list_, 2))  
+
+    #define object1, 2 and 3 in this loop
+    for i in range(len(total_unique_labels)):
+        if support_hand != None:
+            #possible o1, o2, o3 candidates must not be hand_label, ground_label, support_hand_label, label 0
+            #cloud has to be bigger than zero
+            if(i != hand_label_inarray and i != np.where(total_unique_labels == ground_label)[0][0] and i != np.where(total_unique_labels == support_hand)[0][0] and i > 0 and len(filtered_pcd_voxel[i].points) > 0):
+                #checkt if clouds have any points and if hand is in this frame
+                if(len(filtered_pcd_voxel[i].points) > 0 and len(hand.points) > 0):
+                    #if no o1 is defined, define it when distance to hand is smaller than thresh
+                    if(count1 == 0 and np.min(hand.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh):
+                            o1_label = i
+                            count1 = 1
+                            print('o1 found!, label: %d'%total_unique_labels[i])
+                            print(label_file)
+                            o1 = filtered_pcd_voxel[i]
+
+                    #if o1 is defined and o2 not, define it when distance to hand or o1 is smaller than thresh
+                    elif(o1 != None and count2 == 0 and i != o1_label):
+                        if(np.min(hand.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh
+                           or np.min(o1.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh):  
+                                o2_label = i
+                                count2 = 1
+                                print('o2 found!, label: %d'%total_unique_labels[i])
+                                o2 = filtered_pcd_voxel[i]
+
+                    #if o1, o2 is defined and o3 not, define it when distance to hand, o1 or o2 is smaller than thresh
+                    elif(o2 != None and count3 == 0 and i != o1_label and i != o2_label):
+                        if(np.min(hand.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh
+                           or np.min(o1.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh
+                           or np.min(o2.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh):
+                                o3_label = i
+                                count3 = 1
+                                print('o3 found!, label: %d'%total_unique_labels[i])
+                                o3 = filtered_pcd_voxel[i]
+        
+        else:
+            #possible o1, o2, o3 candidates must not be hand_label, ground_label, label 0
+            #cloud has to be bigger than zero
+            if(i != hand_label_inarray and i != np.where(total_unique_labels == ground_label)[0][0] and i > 0 and len(filtered_pcd_voxel[i].points) > 0):
+                #checkt if clouds have any points and if hand is in this frame
+                if(len(filtered_pcd_voxel[i].points) > 0 and len(hand.points) > 0):
+                    #if no o1 is defined, define it when distance to hand is smaller than thresh
+                    if(count1 == 0 and np.min(hand.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh):
+                            o1_label = i
+                            count1 = 1
+                            print('o1 found!, label: %d'%total_unique_labels[i])
+                            #print(label_file)
+                            #print(np.min(hand.compute_point_cloud_distance(filtered_pcd_voxel[i])))
+                            o1 = filtered_pcd_voxel[i]
+
+                    #if o1 is defined and o2 not, define it when distance to hand or o1 is smaller than thresh
+                    elif(o1 != None and count2 == 0 and i != o1_label):
+                        if(np.min(hand.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh
+                           or np.min(o1.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh):  
+                                o2_label = i
+                                count2 = 1
+                                print('o2 found!, label: %d'%total_unique_labels[i])
+                                o2 = filtered_pcd_voxel[i]
+
+                    #if o1, o2 is defined and o3 not, define it when distance to hand, o1 or o2 is smaller than thresh
+                    #o1 is in the frame
+                    elif(o2 != None and count3 == 0 and i != o1_label and i != o2_label and len(o2.points) > 0 and len(o1.points) > 0 ):
+                        if(np.min(hand.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh
+                           or np.min(o1.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh
+                           or np.min(o2.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh):
+                                o3_label = i
+                                count3 = 1
+                                print('o3 found!, label: %d'%total_unique_labels[i])
+                                o3 = filtered_pcd_voxel[i]
+
+                    #if o1, o2 is defined and o3 not, define it when distance to hand, o1 or o2 is smaller than thresh
+                    #o1 is not in the frame            
+                    elif(o2 != None and count3 == 0 and i != o1_label and i != o2_label and len(o2.points) > 0 and len(o1.points) == 0):
+                        if(np.min(hand.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh
+                           or np.min(o2.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh):
+                                o3_label = i
+                                count3 = 1
+                                print('o3 found!, label: %d'%total_unique_labels[i])
+                                o3 = filtered_pcd_voxel[i]
+                    
+                    #if o1, o2 is defined and o3 not, define it when distance to hand, o1 or o2 is smaller than thresh
+                    #o2 is not in the frame             
+                    elif(o2 != None and count3 == 0 and i != o1_label and i != o2_label and len(o1.points) > 0 and len(o2.points) == 0):
+                        if(np.min(hand.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh
+                           or np.min(o1.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh):
+                                o3_label = i
+                                count3 = 1
+                                print('o3 found!, label: %d'%total_unique_labels[i])
+                                o3 = filtered_pcd_voxel[i]
+
+    #if objects are recognized assign the point cloud to the varaibles o1, o2, o3 to track them during the manipulation
+    if count1 == 1:
+        o1 = filtered_pcd_voxel[o1_label]
+    if count2 == 1:
+        o2 = filtered_pcd_voxel[o2_label]
+    if count3 == 1:
+        o3 = filtered_pcd_voxel[o3_label]
+    
+    global count_esec
+    #if hand is in the frame continue to proceed else return translation and eSEC table
+    if(len(hand.points) > 0):
+        #relation == 1 means only TNR
+        if (relations == 1):
+            #empty array that will be filled in _fillTN_absent function
+            add = np.chararray((10,1), itemsize=5)
+            
+            #find TNR and fill the table
+            _fillTN_absent(hand, ground, thresh, add)
+            compare_array = np.reshape(ESEC_table[:,count_esec], (-1, 1))
+            
+            #for the first frame the eSEC table is just this add array
+            if frame == 0:
+                ESEC_table = add
+                
+            #in case the add array is equal to the previous eSEC table row ignore it
+            elif(np.array_equal(add, compare_array)):
+                return translation, ESEC_table
+            
+            #otherwise add column to eSEC table
+            else:
+                ESEC_table = np.column_stack((ESEC_table,add))
+                #save image of manipulation in this frame
+                plt.imsave("event_images/%s.png"%label_file[-21:-16], label)
+                count_esec += 1
+                
+        #relation == 2 means TNR and SSR
+        elif (relations == 2):
+            #empty array that will be filled in _fillTN_absent and _fillSSR_2 function
+            add = np.chararray((20,1), itemsize=5)
+            
+            #find TNR and fill the table
+            _fillTN_absent(hand, ground, thresh, add)
+            
+            #find SSR and fill the table
+            _fillSSR_2(hand, ground, add)
+            compare_array = np.reshape(ESEC_table[:,count_esec], (-1, 1))
+            
+            #for the first frame the eSEC table is just this add array
+            if frame == 0:
+                ESEC_table = add
+                
+            #in case the add array is equal to the previous eSEC table row ignore it
+            elif(np.array_equal(add, compare_array)):
+                return translation, ESEC_table
+        
+            #otherwise add column to eSEC table
+            else:
+                ESEC_table = np.column_stack((ESEC_table,add))
+                #save image of manipulation in this frame
+                plt.imsave("event_images/%s.png"%label_file[-21:-16], label)
+                count_esec += 1
+                
+        #relation == 3 means TNR, SSR and DSR
+        elif (relations == 3):
+            #dont consider first appearance of manipulation
+            #save first objects into previous_array
+            if (len(hand.points) > 0 and internal_count == 0):
+                previous_array = [hand, ground, o1, o2, o3]
+                internal_count = 1
+                return translation, ESEC_table
+            
+            #internal_count is bigger zero after first appearance of manipulation
+            elif(internal_count > 0):
+                #empty array that will be filled in _fillTN_absent, _fillSSR_2 and _fillDSR function
+                add = np.chararray((30,1), itemsize=5)
+                
+                #find T/N relations and fill the table
+                _fillTN_absent(hand, ground, thresh, add)
+                
+                #find SSR relations and fill the table
+                _fillSSR_2(hand, ground, add)
+                
+                #find DSR relations and fill the table
+                _fillDSR(hand, ground, previous_array, thresh, add)
+                
+                #define the new previous array after calculation of TNR, SSR, DSR
+                previous_array = [hand, ground, o1, o2, o3]
+                compare_array = np.reshape(ESEC_table[:,count_esec], (-1, 1))
+                
+                #for the first frame the eSEC table is just this add array
+                if internal_count == 1:
+                    ESEC_table = add
+                    internal_count = 2
+                    
+                #in case the add array is equal to the previous eSEC table row ignore it    
+                elif(np.array_equal(add, compare_array)):
+                    return translation, ESEC_table
+                
+                #otherwise add column to eSEC table
+                else:
+                    ESEC_table = np.column_stack((ESEC_table,add))
+                    #save image of manipulation in this frame
+                    if debug == True:
+                        if count_ground > 0:
+    #                         mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(
+    #                          size=0.6, origin=[0,0,0])
+                            #o3d.visualization.draw_geometries([ground, hand, mesh_frame])
+                            fig, (ax1, ax2) = plt.subplots(1, 2, figsize = (20,10))
+                            ax1.set_title("x-y-view")
+                            ax2.set_title("y-z-view")
+                            #ax1.set_ylim(0.7,1.5)
+                            ax2.set_ylim(0.7,1.5)
+                            #ax1.set_xlim(-1,1)
+                            ax2.set_xlim(-1,1)
+
+                            #ax1.plot(np.array(mesh_frame)[:,0], np.array(mesh_frame)[:,1], ".g", label = 'hand')
+                            ax1.plot(np.array(hand.points)[:,0], np.array(hand.points)[:,1], ".g", label = 'hand')
+                            ax2.plot(np.array(hand.points)[:,1], np.array(hand.points)[:,2], ".g", label = 'hand')
+        #                     ax1.plot(np.array(ground2.points)[:,0], np.array(ground2.points)[:,2], ".r", label = 'ground frame %d (unfiltered)'%frame)
+        #                     ax2.plot(np.array(ground2.points)[:,1], np.array(ground2.points)[:,2], ".r", label = 'ground frame %d (unfiltered)'%frame)
+                            ax1.plot(np.array(ground.points)[:,0], np.array(ground.points)[:,1], ".k", label = 'ground frame 0 (filtered)')
+                            ax2.plot(np.array(ground.points)[:,1], np.array(ground.points)[:,2], ".k", label = 'ground frame 0 (filtered)')
+
+                            if(count1 == 1):
+        #                         hand.paint_uniform_color([1, 0, 0])
+        #                         o1.paint_uniform_color([0, 1, 0])
+        #                         ground.paint_uniform_color([0, 0, 0])
+        #                         o3d.visualization.draw_geometries([o1, hand,ground])
+                                ax1.plot(np.array(o1.points)[:,0], np.array(o1.points)[:,1], ".r", label = 'o1 label:%d'%total_unique_labels[o1_label])
+                                ax2.plot(np.array(o1.points)[:,1], np.array(o1.points)[:,2], ".r", label = 'o1 label:%d'%total_unique_labels[o1_label])
+                                if(count2 == 1):
+                                    ax1.plot(np.array(o2.points)[:,0], np.array(o2.points)[:,1], ".b", label = 'o2 label:%d'%total_unique_labels[o2_label])
+                                    ax2.plot(np.array(o2.points)[:,1], np.array(o2.points)[:,2], ".b", label = 'o2 label:%d'%total_unique_labels[o2_label])
+                                    if count3 == 1:
+                                        ax1.plot(np.array(o3.points)[:,0], np.array(o3.points)[:,1], ".y", label = 'o3 label:%d'%total_unique_labels[o3_label])
+                                        ax2.plot(np.array(o3.points)[:,1], np.array(o3.points)[:,2], ".y", label = 'o3 label:%d'%total_unique_labels[o3_label])
+                        ax1.legend(loc = 'upper right')
+                        ax2.legend(loc = 'upper right')
+                        #plt.axis('off')
+                        #plt.savefig("debug/%d.png"%frame)
+                        plt.savefig("debug_images/%d.png"%(count_esec+1), bbox_inches='tight')
+                        plt.clf()  
+                    plt.imsave("event_images/%s.png"%label_file[-21:-16], label)
+                    count_esec += 1
+
+    
+    return translation, ESEC_table
+
 def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, support_hand, relations,
                                 replace, old, new, ignored_labels, thresh, debug = False, cython = False, savename = ""):
     '''
@@ -1571,7 +2119,7 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
     
     #define first column of tables as "-"
     table[:] = '-'
-    rotation = 0
+    translation = 0
     i = 0
 
     #define fps
@@ -1581,9 +2129,9 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
 
     for file in progressbar.progressbar(sorted(os.listdir(pcl_path))):
         if(i%frames == 0):
-            rotation, table = _process(pcl_path+file[0:-7]+"_pc.pcd",
+            translation, table = _process(pcl_path+file[0:-7]+"_pc.pcd",
                                label_path+file[0:-7]+"_left-labels.dat",
-                               ground_label = ground_label ,hand_label = hand_label, support_hand = support_hand, rotation = rotation,frame = i, fps=fps,
+                               ground_label = ground_label ,hand_label = hand_label, support_hand = support_hand, translation = translation,frame = i, fps=fps,
                                 ESEC_table = table, relations = relations,
                                 replace = replace, old = old, new = new, 
                                 ignored_labels = ignored_labels,
