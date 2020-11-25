@@ -20,7 +20,7 @@ import json
 import shutil
 import sys
 import random
-from cython_filter import filter_cython
+from ManipulationLibrary.cython_filter import filter_cython
 
 
 ##define global variables
