@@ -2880,7 +2880,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_first_point, 1);
  *     #calculate mean distance between points
  *     cdef float mean_distance = 0             # <<<<<<<<<<<<<<
  *     for i in range(length):
- *         mean_distance += distance_cython(pcd[i], center)
+ *         if (distance_cython(pcd[i], first_point)) < 1.0:
  */
   __pyx_v_mean_distance = 0.0;
 
@@ -2888,8 +2888,8 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_first_point, 1);
  *     #calculate mean distance between points
  *     cdef float mean_distance = 0
  *     for i in range(length):             # <<<<<<<<<<<<<<
- *         mean_distance += distance_cython(pcd[i], center)
- *     if i == 0:
+ *         if (distance_cython(pcd[i], first_point)) < 1.0:
+ *             mean_distance += distance_cython(pcd[i], first_point)
  */
   __pyx_t_1 = __pyx_v_length;
   __pyx_t_2 = __pyx_t_1;
@@ -2899,9 +2899,9 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_first_point, 1);
     /* "filter_cython.pyx":28
  *     cdef float mean_distance = 0
  *     for i in range(length):
- *         mean_distance += distance_cython(pcd[i], center)             # <<<<<<<<<<<<<<
- *     if i == 0:
- *         return -1
+ *         if (distance_cython(pcd[i], first_point)) < 1.0:             # <<<<<<<<<<<<<<
+ *             mean_distance += distance_cython(pcd[i], first_point)
+ * #        mean_distance += distance_cython(pcd[i], center)
  */
     __pyx_t_4.data = __pyx_v_pcd.data;
     __pyx_t_4.memview = __pyx_v_pcd.memview;
@@ -2924,128 +2924,19 @@ __pyx_t_4.shape[0] = __pyx_v_pcd.shape[1];
 __pyx_t_4.strides[0] = __pyx_v_pcd.strides[1];
     __pyx_t_4.suboffsets[0] = -1;
 
-__pyx_v_mean_distance = (__pyx_v_mean_distance + __pyx_f_13filter_cython_distance_cython(__pyx_t_4, __pyx_v_center, 0));
+if (unlikely(!__pyx_v_first_point.memview)) { __Pyx_RaiseUnboundLocalError("first_point"); __PYX_ERR(0, 28, __pyx_L1_error) }
+    __pyx_t_5 = ((__pyx_f_13filter_cython_distance_cython(__pyx_t_4, __pyx_v_first_point, 0) < 1.0) != 0);
     __PYX_XDEC_MEMVIEW(&__pyx_t_4, 1);
     __pyx_t_4.memview = NULL;
     __pyx_t_4.data = NULL;
-  }
-
-  /* "filter_cython.pyx":29
- *     for i in range(length):
- *         mean_distance += distance_cython(pcd[i], center)
- *     if i == 0:             # <<<<<<<<<<<<<<
- *         return -1
- *     mean_distance /= i
- */
-  __pyx_t_5 = ((__pyx_v_i == 0) != 0);
-  if (__pyx_t_5) {
-
-    /* "filter_cython.pyx":30
- *         mean_distance += distance_cython(pcd[i], center)
- *     if i == 0:
- *         return -1             # <<<<<<<<<<<<<<
- *     mean_distance /= i
- * 
- */
-    __Pyx_XDECREF(__pyx_r);
-    __Pyx_INCREF(__pyx_int_neg_1);
-    __pyx_r = __pyx_int_neg_1;
-    goto __pyx_L0;
-
-    /* "filter_cython.pyx":29
- *     for i in range(length):
- *         mean_distance += distance_cython(pcd[i], center)
- *     if i == 0:             # <<<<<<<<<<<<<<
- *         return -1
- *     mean_distance /= i
- */
-  }
-
-  /* "filter_cython.pyx":31
- *     if i == 0:
- *         return -1
- *     mean_distance /= i             # <<<<<<<<<<<<<<
- * 
- *     cdef double[:] next_point
- */
-  if (unlikely(__pyx_v_i == 0)) {
-    PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 31, __pyx_L1_error)
-  }
-  __pyx_v_mean_distance = (__pyx_v_mean_distance / __pyx_v_i);
-
-  /* "filter_cython.pyx":34
- * 
- *     cdef double[:] next_point
- *     cdef int test = -1             # <<<<<<<<<<<<<<
- * 
- *     dicti = {}
- */
-  __pyx_v_test = -1;
-
-  /* "filter_cython.pyx":36
- *     cdef int test = -1
- * 
- *     dicti = {}             # <<<<<<<<<<<<<<
- *     dicti[0] = first_point
- *     count = 1
- */
-  __pyx_t_6 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 36, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __pyx_v_dicti = ((PyObject*)__pyx_t_6);
-  __pyx_t_6 = 0;
-
-  /* "filter_cython.pyx":37
- * 
- *     dicti = {}
- *     dicti[0] = first_point             # <<<<<<<<<<<<<<
- *     count = 1
- * 
- */
-  if (unlikely(!__pyx_v_first_point.memview)) { __Pyx_RaiseUnboundLocalError("first_point"); __PYX_ERR(0, 37, __pyx_L1_error) }
-  __pyx_t_6 = __pyx_memoryview_fromslice(__pyx_v_first_point, 1, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 37, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  if (unlikely(PyDict_SetItem(__pyx_v_dicti, __pyx_int_0, __pyx_t_6) < 0)) __PYX_ERR(0, 37, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-
-  /* "filter_cython.pyx":38
- *     dicti = {}
- *     dicti[0] = first_point
- *     count = 1             # <<<<<<<<<<<<<<
- * 
- *     for i in range(length):
- */
-  __Pyx_INCREF(__pyx_int_1);
-  __pyx_v_count = __pyx_int_1;
-
-  /* "filter_cython.pyx":40
- *     count = 1
- * 
- *     for i in range(length):             # <<<<<<<<<<<<<<
- *         if test == -1:
- *             dist_temp = distance_cython(pcd[i], first_point)
- */
-  __pyx_t_1 = __pyx_v_length;
-  __pyx_t_2 = __pyx_t_1;
-  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
-    __pyx_v_i = __pyx_t_3;
-
-    /* "filter_cython.pyx":41
- * 
- *     for i in range(length):
- *         if test == -1:             # <<<<<<<<<<<<<<
- *             dist_temp = distance_cython(pcd[i], first_point)
- *         else:
- */
-    __pyx_t_5 = ((__pyx_v_test == -1L) != 0);
     if (__pyx_t_5) {
 
-      /* "filter_cython.pyx":42
+      /* "filter_cython.pyx":29
  *     for i in range(length):
- *         if test == -1:
- *             dist_temp = distance_cython(pcd[i], first_point)             # <<<<<<<<<<<<<<
- *         else:
- *             dist_temp = distance_cython(pcd[i], next_point)
+ *         if (distance_cython(pcd[i], first_point)) < 1.0:
+ *             mean_distance += distance_cython(pcd[i], first_point)             # <<<<<<<<<<<<<<
+ * #        mean_distance += distance_cython(pcd[i], center)
+ *     if i == 0:
  */
       __pyx_t_4.data = __pyx_v_pcd.data;
       __pyx_t_4.memview = __pyx_v_pcd.memview;
@@ -3059,7 +2950,7 @@ __pyx_v_mean_distance = (__pyx_v_mean_distance + __pyx_f_13filter_cython_distanc
         if (unlikely(!__Pyx_is_valid_index(__pyx_tmp_idx, __pyx_tmp_shape))) {
             PyErr_SetString(PyExc_IndexError,
                             "Index out of bounds (axis 0)");
-            __PYX_ERR(0, 42, __pyx_L1_error)
+            __PYX_ERR(0, 29, __pyx_L1_error)
         }
         __pyx_t_4.data += __pyx_tmp_idx * __pyx_tmp_stride;
 }
@@ -3068,30 +2959,139 @@ __pyx_t_4.shape[0] = __pyx_v_pcd.shape[1];
 __pyx_t_4.strides[0] = __pyx_v_pcd.strides[1];
     __pyx_t_4.suboffsets[0] = -1;
 
-if (unlikely(!__pyx_v_first_point.memview)) { __Pyx_RaiseUnboundLocalError("first_point"); __PYX_ERR(0, 42, __pyx_L1_error) }
-      __pyx_v_dist_temp = __pyx_f_13filter_cython_distance_cython(__pyx_t_4, __pyx_v_first_point, 0);
+if (unlikely(!__pyx_v_first_point.memview)) { __Pyx_RaiseUnboundLocalError("first_point"); __PYX_ERR(0, 29, __pyx_L1_error) }
+      __pyx_v_mean_distance = (__pyx_v_mean_distance + __pyx_f_13filter_cython_distance_cython(__pyx_t_4, __pyx_v_first_point, 0));
       __PYX_XDEC_MEMVIEW(&__pyx_t_4, 1);
       __pyx_t_4.memview = NULL;
       __pyx_t_4.data = NULL;
 
-      /* "filter_cython.pyx":41
+      /* "filter_cython.pyx":28
+ *     cdef float mean_distance = 0
+ *     for i in range(length):
+ *         if (distance_cython(pcd[i], first_point)) < 1.0:             # <<<<<<<<<<<<<<
+ *             mean_distance += distance_cython(pcd[i], first_point)
+ * #        mean_distance += distance_cython(pcd[i], center)
+ */
+    }
+  }
+
+  /* "filter_cython.pyx":31
+ *             mean_distance += distance_cython(pcd[i], first_point)
+ * #        mean_distance += distance_cython(pcd[i], center)
+ *     if i == 0:             # <<<<<<<<<<<<<<
+ *         return -1
+ *     mean_distance /= i
+ */
+  __pyx_t_5 = ((__pyx_v_i == 0) != 0);
+  if (__pyx_t_5) {
+
+    /* "filter_cython.pyx":32
+ * #        mean_distance += distance_cython(pcd[i], center)
+ *     if i == 0:
+ *         return -1             # <<<<<<<<<<<<<<
+ *     mean_distance /= i
+ * 
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __Pyx_INCREF(__pyx_int_neg_1);
+    __pyx_r = __pyx_int_neg_1;
+    goto __pyx_L0;
+
+    /* "filter_cython.pyx":31
+ *             mean_distance += distance_cython(pcd[i], first_point)
+ * #        mean_distance += distance_cython(pcd[i], center)
+ *     if i == 0:             # <<<<<<<<<<<<<<
+ *         return -1
+ *     mean_distance /= i
+ */
+  }
+
+  /* "filter_cython.pyx":33
+ *     if i == 0:
+ *         return -1
+ *     mean_distance /= i             # <<<<<<<<<<<<<<
+ * 
+ *     cdef double[:] next_point
+ */
+  if (unlikely(__pyx_v_i == 0)) {
+    PyErr_SetString(PyExc_ZeroDivisionError, "float division");
+    __PYX_ERR(0, 33, __pyx_L1_error)
+  }
+  __pyx_v_mean_distance = (__pyx_v_mean_distance / __pyx_v_i);
+
+  /* "filter_cython.pyx":36
+ * 
+ *     cdef double[:] next_point
+ *     cdef int test = -1             # <<<<<<<<<<<<<<
+ * 
+ *     dicti = {}
+ */
+  __pyx_v_test = -1;
+
+  /* "filter_cython.pyx":38
+ *     cdef int test = -1
+ * 
+ *     dicti = {}             # <<<<<<<<<<<<<<
+ *     dicti[0] = first_point
+ *     count = 1
+ */
+  __pyx_t_6 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 38, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __pyx_v_dicti = ((PyObject*)__pyx_t_6);
+  __pyx_t_6 = 0;
+
+  /* "filter_cython.pyx":39
+ * 
+ *     dicti = {}
+ *     dicti[0] = first_point             # <<<<<<<<<<<<<<
+ *     count = 1
+ * 
+ */
+  if (unlikely(!__pyx_v_first_point.memview)) { __Pyx_RaiseUnboundLocalError("first_point"); __PYX_ERR(0, 39, __pyx_L1_error) }
+  __pyx_t_6 = __pyx_memoryview_fromslice(__pyx_v_first_point, 1, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 39, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  if (unlikely(PyDict_SetItem(__pyx_v_dicti, __pyx_int_0, __pyx_t_6) < 0)) __PYX_ERR(0, 39, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+  /* "filter_cython.pyx":40
+ *     dicti = {}
+ *     dicti[0] = first_point
+ *     count = 1             # <<<<<<<<<<<<<<
+ * 
+ *     for i in range(length):
+ */
+  __Pyx_INCREF(__pyx_int_1);
+  __pyx_v_count = __pyx_int_1;
+
+  /* "filter_cython.pyx":42
+ *     count = 1
+ * 
+ *     for i in range(length):             # <<<<<<<<<<<<<<
+ *         if test == -1:
+ *             dist_temp = distance_cython(pcd[i], first_point)
+ */
+  __pyx_t_1 = __pyx_v_length;
+  __pyx_t_2 = __pyx_t_1;
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_i = __pyx_t_3;
+
+    /* "filter_cython.pyx":43
  * 
  *     for i in range(length):
  *         if test == -1:             # <<<<<<<<<<<<<<
  *             dist_temp = distance_cython(pcd[i], first_point)
  *         else:
  */
-      goto __pyx_L11;
-    }
+    __pyx_t_5 = ((__pyx_v_test == -1L) != 0);
+    if (__pyx_t_5) {
 
-    /* "filter_cython.pyx":44
- *             dist_temp = distance_cython(pcd[i], first_point)
+      /* "filter_cython.pyx":44
+ *     for i in range(length):
+ *         if test == -1:
+ *             dist_temp = distance_cython(pcd[i], first_point)             # <<<<<<<<<<<<<<
  *         else:
- *             dist_temp = distance_cython(pcd[i], next_point)             # <<<<<<<<<<<<<<
- *         if dist_temp <= mean_distance:
- *             test = 1
+ *             dist_temp = distance_cython(pcd[i], next_point)
  */
-    /*else*/ {
       __pyx_t_4.data = __pyx_v_pcd.data;
       __pyx_t_4.memview = __pyx_v_pcd.memview;
       __PYX_INC_MEMVIEW(&__pyx_t_4, 0);
@@ -3113,15 +3113,60 @@ __pyx_t_4.shape[0] = __pyx_v_pcd.shape[1];
 __pyx_t_4.strides[0] = __pyx_v_pcd.strides[1];
     __pyx_t_4.suboffsets[0] = -1;
 
-if (unlikely(!__pyx_v_next_point.memview)) { __Pyx_RaiseUnboundLocalError("next_point"); __PYX_ERR(0, 44, __pyx_L1_error) }
+if (unlikely(!__pyx_v_first_point.memview)) { __Pyx_RaiseUnboundLocalError("first_point"); __PYX_ERR(0, 44, __pyx_L1_error) }
+      __pyx_v_dist_temp = __pyx_f_13filter_cython_distance_cython(__pyx_t_4, __pyx_v_first_point, 0);
+      __PYX_XDEC_MEMVIEW(&__pyx_t_4, 1);
+      __pyx_t_4.memview = NULL;
+      __pyx_t_4.data = NULL;
+
+      /* "filter_cython.pyx":43
+ * 
+ *     for i in range(length):
+ *         if test == -1:             # <<<<<<<<<<<<<<
+ *             dist_temp = distance_cython(pcd[i], first_point)
+ *         else:
+ */
+      goto __pyx_L12;
+    }
+
+    /* "filter_cython.pyx":46
+ *             dist_temp = distance_cython(pcd[i], first_point)
+ *         else:
+ *             dist_temp = distance_cython(pcd[i], next_point)             # <<<<<<<<<<<<<<
+ *         if dist_temp <= mean_distance:
+ *             test = 1
+ */
+    /*else*/ {
+      __pyx_t_4.data = __pyx_v_pcd.data;
+      __pyx_t_4.memview = __pyx_v_pcd.memview;
+      __PYX_INC_MEMVIEW(&__pyx_t_4, 0);
+      {
+    Py_ssize_t __pyx_tmp_idx = __pyx_v_i;
+        Py_ssize_t __pyx_tmp_shape = __pyx_v_pcd.shape[0];
+    Py_ssize_t __pyx_tmp_stride = __pyx_v_pcd.strides[0];
+        if (__pyx_tmp_idx < 0)
+            __pyx_tmp_idx += __pyx_tmp_shape;
+        if (unlikely(!__Pyx_is_valid_index(__pyx_tmp_idx, __pyx_tmp_shape))) {
+            PyErr_SetString(PyExc_IndexError,
+                            "Index out of bounds (axis 0)");
+            __PYX_ERR(0, 46, __pyx_L1_error)
+        }
+        __pyx_t_4.data += __pyx_tmp_idx * __pyx_tmp_stride;
+}
+
+__pyx_t_4.shape[0] = __pyx_v_pcd.shape[1];
+__pyx_t_4.strides[0] = __pyx_v_pcd.strides[1];
+    __pyx_t_4.suboffsets[0] = -1;
+
+if (unlikely(!__pyx_v_next_point.memview)) { __Pyx_RaiseUnboundLocalError("next_point"); __PYX_ERR(0, 46, __pyx_L1_error) }
       __pyx_v_dist_temp = __pyx_f_13filter_cython_distance_cython(__pyx_t_4, __pyx_v_next_point, 0);
       __PYX_XDEC_MEMVIEW(&__pyx_t_4, 1);
       __pyx_t_4.memview = NULL;
       __pyx_t_4.data = NULL;
     }
-    __pyx_L11:;
+    __pyx_L12:;
 
-    /* "filter_cython.pyx":45
+    /* "filter_cython.pyx":47
  *         else:
  *             dist_temp = distance_cython(pcd[i], next_point)
  *         if dist_temp <= mean_distance:             # <<<<<<<<<<<<<<
@@ -3131,7 +3176,7 @@ if (unlikely(!__pyx_v_next_point.memview)) { __Pyx_RaiseUnboundLocalError("next_
     __pyx_t_5 = ((__pyx_v_dist_temp <= __pyx_v_mean_distance) != 0);
     if (__pyx_t_5) {
 
-      /* "filter_cython.pyx":46
+      /* "filter_cython.pyx":48
  *             dist_temp = distance_cython(pcd[i], next_point)
  *         if dist_temp <= mean_distance:
  *             test = 1             # <<<<<<<<<<<<<<
@@ -3140,7 +3185,7 @@ if (unlikely(!__pyx_v_next_point.memview)) { __Pyx_RaiseUnboundLocalError("next_
  */
       __pyx_v_test = 1;
 
-      /* "filter_cython.pyx":47
+      /* "filter_cython.pyx":49
  *         if dist_temp <= mean_distance:
  *             test = 1
  *             next_point = pcd[i]             # <<<<<<<<<<<<<<
@@ -3159,7 +3204,7 @@ if (unlikely(!__pyx_v_next_point.memview)) { __Pyx_RaiseUnboundLocalError("next_
         if (unlikely(!__Pyx_is_valid_index(__pyx_tmp_idx, __pyx_tmp_shape))) {
             PyErr_SetString(PyExc_IndexError,
                             "Index out of bounds (axis 0)");
-            __PYX_ERR(0, 47, __pyx_L1_error)
+            __PYX_ERR(0, 49, __pyx_L1_error)
         }
         __pyx_t_4.data += __pyx_tmp_idx * __pyx_tmp_stride;
 }
@@ -3173,31 +3218,31 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_next_point, 1);
       __pyx_t_4.memview = NULL;
       __pyx_t_4.data = NULL;
 
-      /* "filter_cython.pyx":48
+      /* "filter_cython.pyx":50
  *             test = 1
  *             next_point = pcd[i]
  *             dicti[count] = next_point             # <<<<<<<<<<<<<<
  *             count += 1
  *             i = 0
  */
-      __pyx_t_6 = __pyx_memoryview_fromslice(__pyx_v_next_point, 1, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 48, __pyx_L1_error)
+      __pyx_t_6 = __pyx_memoryview_fromslice(__pyx_v_next_point, 1, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 50, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      if (unlikely(PyDict_SetItem(__pyx_v_dicti, __pyx_v_count, __pyx_t_6) < 0)) __PYX_ERR(0, 48, __pyx_L1_error)
+      if (unlikely(PyDict_SetItem(__pyx_v_dicti, __pyx_v_count, __pyx_t_6) < 0)) __PYX_ERR(0, 50, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-      /* "filter_cython.pyx":49
+      /* "filter_cython.pyx":51
  *             next_point = pcd[i]
  *             dicti[count] = next_point
  *             count += 1             # <<<<<<<<<<<<<<
  *             i = 0
  *     length_2 = len(dicti)
  */
-      __pyx_t_6 = __Pyx_PyInt_AddObjC(__pyx_v_count, __pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 49, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyInt_AddObjC(__pyx_v_count, __pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 51, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF_SET(__pyx_v_count, __pyx_t_6);
       __pyx_t_6 = 0;
 
-      /* "filter_cython.pyx":50
+      /* "filter_cython.pyx":52
  *             dicti[count] = next_point
  *             count += 1
  *             i = 0             # <<<<<<<<<<<<<<
@@ -3206,7 +3251,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_next_point, 1);
  */
       __pyx_v_i = 0;
 
-      /* "filter_cython.pyx":45
+      /* "filter_cython.pyx":47
  *         else:
  *             dist_temp = distance_cython(pcd[i], next_point)
  *         if dist_temp <= mean_distance:             # <<<<<<<<<<<<<<
@@ -3216,31 +3261,31 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_next_point, 1);
     }
   }
 
-  /* "filter_cython.pyx":51
+  /* "filter_cython.pyx":53
  *             count += 1
  *             i = 0
  *     length_2 = len(dicti)             # <<<<<<<<<<<<<<
  *     new_cloud = np.zeros((length_2, 3))
  * 
  */
-  __pyx_t_7 = PyDict_Size(__pyx_v_dicti); if (unlikely(__pyx_t_7 == ((Py_ssize_t)-1))) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_t_7 = PyDict_Size(__pyx_v_dicti); if (unlikely(__pyx_t_7 == ((Py_ssize_t)-1))) __PYX_ERR(0, 53, __pyx_L1_error)
   __pyx_v_length_2 = __pyx_t_7;
 
-  /* "filter_cython.pyx":52
+  /* "filter_cython.pyx":54
  *             i = 0
  *     length_2 = len(dicti)
  *     new_cloud = np.zeros((length_2, 3))             # <<<<<<<<<<<<<<
  * 
  *     cdef int index = 0
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_zeros); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_zeros); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = PyInt_FromSsize_t(__pyx_v_length_2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_8 = PyInt_FromSsize_t(__pyx_v_length_2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_GIVEREF(__pyx_t_8);
   PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_8);
@@ -3261,13 +3306,13 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_next_point, 1);
   __pyx_t_6 = (__pyx_t_8) ? __Pyx_PyObject_Call2Args(__pyx_t_9, __pyx_t_8, __pyx_t_10) : __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_t_10);
   __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 52, __pyx_L1_error)
+  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   __pyx_v_new_cloud = __pyx_t_6;
   __pyx_t_6 = 0;
 
-  /* "filter_cython.pyx":54
+  /* "filter_cython.pyx":56
  *     new_cloud = np.zeros((length_2, 3))
  * 
  *     cdef int index = 0             # <<<<<<<<<<<<<<
@@ -3276,22 +3321,22 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_next_point, 1);
  */
   __pyx_v_index = 0;
 
-  /* "filter_cython.pyx":55
+  /* "filter_cython.pyx":57
  * 
  *     cdef int index = 0
  *     for key, value in dicti.items():             # <<<<<<<<<<<<<<
  *         new_cloud[key] = np.array(value)
  *         #index += 1
  */
-  __pyx_t_6 = __Pyx_PyDict_Items(__pyx_v_dicti); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyDict_Items(__pyx_v_dicti); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   if (likely(PyList_CheckExact(__pyx_t_6)) || PyTuple_CheckExact(__pyx_t_6)) {
     __pyx_t_9 = __pyx_t_6; __Pyx_INCREF(__pyx_t_9); __pyx_t_7 = 0;
     __pyx_t_11 = NULL;
   } else {
-    __pyx_t_7 = -1; __pyx_t_9 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 55, __pyx_L1_error)
+    __pyx_t_7 = -1; __pyx_t_9 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 57, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
-    __pyx_t_11 = Py_TYPE(__pyx_t_9)->tp_iternext; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 55, __pyx_L1_error)
+    __pyx_t_11 = Py_TYPE(__pyx_t_9)->tp_iternext; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 57, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   for (;;) {
@@ -3299,17 +3344,17 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_next_point, 1);
       if (likely(PyList_CheckExact(__pyx_t_9))) {
         if (__pyx_t_7 >= PyList_GET_SIZE(__pyx_t_9)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_6 = PyList_GET_ITEM(__pyx_t_9, __pyx_t_7); __Pyx_INCREF(__pyx_t_6); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 55, __pyx_L1_error)
+        __pyx_t_6 = PyList_GET_ITEM(__pyx_t_9, __pyx_t_7); __Pyx_INCREF(__pyx_t_6); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 57, __pyx_L1_error)
         #else
-        __pyx_t_6 = PySequence_ITEM(__pyx_t_9, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 55, __pyx_L1_error)
+        __pyx_t_6 = PySequence_ITEM(__pyx_t_9, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 57, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         #endif
       } else {
         if (__pyx_t_7 >= PyTuple_GET_SIZE(__pyx_t_9)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_6 = PyTuple_GET_ITEM(__pyx_t_9, __pyx_t_7); __Pyx_INCREF(__pyx_t_6); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 55, __pyx_L1_error)
+        __pyx_t_6 = PyTuple_GET_ITEM(__pyx_t_9, __pyx_t_7); __Pyx_INCREF(__pyx_t_6); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 57, __pyx_L1_error)
         #else
-        __pyx_t_6 = PySequence_ITEM(__pyx_t_9, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 55, __pyx_L1_error)
+        __pyx_t_6 = PySequence_ITEM(__pyx_t_9, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 57, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         #endif
       }
@@ -3319,7 +3364,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_next_point, 1);
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 55, __pyx_L1_error)
+          else __PYX_ERR(0, 57, __pyx_L1_error)
         }
         break;
       }
@@ -3331,7 +3376,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_next_point, 1);
       if (unlikely(size != 2)) {
         if (size > 2) __Pyx_RaiseTooManyValuesError(2);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 55, __pyx_L1_error)
+        __PYX_ERR(0, 57, __pyx_L1_error)
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -3344,48 +3389,48 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_next_point, 1);
       __Pyx_INCREF(__pyx_t_10);
       __Pyx_INCREF(__pyx_t_8);
       #else
-      __pyx_t_10 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 55, __pyx_L1_error)
+      __pyx_t_10 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 57, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_8 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 55, __pyx_L1_error)
+      __pyx_t_8 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 57, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       #endif
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_12 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 55, __pyx_L1_error)
+      __pyx_t_12 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 57, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_12);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __pyx_t_13 = Py_TYPE(__pyx_t_12)->tp_iternext;
-      index = 0; __pyx_t_10 = __pyx_t_13(__pyx_t_12); if (unlikely(!__pyx_t_10)) goto __pyx_L15_unpacking_failed;
+      index = 0; __pyx_t_10 = __pyx_t_13(__pyx_t_12); if (unlikely(!__pyx_t_10)) goto __pyx_L16_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_10);
-      index = 1; __pyx_t_8 = __pyx_t_13(__pyx_t_12); if (unlikely(!__pyx_t_8)) goto __pyx_L15_unpacking_failed;
+      index = 1; __pyx_t_8 = __pyx_t_13(__pyx_t_12); if (unlikely(!__pyx_t_8)) goto __pyx_L16_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_8);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_13(__pyx_t_12), 2) < 0) __PYX_ERR(0, 55, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_13(__pyx_t_12), 2) < 0) __PYX_ERR(0, 57, __pyx_L1_error)
       __pyx_t_13 = NULL;
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-      goto __pyx_L16_unpacking_done;
-      __pyx_L15_unpacking_failed:;
+      goto __pyx_L17_unpacking_done;
+      __pyx_L16_unpacking_failed:;
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
       __pyx_t_13 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 55, __pyx_L1_error)
-      __pyx_L16_unpacking_done:;
+      __PYX_ERR(0, 57, __pyx_L1_error)
+      __pyx_L17_unpacking_done:;
     }
     __Pyx_XDECREF_SET(__pyx_v_key, __pyx_t_10);
     __pyx_t_10 = 0;
     __Pyx_XDECREF_SET(__pyx_v_value, __pyx_t_8);
     __pyx_t_8 = 0;
 
-    /* "filter_cython.pyx":56
+    /* "filter_cython.pyx":58
  *     cdef int index = 0
  *     for key, value in dicti.items():
  *         new_cloud[key] = np.array(value)             # <<<<<<<<<<<<<<
  *         #index += 1
  * 
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 56, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_array); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 56, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_array); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __pyx_t_8 = NULL;
@@ -3400,13 +3445,13 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_next_point, 1);
     }
     __pyx_t_6 = (__pyx_t_8) ? __Pyx_PyObject_Call2Args(__pyx_t_10, __pyx_t_8, __pyx_v_value) : __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_v_value);
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 56, __pyx_L1_error)
+    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_v_new_cloud, __pyx_v_key, __pyx_t_6) < 0)) __PYX_ERR(0, 56, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_v_new_cloud, __pyx_v_key, __pyx_t_6) < 0)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "filter_cython.pyx":55
+    /* "filter_cython.pyx":57
  * 
  *     cdef int index = 0
  *     for key, value in dicti.items():             # <<<<<<<<<<<<<<
@@ -3416,7 +3461,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_next_point, 1);
   }
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-  /* "filter_cython.pyx":59
+  /* "filter_cython.pyx":61
  *         #index += 1
  * 
  *     return new_cloud             # <<<<<<<<<<<<<<

@@ -25,7 +25,9 @@ cpdef region_filter_cython(double[:] center, double[:,::1] pcd):
     #calculate mean distance between points
     cdef float mean_distance = 0
     for i in range(length):
-        mean_distance += distance_cython(pcd[i], center)
+        if (distance_cython(pcd[i], first_point)) < 1.0:
+            mean_distance += distance_cython(pcd[i], first_point)
+#        mean_distance += distance_cython(pcd[i], center)
     if i == 0:
         return -1
     mean_distance /= i

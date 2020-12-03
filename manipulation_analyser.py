@@ -20,7 +20,7 @@ import json
 import shutil
 import sys
 import random
-from ManipulationLibrary.cython_filter import filter_cython
+from cython_filter import filter_cython
 
 
 ##define global variables
@@ -240,8 +240,11 @@ def _getTranslation(ground_cloud):
     reg_p2p = o3d.pipelines.registration.registration_icp(
         pcd_voxel, plane_cloud, 0.2, trans_init,
         o3d.pipelines.registration.TransformationEstimationPointToPoint())
-
-    return reg_p2p.transformation
+    roll = [[-1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, -1, 0],
+            [0, 0, 0, 1]]
+    return reg_p2p.transformation, roll
 
 def _getGroundiNew(pcd_file, label_file, ground_label, rotation):
     #load pcd file with nan points to map lables 
@@ -425,14 +428,15 @@ def _fillTN_absent(hand, ground, thresh, table):
 #     3, G
 
     #get global objects 1, 2 and 3
-    global o1, o2, o3
+    global o1, o2, o3, absent_o1, absent_o2, absent_o3 
         
     #fill in table with U,T or N corresponding to threshold distances
     if(o1 == None):
         table[0][0] = 'U'
     elif(len(hand.points) > 0):
-        if(len(o1.points) == 0):
+        if(len(o1.points) == 0 or absent_o1 == True):
             table[1][0] = 'A'
+            absent_o1 = True
         elif(len(o1.points) == 0):
             table[0][0] = 'N'
         elif(np.min(hand.compute_point_cloud_distance(o1)) < thresh):
@@ -443,8 +447,9 @@ def _fillTN_absent(hand, ground, thresh, table):
     if(o2 == None):
         table[1][0] = 'U'
     elif(len(hand.points) > 0):
-        if(len(o2.points) == 0):
+        if(len(o2.points) == 0 or absent_o2 == True):
             table[1][0] = 'A'
+            absent_o2 = True
         elif(len(o2.points) == 0):
             table[1][0] = 'N'
         elif(np.min(hand.compute_point_cloud_distance(o2)) < thresh):
@@ -456,8 +461,9 @@ def _fillTN_absent(hand, ground, thresh, table):
     if(o3 == None):
         table[2][0] = 'U'
     elif(len(hand.points) > 0):
-        if(len(o3.points) == 0):
+        if(len(o3.points) == 0 or absent_o3 == True):
             table[2][0] = 'A'
+            absent_o3 = True
         elif(len(o3.points) == 0):
             table[2][0] = 'N'
         elif(np.min(hand.compute_point_cloud_distance(o3)) < thresh):
@@ -474,7 +480,7 @@ def _fillTN_absent(hand, ground, thresh, table):
 
     if(o1 == None or o2 == None):
         table[4][0] = 'U'
-    elif(len(o1.points) == 0 or len(o2.points) == 0):
+    elif(len(o1.points) == 0 or len(o2.points) == 0 or absent_o1 == True or absent_o2 == True):
         table[4][0] = 'A'
     elif(np.min(o1.compute_point_cloud_distance(o2)) < thresh):
         table[4][0] = 'T'
@@ -483,7 +489,7 @@ def _fillTN_absent(hand, ground, thresh, table):
 
     if(o1 == None or o3 == None):
         table[5][0] = 'U'
-    elif(len(o1.points) == 0 or len(o3.points) == 0):
+    elif(len(o1.points) == 0 or len(o3.points) == 0 or absent_o1 == True or absent_o3 == True):
         table[5][0] = 'A'
     elif(np.min(o1.compute_point_cloud_distance(o3)) < thresh):
         table[5][0] = 'T'
@@ -492,7 +498,7 @@ def _fillTN_absent(hand, ground, thresh, table):
 
     if(o1 == None):
         table[6][0] = 'U'
-    elif(len(o1.points) == 0):
+    elif(len(o1.points) == 0 or absent_o1 == True):
         table[6][0] = 'A'
     elif(np.min(o1.compute_point_cloud_distance(ground)) < thresh):
         table[6][0] = 'T'
@@ -501,18 +507,16 @@ def _fillTN_absent(hand, ground, thresh, table):
 
     if(o2 == None or o3 == None):
         table[7][0] = 'U'
-    elif(len(o2.points) == 0 or len(o3.points) == 0):
+    elif(len(o2.points) == 0 or len(o3.points) == 0 or absent_o2 == True or absent_o3 == True):
         table[7][0] = 'A'
     elif(np.min(o2.compute_point_cloud_distance(o3)) < thresh):
         table[7][0] = 'T'
     else:
         table[7][0] = 'N'
 
-#     print(o2)
-#     print(ground)
     if(o2 == None):
         table[8][0] = 'U'
-    elif(len(o2.points) == 0):
+    elif(len(o2.points) == 0 or absent_o2 == True):
         table[8][0] = 'A'
     elif(np.min(o2.compute_point_cloud_distance(ground)) < thresh):
         table[8][0] = 'T'
@@ -521,7 +525,7 @@ def _fillTN_absent(hand, ground, thresh, table):
 
     if(o3 == None):
         table[9][0] = 'U'
-    elif(len(o3.points) == 0):
+    elif(len(o3.points) == 0 or absent_o3 == True):
         table[9][0] = 'A'
     elif(len(o3.points) > 0 and np.min(o3.compute_point_cloud_distance(ground)) < thresh):
         table[9][0] = 'T'
@@ -1619,7 +1623,7 @@ def _process_rotation(pcd_file, label_file, ground_label, hand_label,
     return rotation, ESEC_table
 
 def _process(pcd_file, label_file, ground_label, hand_label, 
-                support_hand, translation, frame, fps, ESEC_table, 
+                support_hand, translation, roll, frame, fps, ESEC_table, 
                 relations, replace = False, old = [], new = [], ignored_labels = [], thresh = 0.1, debug = False, cython = False):
     '''
     Creates raw eSEC table from a point cloud with corresponding label file. 
@@ -1659,8 +1663,9 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         global count_ground, ground
         #rotation = _rotateSceneNewNew(pcd_file, label_file, ground_label)
         ground = _getGroundiNewNew(pcd_file, label_file, ground_label)
-        translation = _getTranslation(ground)
+        translation, roll = _getTranslation(ground)
         ground = ground.transform(translation)
+        ground = ground.transform(roll)
         count_ground = 1
         #find unique labels and replace old with new if replace == True
         unique_labels = np.unique(label)
@@ -1683,7 +1688,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             
     #if hand is missing return roation and eSEC table      
     if hand_label not in np.unique(label):
-        return translation, ESEC_table
+        return translation, roll, ESEC_table
     
     #resize the label file to point cloud size
     label_resized = cv2.resize(label, my_mat.shape, interpolation = cv2.INTER_NEAREST)
@@ -1727,7 +1732,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
 
     #if hand is missing in scene return translation and eSEC table
     if hand_label_inarray in empty_index:
-        return translation, ESEC_table
+        return translation, roll, ESEC_table
     
     #delete the labels from cloud array
     pcd_array_sorted = np.delete(pcd_array_sorted, 3,1)
@@ -1736,6 +1741,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     rotated_cloud = o3d.geometry.PointCloud()
     rotated_cloud.points = o3d.utility.Vector3dVector(pcd_array_sorted)
     rotated_cloud = rotated_cloud.transform(translation)
+    rotated_cloud = rotated_cloud.transform(roll)
     
     #extract points from rotated cloud
     pcd_array_sorted = np.asarray(rotated_cloud.points)
@@ -1799,7 +1805,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     #if hand has no points return translation and eSEC table
     if len(hand.points) == 0:
         #print('Hand is misssing 3')
-        return translation, ESEC_table
+        return translation, roll, ESEC_table
     
     #get global objects 1,2 and 3
     global o1, o2, o3
@@ -1924,7 +1930,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                 
             #in case the add array is equal to the previous eSEC table row ignore it
             elif(np.array_equal(add, compare_array)):
-                return translation, ESEC_table
+                return translation, roll, ESEC_table
             
             #otherwise add column to eSEC table
             else:
@@ -1951,7 +1957,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                 
             #in case the add array is equal to the previous eSEC table row ignore it
             elif(np.array_equal(add, compare_array)):
-                return translation, ESEC_table
+                return translation, roll, ESEC_table
         
             #otherwise add column to eSEC table
             else:
@@ -1967,7 +1973,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             if (len(hand.points) > 0 and internal_count == 0):
                 previous_array = [hand, ground, o1, o2, o3]
                 internal_count = 1
-                return translation, ESEC_table
+                return translation, roll, ESEC_table
             
             #internal_count is bigger zero after first appearance of manipulation
             elif(internal_count > 0):
@@ -1994,7 +2000,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                     
                 #in case the add array is equal to the previous eSEC table row ignore it    
                 elif(np.array_equal(add, compare_array)):
-                    return translation, ESEC_table
+                    return translation, roll, ESEC_table
                 
                 #otherwise add column to eSEC table
                 else:
@@ -2008,10 +2014,10 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                             fig, (ax1, ax2) = plt.subplots(1, 2, figsize = (20,10))
                             ax1.set_title("x-y-view")
                             ax2.set_title("y-z-view")
-                            #ax1.set_ylim(0.7,1.5)
-                            ax2.set_ylim(0.7,1.5)
+                            ax1.set_ylim(-0.8, 0.6)
+                            ax2.set_ylim(-1.5,0.5)
                             #ax1.set_xlim(-1,1)
-                            ax2.set_xlim(-1,1)
+                            ax2.set_xlim(-1,0.75)
 
                             #ax1.plot(np.array(mesh_frame)[:,0], np.array(mesh_frame)[:,1], ".g", label = 'hand')
                             ax1.plot(np.array(hand.points)[:,0], np.array(hand.points)[:,1], ".g", label = 'hand')
@@ -2044,7 +2050,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                     count_esec += 1
 
     
-    return translation, ESEC_table
+    return translation, roll, ESEC_table
 
 def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, support_hand, relations,
                                 replace, old, new, ignored_labels, thresh, debug = False, cython = False, savename = ""):
@@ -2123,6 +2129,7 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
     #define first column of tables as "-"
     table[:] = '-'
     translation = 0
+    roll = 0
     i = 0
 
     #define fps
@@ -2132,9 +2139,9 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
 
     for file in progressbar.progressbar(sorted(os.listdir(pcl_path))):
         if(i%frames == 0):
-            translation, table = _process(pcl_path+file[0:-7]+"_pc.pcd",
+            translation, roll, table = _process(pcl_path+file[0:-7]+"_pc.pcd",
                                label_path+file[0:-7]+"_left-labels.dat",
-                               ground_label = ground_label ,hand_label = hand_label, support_hand = support_hand, translation = translation,frame = i, fps=fps,
+                               ground_label = ground_label ,hand_label = hand_label, support_hand = support_hand, translation = translation, roll = roll, frame = i, fps=fps,
                                 ESEC_table = table, relations = relations,
                                 replace = replace, old = old, new = new, 
                                 ignored_labels = ignored_labels,
