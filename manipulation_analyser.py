@@ -105,8 +105,10 @@ def _replace_labels(label_resized, old, new):
     Returns:
         * new_labels: label array with new labels
     '''
-    
+    #deepcopy old labels
     old_label_file = copy.deepcopy(label_resized)
+
+    #replace old labels with new ones
     for i in range(len(old)):
         if i == 0:
             new_labels = np.where(old_label_file == old[i], new[i], old_label_file) 
@@ -116,6 +118,10 @@ def _replace_labels(label_resized, old, new):
     return new_labels
 
 def _distance(p1, p2):
+    '''
+    Calculates the euclidean distance between two points.
+    '''
+
     return np.sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2 + (p1[2]-p2[2])**2)
 
 def _rotateSceneNewNew(pcd_file, label_file, ground_label):
@@ -210,24 +216,33 @@ def _getTranslation(ground_cloud):
     Returns:
         * translation: translation of the scene
     '''
+    #load ground cloud and voxel it for faster processing
     pcd = ground_cloud
     pcd_voxel = pcd.voxel_down_sample(voxel_size=0.02)
 
+    #calculate obb around ground cloud and get the extent
     pcd_voxel_box = o3d.geometry.OrientedBoundingBox.create_from_points(pcd_voxel.points)
     pcd_voxel_box_extend = pcd_voxel_box.extent
 
+    #calculate the center and the mean z value of the ground
     middle = pcd_voxel.get_center()
     pcd_z = np.mean(np.asarray(pcd_voxel.points)[:,2])
+
+    #plane_array descibes the corner points of the new plane
     plane_array = np.array([[middle[0] + pcd_voxel_box_extend[0]/2, middle[1] + pcd_voxel_box_extend[1]/2, pcd_z], 
                             [middle[0] + pcd_voxel_box_extend[0]/2, middle[1] - pcd_voxel_box_extend[1]/2, pcd_z],
                             [middle[0] - pcd_voxel_box_extend[0]/2, middle[1] - pcd_voxel_box_extend[1]/2, pcd_z],
                             [middle[0] - pcd_voxel_box_extend[0]/2, middle[1] + pcd_voxel_box_extend[1]/2, pcd_z]])
+    
+    #get max and min x,y values from corner points
     plain = np.zeros_like(np.asarray(pcd_voxel.points))
     pcd_array_length = len(np.asarray(pcd_voxel.points))
     min_x = np.min(plane_array[:,0])
     max_X = np.max(plane_array[:,0])
     min_y = np.min(plane_array[:,1])
     max_y = np.max(plane_array[:,1])
+
+    #fill the space between corners with random points and save new plane as plane_cloud
     for i in range(pcd_array_length):
         number_x = random.uniform(min_x, max_X)
         number_y = random.uniform(min_y, max_y)
@@ -236,14 +251,19 @@ def _getTranslation(ground_cloud):
         plain[i] = added_array
     plane_cloud = o3d.geometry.PointCloud()
     plane_cloud.points = o3d.utility.Vector3dVector(plain)
+
+    #define initial translation and use ICP Registration to get translation to map the ground to the plane
     trans_init = np.asarray([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
     reg_p2p = o3d.pipelines.registration.registration_icp(
         pcd_voxel, plane_cloud, 0.2, trans_init,
         o3d.pipelines.registration.TransformationEstimationPointToPoint())
+    
+    #define roll that turns the ground upside down
     roll = [[-1, 0, 0, 0],
             [0, 1, 0, 0],
             [0, 0, -1, 0],
             [0, 0, 0, 1]]
+
     return reg_p2p.transformation, roll
 
 def _getGroundiNew(pcd_file, label_file, ground_label, rotation):
