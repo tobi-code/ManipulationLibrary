@@ -20,7 +20,7 @@ import json
 import shutil
 import sys
 import random
-from cython_filter import filter_cython
+from cython_filter_new import filter_cython_new as filter_cython
 
 
 ##define global variables
@@ -47,7 +47,7 @@ hand_label_inarray = -1
 count_esec = 0
 ground = 0
 count_ground = 0
-absent_o1, absent_o2, absent_03 = False, False, False
+absent_o1, absent_o2, absent_o3 = False, False, False
 
 def esec_to_e2sec(esec_array):
     '''
@@ -669,14 +669,16 @@ def _fillSSR_2(hand, ground, table):
             (o2_min_z > hand_min_z and o2_max_z > hand_max_z) or
             (o2_min_z < hand_min_z and o2_max_z > hand_max_z))):
             if table[1][0] == b'T':
-                table[10][0] = 'VArT'
+                table[11][0] = 'VArT'
             else:
-                table[10][0] = 'VAr'
+                table[11][0] = 'VAr'
         else: 
             if table[1][0] == b'T':
                 table[11][0] = 'HArT'
             else:
                 table[11][0] = 'HAr'
+
+    #print(table[11][0])
 
     if(o3 == None):
         table[12][0] = 'U'
@@ -1355,7 +1357,6 @@ def _process_rotation(pcd_file, label_file, ground_label, hand_label,
     #get global counts, lables, previous point cloud and counts
     global count1, count2, count3
     global o1_label, o2_label, o3_label, previous_array, internal_count
-
     #empty dict for point clouds of single objects, 
     pcd = {}
     filtered_pcd_voxel = {}
@@ -1644,7 +1645,7 @@ def _process_rotation(pcd_file, label_file, ground_label, hand_label,
 
 def _process(pcd_file, label_file, ground_label, hand_label, 
                 support_hand, translation, roll, frame, fps, ESEC_table, 
-                relations, replace = False, old = [], new = [], ignored_labels = [], thresh = 0.1, debug = False, cython = False):
+                relations, replace = False, old = [], new = [], ignored_labels = [], cutted_labels = [], thresh = 0.1, debug = False, cython = False):
     '''
     Creates raw eSEC table from a point cloud with corresponding label file. 
     
@@ -1661,6 +1662,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         * old: old labels to raplace [int]
         * new: new labels that will replace old labels [int]
         * ignored_labels: labels that will be ignored in this manipulation [int]
+        * cutted_labels: label of the cutted object [int]
         * threshold that defines distance for touching
         * cython: if true a self created filter will be used (experimental)
     
@@ -1701,11 +1703,15 @@ def _process(pcd_file, label_file, ground_label, hand_label,
 
         #add hand label if not in total_unique_labels else append total_unique_labels by hand label
         if hand_label not in total_unique_labels:
+            if cutted_labels != []:
+                total_unique_labels = np.append(total_unique_labels, cutted_labels)
             total_unique_labels = np.append(total_unique_labels, hand_label)
             hand_label_inarray = 0
         else:
+            if cutted_labels != []:
+                total_unique_labels = np.append(total_unique_labels, cutted_labels)
             hand_label_inarray = np.where(total_unique_labels == hand_label)[0][0]
-            
+
     #if hand is missing return roation and eSEC table      
     if hand_label not in np.unique(label):
         return translation, roll, ESEC_table
@@ -1738,7 +1744,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     for value in total_unique_labels:
             #if no hand label is defined previous hand must be the last entry in total_unique_labels
             if(hand_label_inarray == 0):
-                hand_label_inarray = np.where(total_unique_labels == np.max(total_unique_labels))[0][0]
+                hand_label_inarray = np.where(total_unique_labels == hand_label)[0][0]
                 
             #find the index of the different objects in the scene
             if float(value) in pcd_array_sorted[:,3]:
@@ -1790,21 +1796,28 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     pcd = {}
     filtered_pcd_voxel = {}
     j = 0
+    #print(total_unique_labels)
     for i in range(len(total_unique_labels)):
         #if label has a point cloud (i.e. objects[i] != -1) proceed
         if not isinstance(objects[i], int):
             #convert arrays to point clouds
             pcd[i] = o3d.geometry.PointCloud()
             pcd[i].points = o3d.utility.Vector3dVector(objects[i])
+
+            #if frame > 600 and i == hand_label_inarray:
+            #    o3d.io.write_point_cloud("hand.pcd", pcd[i])
+            #    o3d.visualization.draw_geometries([pcd[i]])
             if  i != ground_label and i != 0:
                 if cython == True:
                     center = np.array(pcd[i].get_center())
                     filtered_pcd_voxel_array = filter_cython.region_filter_cython(center, objects[i])
                     if isinstance(filtered_pcd_voxel_array, int):
                         filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
+
                     else:
                         filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
                         filtered_pcd_voxel[i].points = o3d.utility.Vector3dVector(filtered_pcd_voxel_array)
+                        #print(i)
                 else:
                     #filter objects with statistical filter except ground and label 0 (borders)
                     filtered_pcd_voxel[i], _ = pcd[i].remove_statistical_outlier(nb_neighbors=20, std_ratio=1)
@@ -1815,12 +1828,13 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                         filtered_pcd_voxel[i] = pcd[i]
             else:
                 filtered_pcd_voxel[i] = pcd[i]
-
         else:
             filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
+
             
     #define hand variable as hand point cloud
     hand = filtered_pcd_voxel[hand_label_inarray]
+    #cutted = filtered_pcd_voxel[int(len(total_unique_labels)-2)]
 
     #if hand has no points return translation and eSEC table
     if len(hand.points) == 0:
@@ -1847,7 +1861,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                             o1_label = i
                             count1 = 1
                             print('o1 found!, label: %d'%total_unique_labels[i])
-                            print(label_file)
+                            #print(label_file)
                             o1 = filtered_pcd_voxel[i]
 
                     #if o1 is defined and o2 not, define it when distance to hand or o1 is smaller than thresh
@@ -2028,9 +2042,9 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                     #save image of manipulation in this frame
                     if debug == True:
                         if count_ground > 0:
-    #                         mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(
-    #                          size=0.6, origin=[0,0,0])
-                            #o3d.visualization.draw_geometries([ground, hand, mesh_frame])
+                            # mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(
+                            # size=0.6, origin=[0,0,0])
+                            # o3d.visualization.draw_geometries([ground, hand, mesh_frame])
                             fig, (ax1, ax2) = plt.subplots(1, 2, figsize = (20,10))
                             ax1.set_title("x-y-view")
                             ax2.set_title("y-z-view")
@@ -2041,6 +2055,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
 
                             #ax1.plot(np.array(mesh_frame)[:,0], np.array(mesh_frame)[:,1], ".g", label = 'hand')
                             ax1.plot(np.array(hand.points)[:,0], np.array(hand.points)[:,1], ".g", label = 'hand')
+        #                    ax1.plot(np.array(cutted.points)[:,0], np.array(cutted.points)[:,1], ".b", label = 'cutted')
                             ax2.plot(np.array(hand.points)[:,1], np.array(hand.points)[:,2], ".g", label = 'hand')
         #                     ax1.plot(np.array(ground2.points)[:,0], np.array(ground2.points)[:,2], ".r", label = 'ground frame %d (unfiltered)'%frame)
         #                     ax2.plot(np.array(ground2.points)[:,1], np.array(ground2.points)[:,2], ".r", label = 'ground frame %d (unfiltered)'%frame)
@@ -2073,7 +2088,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     return translation, roll, ESEC_table
 
 def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, support_hand, relations,
-                                replace, old, new, ignored_labels, thresh, debug = False, cython = False, savename = ""):
+                                replace, old, new, ignored_labels, thresh, cutted_labels = [],  debug = False, cython = False, savename = ""):
     '''
     Analyses a complete manipulation from the MANIAC dataset. Therefore, it needs the path
     of the folder that contains all the .pcd files (pcl_path) and the label files(label_path). 
@@ -2156,7 +2171,7 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
     fps = 10
     frames = int(30/fps)
     relations = 3
-
+   
     for file in progressbar.progressbar(sorted(os.listdir(pcl_path))):
         if(i%frames == 0):
             translation, roll, table = _process(pcl_path+file[0:-7]+"_pc.pcd",
@@ -2165,8 +2180,8 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
                                 ESEC_table = table, relations = relations,
                                 replace = replace, old = old, new = new, 
                                 ignored_labels = ignored_labels,
-                                thresh = thresh,  debug = debug, cython = cython)
+                                thresh = thresh, cutted_labels = cutted_labels, debug = debug, cython = cython)
         i+=1
-
+        
     e2sec, esec = esec_to_e2sec(table)
     np.save("e2sec_%s.npy"%savename,e2sec)
