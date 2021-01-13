@@ -1807,7 +1807,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             #if frame > 600 and i == hand_label_inarray:
             #    o3d.io.write_point_cloud("hand.pcd", pcd[i])
             #    o3d.visualization.draw_geometries([pcd[i]])
-            if  i != ground_label and i != 0:
+            if  i != ground_label and i != 0 and len(objects[i]) > 3:
                 if cython == True:
                     center = np.array(pcd[i].get_center())
                     filtered_pcd_voxel_array = filter_cython.region_filter_cython(center, objects[i])

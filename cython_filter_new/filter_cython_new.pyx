@@ -26,7 +26,11 @@ cpdef double[:,::1] region_filter_cython(double[:] center, double[:,::1] pcd):
     cdef float mean_distance = 0
     for i in range(length-1):
         mean_distance += distance_cython(pcd[i], pcd[i-1])
-    mean_distance /= i
+
+    if i != 0.0:
+        mean_distance /= i
+    else:
+        return np.zeros((1, 3))
 
     cdef double[:] next_point
     cdef int test = -1
