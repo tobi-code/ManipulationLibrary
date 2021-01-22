@@ -20,7 +20,7 @@ import json
 import shutil
 import sys
 import random
-from cython_filter_new import filter_cython_new as filter_cython
+from ManipulationLibrary.cython_filter_new import filter_cython_new as filter_cython
 
 
 ##define global variables
@@ -1645,7 +1645,7 @@ def _process_rotation(pcd_file, label_file, ground_label, hand_label,
 
 def _process(pcd_file, label_file, ground_label, hand_label, 
                 support_hand, translation, roll, frame, fps, ESEC_table, 
-                relations, replace = False, old = [], new = [], ignored_labels = [], cutted_labels = [], thresh = 0.1, debug = False, cython = False):
+                relations, replace = False, old = [], new = [], ignored_labels = [], cutted_labels = [], thresh = 0.1, debug = False, cython = False, savename = ""):
     '''
     Creates raw eSEC table from a point cloud with corresponding label file. 
     
@@ -1796,7 +1796,6 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     pcd = {}
     filtered_pcd_voxel = {}
     j = 0
-    #print(total_unique_labels)
     for i in range(len(total_unique_labels)):
         #if label has a point cloud (i.e. objects[i] != -1) proceed
         if not isinstance(objects[i], int):
@@ -1804,10 +1803,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             pcd[i] = o3d.geometry.PointCloud()
             pcd[i].points = o3d.utility.Vector3dVector(objects[i])
 
-            #if frame > 600 and i == hand_label_inarray:
-            #    o3d.io.write_point_cloud("hand.pcd", pcd[i])
-            #    o3d.visualization.draw_geometries([pcd[i]])
-            if  i != ground_label and i != 0 and len(objects[i]) > 3:
+            if  i != np.where(total_unique_labels == ground_label)[0][0] and i != 0 and len(objects[i]) > 3:
                 if cython == True:
                     center = np.array(pcd[i].get_center())
                     filtered_pcd_voxel_array = filter_cython.region_filter_cython(center, objects[i])
@@ -1817,7 +1813,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                     else:
                         filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
                         filtered_pcd_voxel[i].points = o3d.utility.Vector3dVector(filtered_pcd_voxel_array)
-                        #print(i)
+                        
                 else:
                     #filter objects with statistical filter except ground and label 0 (borders)
                     filtered_pcd_voxel[i], _ = pcd[i].remove_statistical_outlier(nb_neighbors=20, std_ratio=1)
@@ -1834,6 +1830,12 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             
     #define hand variable as hand point cloud
     hand = filtered_pcd_voxel[hand_label_inarray]
+
+    # if frame > 200:
+    #     o3d.io.write_point_cloud("ownCloud/bowl_unfiltered_%d.pcd"%frame, pcd[3])
+    #     o3d.io.write_point_cloud("ownCloud/bowl_filtered_%d.pcd"%frame, filtered_pcd_voxel[3])
+
+    #o3d.visualization.draw_geometries([ground])
     #cutted = filtered_pcd_voxel[int(len(total_unique_labels)-2)]
 
     #if hand has no points return translation and eSEC table
@@ -2079,9 +2081,9 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                         ax2.legend(loc = 'upper right')
                         #plt.axis('off')
                         #plt.savefig("debug/%d.png"%frame)
-                        plt.savefig("debug_images/%d.png"%(count_esec+1), bbox_inches='tight')
+                        plt.savefig("debug_images/"+savename+"/%d.png"%(count_esec+1), bbox_inches='tight')
                         plt.clf()  
-                    plt.imsave("event_images/%s.png"%label_file[-21:-16], label)
+                        plt.imsave("event_images/"+savename+"/%s.png"%label_file[-21:-16], label)
                     count_esec += 1
 
     
@@ -2115,17 +2117,17 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
     '''
 
     #create folder for event images in case it does not exist yet
-    if not os.path.exists("event_images"):
-        os.makedirs("event_images")
-    else:
-        shutil.rmtree("event_images")
-        os.makedirs("event_images")
     if debug == True:
-        if not os.path.exists("debug_images"):
-            os.makedirs("debug_images")
+        if not os.path.exists("debug_images/"+savename+"/"):
+            os.makedirs("debug_images/"+savename)
         else:
-            shutil.rmtree("debug_images")
-            os.makedirs("debug_images")
+            shutil.rmtree("debug_images/"+savename+"/")
+            os.makedirs("debug_images/"+savename+"/")
+        if not os.path.exists("event_images/"+savename+"/"):
+            os.makedirs("event_images/"+savename)
+        else:
+            shutil.rmtree("event_images/"+savename+"/")
+            os.makedirs("event_images/"+savename+"/")
 
     ##define global variables
     global o1, o2, o3, count1, count2, count3, o1_label, o2_label, o3_label, previous_array, internal_count, total_unique_labels, hand_label_inarray, count_esec, ground, count_ground, absent_o1, absent_o2, absent_o3
@@ -2180,7 +2182,7 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
                                 ESEC_table = table, relations = relations,
                                 replace = replace, old = old, new = new, 
                                 ignored_labels = ignored_labels,
-                                thresh = thresh, cutted_labels = cutted_labels, debug = debug, cython = cython)
+                                thresh = thresh, cutted_labels = cutted_labels, debug = debug, cython = cython, savename = savename)
         i+=1
         
     e2sec, esec = esec_to_e2sec(table)
