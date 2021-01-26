@@ -6,7 +6,7 @@ from libc.math cimport sqrt
 cpdef double distance_cython(double[:] p1, double[:] p2):
     return sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2 + (p1[2]-p2[2])**2)
 
-cpdef double[:,::1] region_filter_cython(double[:] center, double[:,::1] pcd):
+cpdef double[:,::1] region_filter_cython(double[:] center, double[:,::1] pcd, int hand_cloud):
 
     #define dist dummy for calculation
     cdef float dist = 50000
@@ -42,7 +42,10 @@ cpdef double[:,::1] region_filter_cython(double[:] center, double[:,::1] pcd):
     cdef int abort = 0
     cdef int temp = 0
     cdef int length_deleted = 0
-    mean_distance = 2 * mean_distance
+    if hand_cloud:
+        mean_distance = 10 * mean_distance
+    else:
+        mean_distance = 2 * mean_distance
     while (abort < 30):
         indices = []
         temp = len(pcd)

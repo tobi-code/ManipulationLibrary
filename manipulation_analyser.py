@@ -20,8 +20,9 @@ import json
 import shutil
 import sys
 import random
-from ManipulationLibrary.cython_filter_new import filter_cython_new as filter_cython
 
+#from ManipulationLibrary.cython_filter_new import filter_cython_new as filter_cython
+from cython_filter_new import filter_cython_new as filter_cython
 
 ##define global variables
 #o1,o2,o3 are the three main objects of the manipulation
@@ -123,6 +124,7 @@ def _distance(p1, p2):
     '''
 
     return np.sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2 + (p1[2]-p2[2])**2)
+
 
 def _rotateSceneNewNew(pcd_file, label_file, ground_label):
     '''
@@ -1178,6 +1180,363 @@ def _fillDSR(hand, ground, previous_array, thresh, table):
     else:
         table[29][0] = 'Q'
 
+
+def _fillDSR_new(hand, ground, previous_array, thresh, table):
+    '''
+    Creates the DSR with pre-defined point clouds of hand and ground. It also need the point cloud from the previous frame.
+    
+    Parameters:
+        * hand: point cloud of the hand
+        * ground: point cloud of the ground
+        * previous_array: array that contains point clouds from previous frame of hand, ground, o1, o2 and o3
+        * thresh: threshold distance of touching
+        * table: chararray table   
+    '''
+    #     DSR
+    #     H, 1
+    #     H, 2
+    #     H, 3
+    #     H, G
+    #     1, 2
+    #     1, 3
+    #     1, G
+    #     2, 3
+    #     2, G
+    #     3, G 
+
+    #get global objects 1, 2 and 3
+    global o1,o2,o3
+    
+    #get varaibles from previous frame
+    phand, pground, po1, po2, po3 = previous_array
+
+    #creates AABB around object1 if o1 and po1 are defined and if TNR relation is not abscent
+    if(o1 != None and po1 != None and table[0][0] != b'A'):
+        o1_box = o1.get_axis_aligned_bounding_box()
+        po1_box = po1.get_axis_aligned_bounding_box()
+        
+    #creates AABB around object2 if o2 and po2 are defined and if TNR relation is not abscent    
+    if(o2 != None and po2 != None and table[1][0] != b'A'):
+        o2_box = o2.get_axis_aligned_bounding_box()
+        po2_box = po2.get_axis_aligned_bounding_box()
+        
+    #creates AABB around object1 if o3 and po3 are defined and if TNR relation is not abscent
+    if(o3 != None and po3 != None and table[2][0] != b'A'):
+        o3_box = o3.get_axis_aligned_bounding_box()
+        po3_box = po3.get_axis_aligned_bounding_box()
+        
+    #creates AABB around hand if point cloud is in the frame
+    if(len(hand.points) > 0):
+        hand_box = hand.get_axis_aligned_bounding_box()
+        phand_box = phand.get_axis_aligned_bounding_box()
+    
+    #creates AABB around ground
+    ground_box = ground.get_axis_aligned_bounding_box()
+    pground_box = pground.get_axis_aligned_bounding_box()
+        
+    
+    multi = 1.5
+    threshold = 0.1
+
+    P1 = [table[0][0] == b'T', table[1][0] == b'T', table[2][0] == b'T', table[3][0] == b'T', table[4][0] == b'T', table[5][0] == b'T', table[6][0] == b'T', table[7][0] == b'T', table[8][0] == b'T', table[9][0] == b'T']
+    P2 = [table[0][0] == b'N', table[1][0] == b'N', table[2][0] == b'N', table[3][0] == b'N', table[4][0] == b'N', table[5][0] == b'N', table[6][0] == b'N', table[7][0] == b'N', table[8][0] == b'N', table[9][0] == b'N']
+    if o1 != None and po1 != None and o2 != None and po2 != None and o3 != None and po3 != None:
+        P3 = [all(ground_box.get_center() != pground_box.get_center()), all(hand_box.get_center() != phand_box.get_center()), all(o1_box.get_center() != po1_box.get_center()), all(o2_box.get_center() != po2_box.get_center()), all(o3_box.get_center() != po3_box.get_center())]
+    elif o1 != None and po1 != None and o2 != None and po2 != None:
+        P3 = [all(ground_box.get_center() != pground_box.get_center()), all(hand_box.get_center() != phand_box.get_center()), all(o1_box.get_center() != po1_box.get_center()), all(o2_box.get_center() != po2_box.get_center()), 0]
+    elif o1 != None and po1 != None and o3 != None and po3 != None:
+        P3 = [all(ground_box.get_center() != pground_box.get_center()), all(hand_box.get_center() != phand_box.get_center()), all(o1_box.get_center() != po1_box.get_center()), 0, all(o3_box.get_center() != po3_box.get_center())]
+    elif o2 != None and o3 != None and po3 != None:
+        P3 = [all(ground_box.get_center() != pground_box.get_center()), all(hand_box.get_center() != phand_box.get_center()), 0, all(o2_box.get_center() != po2_box.get_center()), all(o3_box.get_center() != po3_box.get_center())]
+    elif o1 != None and po1 != None:
+        P3 = [all(ground_box.get_center() != pground_box.get_center()), all(hand_box.get_center() != phand_box.get_center()),all(o1_box.get_center() != po1_box.get_center()), 0, 0]
+    elif o2 != None and po2 != None:
+        P3 = [all(ground_box.get_center() != pground_box.get_center()), all(hand_box.get_center() != phand_box.get_center()), 0, all(o2_box.get_center() != po2_box.get_center()), 0]
+    elif o3 != None and po3 != None:
+        P3 = [all(ground_box.get_center() != pground_box.get_center()), all(hand_box.get_center() != phand_box.get_center()), 0, 0, all(o3_box.get_center() != po3_box.get_center())]
+    else:
+        P3 = [all(ground_box.get_center() != pground_box.get_center()), all(hand_box.get_center() != phand_box.get_center()), 0, 0, 0]
+ 
+
+    if o1 != None and po1 != None and o2 != None and po2 != None and o3 != None and po3 != None:
+        P5 = [(_distance(hand_box.get_center(), o1_box.get_center()) - _distance(phand_box.get_center(), po1_box.get_center())) < threshold,
+            (_distance(hand_box.get_center(), o2_box.get_center()) - _distance(phand_box.get_center(), po2_box.get_center())) < threshold,
+            (_distance(hand_box.get_center(),o3_box.get_center()) - _distance(phand_box.get_center(), po3_box.get_center())) < threshold,
+            (_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) < threshold,
+            (_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) < threshold,
+            (_distance(o1_box.get_center(), o3_box.get_center()) - _distance(po1_box.get_center(), po3_box.get_center())) < threshold,
+            (_distance(o1_box.get_center(), ground_box.get_center()) - _distance(po1_box.get_center(), pground_box.get_center())) < threshold,
+            (_distance(o2_box.get_center(), o3_box.get_center()) - _distance(po2_box.get_center(), po3_box.get_center())) < threshold,
+            (_distance(o2_box.get_center(), ground_box.get_center()) - _distance(po2_box.get_center(), pground_box.get_center())) < threshold,
+            (_distance(o3_box.get_center(), ground_box.get_center()) - _distance(po3_box.get_center(), pground_box.get_center())) < threshold]
+    elif o1 != None and po1 != None and o2 != None and po2 != None:
+        P5 = [(_distance(hand_box.get_center(), o1_box.get_center()) - _distance(phand_box.get_center(), po1_box.get_center())) < threshold,
+          (_distance(hand_box.get_center(), o2_box.get_center()) - _distance(phand_box.get_center(), po2_box.get_center())) < threshold,
+          0,
+          (_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) < threshold,
+          (_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) < threshold,
+          0,
+          (_distance(o1_box.get_center(), ground_box.get_center()) - _distance(po1_box.get_center(), pground_box.get_center())) < threshold,
+          0,
+          (_distance(o2_box.get_center(), ground_box.get_center()) - _distance(po2_box.get_center(), pground_box.get_center())) < threshold,
+          0]
+    elif o1 != None and po1 != None and o3 != None and po3 != None:
+        P5 = [(_distance(hand_box.get_center(), o1_box.get_center()) - _distance(phand_box.get_center(), po1_box.get_center())) < threshold,
+          0,
+          (_distance(hand_box.get_center(), o3_box.get_center()) - _distance(phand_box.get_center(), po3_box.get_center())) < threshold,
+          (_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) < threshold,
+          0,
+          (_distance(o1_box.get_center(), o3_box.get_center()) - _distance(po1_box.get_center(), po3_box.get_center())) < threshold,
+          (_distance(o1_box.get_center(), ground_box.get_center()) - _distance(po1_box.get_center(), pground_box.get_center())) < threshold,
+          0,
+          0,
+          (_distance(o3_box.get_center(), ground_box.get_center()) - _distance(po3_box.get_center(), pground_box.get_center())) < threshold]
+    elif o2 != None and po2 != None and o3 != None and po3 != None:
+        P5 = [0,
+          (_distance(hand_box.get_center(), o2_box.get_center()) - _distance(phand_box.get_center(), po2_box.get_center())) < threshold,
+          (_distance(hand_box.get_center(), o3_box.get_center()) - _distance(phand_box.get_center(), po3_box.get_center())) < threshold,
+          (_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) < threshold,
+          0,
+          0,
+          0,
+          (_distance(o2_box.get_center(), o3_box.get_center()) - _distance(po2_box.get_center(), po3_box.get_center())) < threshold,
+          (_distance(o2_box.get_center(), ground_box.get_center()) - _distance(po2_box.get_center(), pground_box.get_center())) < threshold,
+          (_distance(o3_box.get_center(), ground_box.get_center()) - _distance(po3_box.get_center(), pground_box.get_center())) < threshold]
+    elif o1 != None and po1 != None:
+        P5 = [(_distance(hand_box.get_center(), o1_box.get_center()) - _distance(phand_box.get_center(), po1_box.get_center())) < threshold,
+          0,
+          0,
+          (_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) < threshold,
+          0,
+          0,
+          (_distance(o1_box.get_center(), ground_box.get_center()) - _distance(po1_box.get_center(), pground_box.get_center())) < threshold,
+          0,
+          0,
+          0]
+    elif o2 != None and po2 != None:
+        P5 = [0,
+          (_distance(hand_box.get_center(), o2_box.get_center()) - _distance(phand_box.get_center(), po2_box.get_center())) < threshold,
+          0,
+          (_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) < threshold,
+          0,
+          0,
+          0,
+          0,
+          (_distance(o2_box.get_center(), ground_box.get_center()) - _distance(po2_box.get_center(), pground_box.get_center())) < threshold,
+          0]
+    elif o3 != None and po3 != None:
+        P5 = [0,
+          0,
+          (_distance(hand_box.get_center(), o3_box.get_center()) - _distance(phand_box.get_center(), po3_box.get_center())) < threshold,
+          (_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) < threshold,
+          0,
+          0,
+          0,
+          0,
+          0,
+          (_distance(o3_box.get_center(), ground_box.get_center()) - _distance(po3_box.get_center(), pground_box.get_center())) < threshold]
+    else:
+        P5 = [0,
+          0,
+          0,
+          (_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) < threshold,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0]
+
+    # P5 = [(abs(hand_box.get_center() - o1_box.get_center()) - abs(phand_box.get_center() - po1_box.get_center())) < threshold,
+    #       (abs(hand_box.get_center() - o2_box.get_center()) - abs(phand_box.get_center() - po2_box.get_center())) < threshold,
+    #       (abs(hand_box.get_center() - o3_box.get_center()) - abs(phand_box.get_center() - po3_box.get_center())) < threshold,
+    #       (abs(hand_box.get_center() - ground_box.get_center()) - abs(phand_box.get_center() - pground_box.get_center())) < threshold,
+    #       (abs(o1_box.get_center() - o2_box.get_center()) - abs(po1_box.get_center() - po2_box.get_center())) < threshold,
+    #       (abs(o1_box.get_center() - o3_box.get_center()) - abs(po1_box.get_center() - po3_box.get_center())) < threshold,
+    #       (abs(o1_box.get_center() - ground_box.get_center()) - abs(po1_box.get_center() - pground_box.get_center())) < threshold,
+    #       (abs(o2_box.get_center() - o3_box.get_center()) - abs(po2_box.get_center() - po3_box.get_center())) < threshold,
+    #       (abs(o2_box.get_center() - ground_box.get_center()) - abs(po2_box.get_center() - pground_box.get_center())) < threshold,
+    #       (abs(o3_box.get_center() - ground_box.get_center()) - abs(po3_box.get_center() - pground_box.get_center())) < threshold]
+    
+    if(o1 == None or po1 == None):
+        table[20][0] = 'U'
+    elif(table[0][0] == b'A'):
+        table[20][0] = 'A'
+    elif(len(hand.points) > 0):
+        if (P2[0] and P5[0]):
+            table[20][0] = 'S'
+        elif (P1[0] and P3[1] and P3[2]):
+            table[20][0] = 'MT' 
+        elif (P1[0] and not P3[1] and not P3[2]):
+            table[20][0] = 'HT' 
+        elif (not P5[0]):
+            table[20][0] = 'MA'
+        elif (P5[0]):
+            table[20][0] = 'GC'
+        else:
+            table[20][0] = 'Q'
+        
+    
+    if(o2 == None or po2 == None):
+        table[21][0] = 'U'
+    elif(table[1][0] == b'A'):
+        table[21][0] = 'A'
+    elif(len(hand.points) > 0):
+        if (P2[1] and P5[1]):
+            table[21][0] = 'S'
+        elif (P1[1] and P3[1] and P3[3]):
+            table[21][0] = 'MT' 
+        elif (P1[1] and not P3[1] and not P3[3]):
+            table[21][0] = 'HT' 
+        elif (not P5[1]):
+            table[21][0] = 'MA'
+        elif (P5[1]):
+            table[21][0] = 'GC'
+        else:
+            table[21][0] = 'Q'
+        
+       
+    if(o3 == None or po3 == None):
+        table[22][0] = 'U'
+    elif(table[2][0] == b'A'):
+        table[22][0] = 'A'
+    elif(len(hand.points) > 0):
+        if (P2[2] and P5[2]):
+            table[22][0] = 'S'
+        elif (P1[2] and P3[1] and P3[4]):
+            table[22][0] = 'MT' 
+        elif (P1[2] and not P3[1] and not P3[4]):
+            table[22][0] = 'HT' 
+        elif (not P5[2]):
+            table[22][0] = 'MA'
+        elif (P5[2]):
+            table[22][0] = 'GC'
+        else:
+            table[22][0] = 'Q'
+         
+    if(len(hand.points) > 0):
+        if (P2[3] and P5[3]):
+            table[23][0] = 'S'
+        elif (P1[3] and P3[1] and P3[0]):
+            table[23][0] = 'MT' 
+        elif (P1[3] and not P3[1] and not P3[0]):
+            table[23][0] = 'HT' 
+        elif (not P5[3]):
+            table[23][0] = 'MA'
+        elif (P5[3]):
+            table[23][0] = 'GC'
+        else:
+            table[23][0] = 'Q'
+        
+        
+    if(o1 == None or o2 == None or po1 == None or po2 == None):
+        table[24][0] = 'U'
+    elif(table[4][0] == b'A'):
+        table[24][0] = 'A'
+    elif (P2[4] and P5[4]):
+        table[24][0] = 'S'
+    elif (P1[4] and P3[2] and P3[3]):
+        table[24][0] = 'MT' 
+    elif (P1[4] and not P3[2] and not P3[3]):
+        table[24][0] = 'HT' 
+    elif (not P5[4]):
+        table[24][0] = 'MA'
+    elif (P5[4]):
+        table[24][0] = 'GC'
+    else:
+        table[24][0] = 'Q'
+    
+    
+    if(o1 == None or o3 == None or po1 == None or po3 == None):
+        table[25][0] = 'U'
+    elif(table[5][0] == b'A'):
+        table[25][0] = 'A'
+    elif (P2[5] and P5[5]):
+        table[25][0] = 'S'
+    elif (P1[5] and P3[2] and P3[4]):
+        table[25][0] = 'MT' 
+    elif (P1[5] and not P3[2] and not P3[4]):
+        table[25][0] = 'HT' 
+    elif (not P5[5]):
+        table[25][0] = 'MA'
+    elif (P5[5]):
+        table[25][0] = 'GC'
+    else:
+        table[25][0] = 'Q'
+    
+        
+    if(o1 == None or po1 == None):
+        table[26][0] = 'U'
+    elif(table[6][0] == b'A'):
+        table[26][0] = 'A'
+    elif (P2[6] and P5[6]):
+        table[26][0] = 'S'
+    elif (P1[6] and P3[2] and P3[0]):
+        table[26][0] = 'MT' 
+    elif (P1[6] and not P3[2] and not P3[0]):
+        table[26][0] = 'HT' 
+    elif (not P5[6]):
+        table[26][0] = 'MA'
+    elif (P5[6]):
+        table[26][0] = 'GC'
+    else:
+        table[26][0] = 'Q'
+    
+      
+    if(o2 == None or o3 == None or po2 == None or po3 == None):
+        table[27][0] = 'U'
+    elif(table[7][0] == b'A'):
+        table[27][0] = 'A'
+    elif (P2[7] and P5[7]):
+        table[27][0] = 'S'
+    elif (P1[7] and P3[3] and P3[4]):
+        table[27][0] = 'MT' 
+    elif (P1[7] and not P3[3] and not P3[4]):
+        table[27][0] = 'HT' 
+    elif (not P5[7]):
+        table[27][0] = 'MA'
+    elif (P5[7]):
+        table[27][0] = 'GC'
+    else:
+        table[27][0] = 'Q'
+    
+    # if o2 != None and po2 != None:
+    #     print(len(o2.points), len(po2.points))
+    
+    if(o2 == None or po2 == None):
+        table[28][0] = 'U'
+    elif(table[8][0] == b'A'):
+        table[28][0] = 'A'
+    elif (P2[8] and P5[8]):
+        table[28][0] = 'S'
+    elif (P1[8] and P3[3] and P3[0]):
+        table[28][0] = 'MT' 
+    elif (P1[8] and not P3[3] and not P3[0]):
+        table[28][0] = 'HT' 
+    elif (not P5[8]):
+        table[28][0] = 'MA'
+    elif (P5[8]):
+        table[28][0] = 'GC'
+    else:
+        table[28][0] = 'Q'
+        
+    if(o3 == None or po3 == None):
+        table[29][0] = 'U'
+    elif(table[9][0] == b'A'):
+        table[29][0] = 'A'
+    elif (P2[9] and P5[9]):
+        table[29][0] = 'S'
+    elif (P1[9] and P3[4] and P3[0]):
+        table[29][0] = 'MT' 
+    elif (P1[9] and not P3[4] and not P3[0]):
+        table[29][0] = 'HT' 
+    elif (not P5[9]):
+        table[29][0] = 'MA'
+    elif (P5[9]):
+        table[29][0] = 'GC'
+    else:
+        table[29][0] = 'Q'
+
 def _region_filter(pcd):
     #get center of point cloud
     center = pcd.get_center()
@@ -1370,7 +1729,7 @@ def _process_rotation(pcd_file, label_file, ground_label, hand_label,
             if  i != ground_label and i != 0:
                 if cython == True:
                     center = np.array(pcd[i].get_center())
-                    filtered_pcd_voxel_array = filter_cython.region_filter_cython(center, objects[i])
+                    filtered_pcd_voxel_array = filter_cython.region_filter_cython(center, objects[i], i == hand_label_inarray)
                     if isinstance(filtered_pcd_voxel_array, int):
                         filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
                     else:
@@ -1802,11 +2161,13 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             #convert arrays to point clouds
             pcd[i] = o3d.geometry.PointCloud()
             pcd[i].points = o3d.utility.Vector3dVector(objects[i])
-
+            # if i == np.where(total_unique_labels == 3)[0][0]:
+            #     o3d.io.write_point_cloud("../%s.pcd"%pcd_file.replace("/", "_"), pcd[i])
+            #     print("saving")
             if  i != np.where(total_unique_labels == ground_label)[0][0] and i != 0 and len(objects[i]) > 3:
                 if cython == True:
                     center = np.array(pcd[i].get_center())
-                    filtered_pcd_voxel_array = filter_cython.region_filter_cython(center, objects[i])
+                    filtered_pcd_voxel_array = filter_cython.region_filter_cython(center, objects[i], i == hand_label_inarray)
                     if isinstance(filtered_pcd_voxel_array, int):
                         filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
 
@@ -2023,7 +2384,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                 _fillSSR_2(hand, ground, add)
                 
                 #find DSR relations and fill the table
-                _fillDSR(hand, ground, previous_array, thresh, add)
+                _fillDSR_new(hand, ground, previous_array, thresh, add)
                 
                 #define the new previous array after calculation of TNR, SSR, DSR
                 previous_array = [hand, ground, o1, o2, o3]
@@ -2057,6 +2418,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
 
                             #ax1.plot(np.array(mesh_frame)[:,0], np.array(mesh_frame)[:,1], ".g", label = 'hand')
                             ax1.plot(np.array(hand.points)[:,0], np.array(hand.points)[:,1], ".g", label = 'hand')
+                            ax2.text(-1, 0.4, pcd_file)
         #                    ax1.plot(np.array(cutted.points)[:,0], np.array(cutted.points)[:,1], ".b", label = 'cutted')
                             ax2.plot(np.array(hand.points)[:,1], np.array(hand.points)[:,2], ".g", label = 'hand')
         #                     ax1.plot(np.array(ground2.points)[:,0], np.array(ground2.points)[:,2], ".r", label = 'ground frame %d (unfiltered)'%frame)
@@ -2176,6 +2538,7 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
    
     for file in progressbar.progressbar(sorted(os.listdir(pcl_path))):
         if(i%frames == 0):
+            #print(file)
             translation, roll, table = _process(pcl_path+file[0:-7]+"_pc.pcd",
                                label_path+file[0:-7]+"_left-labels.dat",
                                ground_label = ground_label ,hand_label = hand_label, support_hand = support_hand, translation = translation, roll = roll, frame = i, fps=fps,
