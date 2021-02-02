@@ -409,7 +409,7 @@ def plotDendrogram(rows, labels, threshold = 0.4, save = False):
 	if save == True:
 		plt.savefig("dendrogram_rows_%s.png"%indexes, bbox_inches = 'tight')
 
-def plotDendrogramFromMatrix(D_shaped, labels, threshold = 0.4, save = False, name_of_plot = ""):
+def plotDendrogramFromMatrix(D_shaped, labels, figsize = (30,16), threshold = 0.4, save = False, name_of_plot = ""):
 	'''
 	| Plots the dendrogram for specific rows for the .npy arrays.
 	| Warning: needs the output from removeCobinationRowsSave()
@@ -417,12 +417,13 @@ def plotDendrogramFromMatrix(D_shaped, labels, threshold = 0.4, save = False, na
 	Parameters:
 		* D_shaped: dissimilarity matrix of all manipulations from function removeCobinationRowsSave() (numpy array)
 		* labels: name of the manipulations in the right order [string array]
+		* figsize: size of plot in case labels are squeezed
 		* threshold: color threshold for the dendrogram (float)
 		* save: paramter if figure need to be saved (bool)
 		* name_of_plot: name of the plot that will be saved (string)
 	'''
 	
-	fig = plt.figure(figsize=(30,16))
+	fig = plt.figure(figsize=figsize, facecolor='white')
 
 	#reshape the D_shaped matrix in squareform
 	dissimilarity = distance.squareform(D_shaped)
