@@ -50,7 +50,7 @@ ground = 0
 count_ground = 0
 absent_o1, absent_o2, absent_o3 = False, False, False
 
-def esec_to_e2sec(esec_array):
+def esec_to_e2sec(esec_array, relations):
     '''
     Takes an eSEC matrix as input and outputs the calculated e2SEC matrix.
     
@@ -78,7 +78,12 @@ def esec_to_e2sec(esec_array):
 
     #----------------------------------------------------------------  
     #remove rows 4 and 10 in T/N, SSR, DSR
-    e2sec_array = np.delete(e2sec_array, [3,9,13,19,23,29], 0)
+    if relations == 3:
+        e2sec_array = np.delete(e2sec_array, [3,9,13,19,23,29], 0)
+    if relations == 2:
+        e2sec_array = np.delete(e2sec_array, [3,9,13,19], 0)
+    if relations == 1:
+        e2sec_array = np.delete(e2sec_array, [3,9], 0)
     
     #----------------------------------------------------------------  
     
@@ -1657,7 +1662,8 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
     
     #multi = 1.5
     threshold = thresh
-    center_distance = threshold/100
+    center_distance = threshold/10
+    #center_distance = 0.02
 
     P1 = [table[0][0] == b'T', table[1][0] == b'T', table[2][0] == b'T', table[3][0] == b'T', table[4][0] == b'T', table[5][0] == b'T', table[6][0] == b'T', table[7][0] == b'T', table[8][0] == b'T', table[9][0] == b'T']
     P2 = [table[0][0] == b'N', table[1][0] == b'N', table[2][0] == b'N', table[3][0] == b'N', table[4][0] == b'N', table[5][0] == b'N', table[6][0] == b'N', table[7][0] == b'N', table[8][0] == b'N', table[9][0] == b'N']
@@ -1667,6 +1673,7 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
     elif(table[0][0] == b'A'):
         table[20][0] = 'A'
     elif(len(hand.points) > 0):
+        #print("\n", _distance(hand_box.get_center(), phand_box.get_center()), " > ", center_distance)
         if (P2[0] and (_distance(hand_box.get_center(), o1_box.get_center()) - _distance(phand_box.get_center(), po1_box.get_center())) < threshold):
             table[20][0] = 'S'
         elif ((P2[0] and not (_distance(hand_box.get_center(), o1_box.get_center()) - _distance(phand_box.get_center(), po1_box.get_center())) < threshold) or 
@@ -2562,6 +2569,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
 
             
     #define hand variable as hand point cloud
+    #hand = pcd[hand_label_inarray]
     hand = filtered_pcd_voxel[hand_label_inarray]
 
     # if frame > 200:
@@ -2674,6 +2682,13 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                                 o3 = filtered_pcd_voxel[i]
 
     #if objects are recognized assign the point cloud to the varaibles o1, o2, o3 to track them during the manipulation
+    # if count1 == 1:
+    #     o1 = pcd[o1_label]
+    # if count2 == 1:
+    #     o2 = pcd[o2_label]
+    # if count3 == 1:
+    #     o3 = pcd[o3_label]
+
     if count1 == 1:
         o1 = filtered_pcd_voxel[o1_label]
     if count2 == 1:
@@ -2906,7 +2921,7 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
     #define fps
     fps = 10
     frames = int(30/fps)
-    relations = 3
+    relations = relations
    
     for file in progressbar.progressbar(sorted(os.listdir(pcl_path))):
         if(i%frames == 0):
@@ -2920,6 +2935,6 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
                                 thresh = thresh, cutted_labels = cutted_labels, debug = debug, cython = cython, savename = savename)
         i+=1
         
-    e2sec, esec = esec_to_e2sec(table)
+    e2sec, esec = esec_to_e2sec(table,relations)
     np.save("e2sec_%s.npy"%savename.replace("/", "_"),e2sec)
     plt.close('all')
