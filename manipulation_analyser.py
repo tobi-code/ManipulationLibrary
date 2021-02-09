@@ -651,7 +651,7 @@ def _fillSSR_2(hand, ground, table):
                 table[10][0] = 'HArT'
             else:
                 table[10][0] = 'HAr'
-        #
+        
         
     if(o2 == None):
         table[11][0] = 'U'
@@ -1676,16 +1676,15 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
         #print("\n", _distance(hand_box.get_center(), phand_box.get_center()), " > ", center_distance)
         if (P2[0] and (_distance(hand_box.get_center(), o1_box.get_center()) - _distance(phand_box.get_center(), po1_box.get_center())) < threshold):
             table[20][0] = 'S'
-        elif ((P2[0] and not (_distance(hand_box.get_center(), o1_box.get_center()) - _distance(phand_box.get_center(), po1_box.get_center())) < threshold) or 
-             ((_distance(hand_box.get_center(), o1_box.get_center()) - _distance(phand_box.get_center(), po1_box.get_center())) < threshold)):
+        elif ((P2[0] and not (_distance(hand_box.get_center(), o1_box.get_center()) - _distance(phand_box.get_center(), po1_box.get_center())) < threshold)):
             table[20][0] = 'MA'
+        elif ((P2[0] and (_distance(hand_box.get_center(), o1_box.get_center()) - _distance(phand_box.get_center(), po1_box.get_center())) < threshold)):
+            table[20][0] = 'GC'
         elif ((P1[0] and _distance(hand_box.get_center(), phand_box.get_center()) > center_distance and _distance(o1_box.get_center(), po1_box.get_center()) > center_distance) or 
               (P1[0] and (xor(_distance(hand_box.get_center(), phand_box.get_center()) > center_distance, _distance(o1_box.get_center(), po1_box.get_center()) > center_distance)))):
             table[20][0] = 'MT' 
         elif (P1[0] and not _distance(hand_box.get_center(), phand_box.get_center()) > center_distance and not _distance(o1_box.get_center(),po1_box.get_center()) > center_distance):
             table[20][0] = 'HT' 
-        #elif ((_distance(hand_box.get_center(), o1_box.get_center()) - _distance(phand_box.get_center(), po1_box.get_center())) < threshold):
-        #    table[20][0] = 'GC'
         else:
             table[20][0] = 'Q'
         
@@ -1697,16 +1696,15 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
     elif(len(hand.points) > 0):
         if (P2[1] and (_distance(hand_box.get_center(), o2_box.get_center()) - _distance(phand_box.get_center(), po2_box.get_center())) < threshold):
             table[21][0] = 'S'
-        elif ((P2[1] and not (_distance(hand_box.get_center(), o2_box.get_center()) - _distance(phand_box.get_center(), po2_box.get_center())) < threshold) or 
-             (P2[1] and (_distance(hand_box.get_center(), o2_box.get_center()) - _distance(phand_box.get_center(), po2_box.get_center())) < threshold)):
+        elif (P2[1] and not (_distance(hand_box.get_center(), o2_box.get_center()) - _distance(phand_box.get_center(), po2_box.get_center())) < threshold):
             table[21][0] = 'MA'
+        elif (P2[1] and (_distance(hand_box.get_center(), o2_box.get_center()) - _distance(phand_box.get_center(), po2_box.get_center())) < threshold):
+            table[21][0] = 'GC'
         elif ((P1[1] and _distance(hand_box.get_center() , phand_box.get_center() > center_distance) and _distance(o2_box.get_center() , po2_box.get_center()) > center_distance) or 
               (P1[1] and (xor(_distance(hand_box.get_center() , phand_box.get_center()) > center_distance, _distance(o2_box.get_center() , po2_box.get_center()) > center_distance)))):
             table[21][0] = 'MT' 
         elif (P1[1] and not _distance(hand_box.get_center() , phand_box.get_center()) > center_distance and not _distance(o2_box.get_center() , po2_box.get_center()) > center_distance):
             table[21][0] = 'HT' 
-        #elif ((_distance(hand_box.get_center(), o2_box.get_center()) - _distance(phand_box.get_center(), po2_box.get_center())) < threshold):
-        #    table[21][0] = 'GC'
         else:
             table[21][0] = 'Q'
         
@@ -1718,33 +1716,32 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
     elif(len(hand.points) > 0):
         if (P2[2] and (_distance(hand_box.get_center(),o3_box.get_center()) - _distance(phand_box.get_center(), po3_box.get_center())) < threshold):
             table[22][0] = 'S'
-        elif ((P2[2] and not (_distance(hand_box.get_center(),o3_box.get_center()) - _distance(phand_box.get_center(), po3_box.get_center())) < threshold) or 
-             (P2[2] and (_distance(hand_box.get_center(),o3_box.get_center()) - _distance(phand_box.get_center(), po3_box.get_center())) < threshold)):
+        elif (P2[2] and not (_distance(hand_box.get_center(),o3_box.get_center()) - _distance(phand_box.get_center(), po3_box.get_center())) < threshold):
             table[22][0] = 'MA'
+        elif (P2[2] and (_distance(hand_box.get_center(),o3_box.get_center()) - _distance(phand_box.get_center(), po3_box.get_center())) < threshold):
+            table[22][0] = 'GC'
         elif ((P1[2] and _distance(hand_box.get_center() , phand_box.get_center() > center_distance) and _distance(o3_box.get_center() , po3_box.get_center()) > center_distance) or 
               (P1[2] and (xor(_distance(hand_box.get_center() , phand_box.get_center()) > center_distance, _distance(o3_box.get_center() , po3_box.get_center()) > center_distance)))):
             table[22][0] = 'MT' 
-            
         elif (P1[2] and not _distance(hand_box.get_center() , phand_box.get_center()) > center_distance and not _distance(o3_box.get_center() , po3_box.get_center()) > center_distance):
             table[22][0] = 'HT' 
-        #elif ((_distance(hand_box.get_center(),o3_box.get_center()) - _distance(phand_box.get_center(), po3_box.get_center())) < threshold):
-        #    table[22][0] = 'GC'
+        
         else:
             table[22][0] = 'Q'
          
     if(len(hand.points) > 0):
         if (P2[3] and (_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) < threshold):
             table[23][0] = 'S'
-        elif ((P2[3] and not (_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) < threshold) or
-             (P2[3] and (_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) < threshold)):
+        elif (P2[3] and not (_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) < threshold):
             table[23][0] = 'MA'
+        elif (P2[3] and (_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) < threshold):
+           table[23][0] = 'GC'
         elif ((P1[3] and _distance(hand_box.get_center() , phand_box.get_center()) > center_distance and _distance(ground_box.get_center() , pground_box.get_center()) > center_distance) or 
               (P1[3] and (xor(_distance(hand_box.get_center() , phand_box.get_center()) > center_distance, _distance(ground_box.get_center() , pground_box.get_center()) > center_distance)))):
             table[23][0] = 'MT' 
         elif (P1[3] and not _distance(hand_box.get_center() , phand_box.get_center()) > center_distance and not _distance(ground_box.get_center() , pground_box.get_center()) > center_distance):
             table[23][0] = 'HT' 
-        #elif ((_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) < threshold):
-        #    table[23][0] = 'GC'
+        
         else:
             table[23][0] = 'Q'
         
@@ -1754,9 +1751,10 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
         table[24][0] = 'A'
     elif (P2[4] and (_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) < threshold):
         table[24][0] = 'S'
-    elif ((P2[4] and not (_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) < threshold) or 
-         (P2[4] and (_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) < threshold)):
+    elif (P2[4] and not (_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) < threshold):
         table[24][0] = 'MA'
+    elif (P2[4] and (_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) < threshold):
+       table[24][0] = 'GC'
     elif ((P1[4] and _distance(o1_box.get_center() , po1_box.get_center()) > center_distance and _distance(o2_box.get_center() , po2_box.get_center()) > center_distance) or 
           (P1[4] and (xor(_distance(o1_box.get_center() , po1_box.get_center()) > center_distance, _distance(o2_box.get_center() , po2_box.get_center()) > center_distance)))):
         #print("\n!!!MT!!!")
@@ -1768,8 +1766,7 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
         #print("\nMT: (",P1[4], "and", _distance(o1_box.get_center() , po1_box.get_center()) > center_distance, "and", _distance(o2_box.get_center() , po2_box.get_center()) > center_distance, ") or (",P1[5], "and", (xor(_distance(o1_box.get_center() , po1_box.get_center()) > center_distance, _distance(o2_box.get_center() , po2_box.get_center()) > center_distance)))
         #print("\nMA: (",not (_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center()) < threshold), "or", ((_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) < threshold))
         table[24][0] = 'HT' 
-    #elif ((_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) < threshold):
-    #    table[24][0] = 'GC'
+    
     else:
         table[24][0] = 'Q'
     
@@ -1780,16 +1777,16 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
         table[25][0] = 'A'
     elif (P2[5] and (_distance(o1_box.get_center(), o3_box.get_center()) - _distance(po1_box.get_center(), po3_box.get_center())) < threshold):
         table[25][0] = 'S'
-    elif ((P2[5] and not (_distance(o1_box.get_center(), o3_box.get_center()) - _distance(po1_box.get_center(), po3_box.get_center())) < threshold) or 
-         (P2[5] and (_distance(o1_box.get_center(), o3_box.get_center()) - _distance(po1_box.get_center(), po3_box.get_center())) < threshold)):
+    elif (P2[5] and not (_distance(o1_box.get_center(), o3_box.get_center()) - _distance(po1_box.get_center(), po3_box.get_center())) < threshold):
         table[25][0] = 'MA'
+    elif (P2[5] and (_distance(o1_box.get_center(), o3_box.get_center()) - _distance(po1_box.get_center(), po3_box.get_center())) < threshold):
+       table[25][0] = 'GC'
     elif ((P1[5] and _distance(o1_box.get_center() , po1_box.get_center()) > center_distance and _distance(o3_box.get_center() , po3_box.get_center()) > center_distance) or 
           (P1[5] and (xor(_distance(o1_box.get_center() , po1_box.get_center()) > center_distance, _distance(o3_box.get_center() , po3_box.get_center()) > center_distance)))):
         table[25][0] = 'MT' 
     elif (P1[5] and not _distance(o1_box.get_center() , po1_box.get_center()) > center_distance and not _distance(o3_box.get_center() , po3_box.get_center()) > center_distance):
         table[25][0] = 'HT' 
-    #elif ((_distance(o1_box.get_center(), o3_box.get_center()) - _distance(po1_box.get_center(), po3_box.get_center())) < threshold):
-    #    table[25][0] = 'GC'
+    
     else:
         table[25][0] = 'Q'
     
@@ -1800,16 +1797,16 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
         table[26][0] = 'A'
     elif (P2[6] and (_distance(o1_box.get_center(), ground_box.get_center()) - _distance(po1_box.get_center(), pground_box.get_center())) < threshold):
         table[26][0] = 'S'
-    elif ((P2[6] and not (_distance(o1_box.get_center(), ground_box.get_center()) - _distance(po1_box.get_center(), pground_box.get_center())) < threshold) or
-         (P2[6] and (_distance(o1_box.get_center(), ground_box.get_center()) - _distance(po1_box.get_center(), pground_box.get_center())) < threshold)):
+    elif (P2[6] and not (_distance(o1_box.get_center(), ground_box.get_center()) - _distance(po1_box.get_center(), pground_box.get_center())) < threshold):
         table[26][0] = 'MA'
+    elif (P2[6] and (_distance(o1_box.get_center(), ground_box.get_center()) - _distance(po1_box.get_center(), pground_box.get_center())) < threshold):
+       table[26][0] = 'GC'
     elif ((P1[6] and _distance(o1_box.get_center() , po1_box.get_center()) > center_distance and _distance(ground_box.get_center() , pground_box.get_center()) > center_distance) or 
           (P1[6] and (xor(_distance(o1_box.get_center() , po1_box.get_center()) > center_distance, _distance(ground_box.get_center() , pground_box.get_center()) > center_distance)))):
         table[26][0] = 'MT' 
     elif (P1[6] and not _distance(o1_box.get_center() , po1_box.get_center()) > center_distance and not _distance(ground_box.get_center() , pground_box.get_center()) > center_distance):
         table[26][0] = 'HT' 
-    #elif ((_distance(o1_box.get_center(), ground_box.get_center()) - _distance(po1_box.get_center(), pground_box.get_center())) < threshold):
-    #    table[26][0] = 'GC'
+    
     else:
         table[26][0] = 'Q'
     
@@ -1820,16 +1817,16 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
         table[27][0] = 'A'
     elif (P2[7] and (_distance(o2_box.get_center(), o3_box.get_center()) - _distance(po2_box.get_center(), po3_box.get_center())) < threshold):
         table[27][0] = 'S'
-    elif ((P2[7] and not (_distance(o2_box.get_center(), o3_box.get_center()) - _distance(po2_box.get_center(), po3_box.get_center())) < threshold) or 
-         (P2[7] and (_distance(o2_box.get_center(), o3_box.get_center()) - _distance(po2_box.get_center(), po3_box.get_center())) < threshold)):
+    elif (P2[7] and not (_distance(o2_box.get_center(), o3_box.get_center()) - _distance(po2_box.get_center(), po3_box.get_center())) < threshold):
         table[27][0] = 'MA'
+    elif (P2[7] and (_distance(o2_box.get_center(), o3_box.get_center()) - _distance(po2_box.get_center(), po3_box.get_center())) < threshold):
+       table[27][0] = 'GC'
     elif ((P1[7] and _distance(o2_box.get_center() , po2_box.get_center()) > center_distance and _distance(o3_box.get_center() , po3_box.get_center()) > center_distance) or 
           (P1[7] and (xor(_distance(o2_box.get_center() , po2_box.get_center()) > center_distance, _distance(o3_box.get_center() , po3_box.get_center()) > center_distance)))):
         table[27][0] = 'MT' 
     elif (P1[7] and not _distance(o2_box.get_center() , po2_box.get_center()) > center_distance and not _distance(o3_box.get_center() , po3_box.get_center()) > center_distance):
         table[27][0] = 'HT' 
-    #elif ((_distance(o2_box.get_center(), o3_box.get_center()) - _distance(po2_box.get_center(), po3_box.get_center())) < threshold):
-    #    table[27][0] = 'GC'
+    
     else:
         table[27][0] = 'Q'
     
@@ -1842,16 +1839,16 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
         table[28][0] = 'A'
     elif (P2[8] and (_distance(o2_box.get_center(), ground_box.get_center()) - _distance(po2_box.get_center(), pground_box.get_center())) < threshold):
         table[28][0] = 'S'
-    elif ((P2[8] and not (_distance(o2_box.get_center(), ground_box.get_center()) - _distance(po2_box.get_center(), pground_box.get_center())) < threshold) or 
-         (P2[8] and (_distance(o2_box.get_center(), ground_box.get_center()) - _distance(po2_box.get_center(), pground_box.get_center())) < threshold)):
+    elif (P2[8] and not (_distance(o2_box.get_center(), ground_box.get_center()) - _distance(po2_box.get_center(), pground_box.get_center())) < threshold):
         table[28][0] = 'MA'
+    elif (P2[8] and (_distance(o2_box.get_center(), ground_box.get_center()) - _distance(po2_box.get_center(), pground_box.get_center())) < threshold):
+       table[28][0] = 'GC'
     elif ((P1[8] and _distance(o2_box.get_center() , po2_box.get_center()) > center_distance and _distance(ground_box.get_center() , pground_box.get_center()) > center_distance) or 
           (P1[8] and (xor(_distance(o2_box.get_center() , po2_box.get_center()) > center_distance, _distance(ground_box.get_center() , pground_box.get_center()) > center_distance)))):
         table[28][0] = 'MT' 
     elif (P1[8] and not _distance(o2_box.get_center() , po2_box.get_center()) > center_distance and not _distance(ground_box.get_center() , pground_box.get_center()) > center_distance):
         table[28][0] = 'HT' 
-    #elif ((_distance(o2_box.get_center(), ground_box.get_center()) - _distance(po2_box.get_center(), pground_box.get_center())) < threshold):
-    #    table[28][0] = 'GC'
+    
     else:
         table[28][0] = 'Q'
         
@@ -1861,16 +1858,16 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
         table[29][0] = 'A'
     elif (P2[9] and (_distance(o3_box.get_center(), ground_box.get_center()) - _distance(po3_box.get_center(), pground_box.get_center())) < threshold):
         table[29][0] = 'S'
-    elif ((P2[9] and not (_distance(o3_box.get_center(), ground_box.get_center()) - _distance(po3_box.get_center(), pground_box.get_center())) < threshold) or 
-         (P2[9] and (_distance(o3_box.get_center(), ground_box.get_center()) - _distance(po3_box.get_center(), pground_box.get_center())) < threshold)):
+    elif (P2[9] and not (_distance(o3_box.get_center(), ground_box.get_center()) - _distance(po3_box.get_center(), pground_box.get_center())) < threshold):
         table[29][0] = 'MA'
+    elif (P2[9] and (_distance(o3_box.get_center(), ground_box.get_center()) - _distance(po3_box.get_center(), pground_box.get_center())) < threshold):
+       table[29][0] = 'GC'
     elif ((P1[9] and _distance(o3_box.get_center() , po3_box.get_center()) > center_distance and _distance(ground_box.get_center() , pground_box.get_center()) > center_distance) or 
           (P1[9] and (xor(_distance(o3_box.get_center() , po3_box.get_center()) > center_distance, _distance(ground_box.get_center() , pground_box.get_center()) > center_distance)))):
         table[29][0] = 'MT' 
     elif (P1[9] and not _distance(o3_box.get_center() , po3_box.get_center()) > center_distance and not _distance(ground_box.get_center() , pground_box.get_center()) > center_distance):
         table[29][0] = 'HT' 
-    #elif ((_distance(o3_box.get_center(), ground_box.get_center()) - _distance(po3_box.get_center(), pground_box.get_center())) < threshold):
-    #    table[29][0] = 'GC'
+    
     else:
         table[29][0] = 'Q'
 
@@ -2547,6 +2544,13 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                 if cython == True:
                     center = np.array(pcd[i].get_center())
                     filtered_pcd_voxel_array = filter_cython.region_filter_cython(center, objects[i], i == hand_label_inarray)
+                   
+                    #alpha = 0.02
+                    #tetra_mesh, pt_map = o3d.geometry.TetraMesh.create_from_point_cloud(pcd[i])
+                    #mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(pcd[i], alpha, tetra_mesh, pt_map)
+                    #mesh.compute_vertex_normals()
+                    
+                    #filtered_pcd_voxel[i] = mesh.sample_points_uniformly(number_of_points=10000)
                     if isinstance(filtered_pcd_voxel_array, int):
                         filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
 
