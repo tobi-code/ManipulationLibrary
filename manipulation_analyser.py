@@ -2808,28 +2808,120 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                             ax2.set_xlim(-1,0.75)
 
                             #ax1.plot(np.array(mesh_frame)[:,0], np.array(mesh_frame)[:,1], ".g", label = 'hand')
+                            hand_box = hand.get_axis_aligned_bounding_box()
+                            points_hand = np.asarray(hand_box.get_box_points())
+                            hand_max_x, hand_max_y, hand_max_z = np.max(points_hand[:,0]), np.max(points_hand[:,1]), np.max(points_hand[:,2])
+                            hand_min_x, hand_min_y, hand_min_z = np.min(points_hand[:,0]), np.min(points_hand[:,1]), np.min(points_hand[:,2])
+
+                            ground_box = ground.get_axis_aligned_bounding_box()
+                            points_ground = np.asarray(ground_box.get_box_points())
+                            ground_max_x, ground_max_y, ground_max_z = np.max(points_ground[:,0]), np.max(points_ground[:,1]), np.max(points_ground[:,2])
+                            ground_min_x, ground_min_y, ground_min_z = np.min(points_ground[:,0]), np.min(points_ground[:,1]), np.min(points_ground[:,2])
+
                             ax1.plot(np.array(hand.points)[:,0], np.array(hand.points)[:,1], ".g", label = 'hand')
-                            ax2.text(-1, 0.4, pcd_file)
-        #                    ax1.plot(np.array(cutted.points)[:,0], np.array(cutted.points)[:,1], ".b", label = 'cutted')
-                            ax2.plot(np.array(hand.points)[:,1], np.array(hand.points)[:,2], ".g", label = 'hand')
-        #                     ax1.plot(np.array(ground2.points)[:,0], np.array(ground2.points)[:,2], ".r", label = 'ground frame %d (unfiltered)'%frame)
-        #                     ax2.plot(np.array(ground2.points)[:,1], np.array(ground2.points)[:,2], ".r", label = 'ground frame %d (unfiltered)'%frame)
+
+                            ax1.plot((hand_max_x, hand_max_x), (hand_min_y,hand_max_y), "-g")
+                            ax1.plot((hand_min_x, hand_min_x), (hand_max_y,hand_min_y), "-g")
+
+                            ax1.plot((hand_max_x, hand_min_x), (hand_max_y,hand_max_y), "-g")
+                            ax1.plot((hand_min_x, hand_max_x), (hand_min_y,hand_min_y), "-g")
+
                             ax1.plot(np.array(ground.points)[:,0], np.array(ground.points)[:,1], ".k", label = 'ground frame 0 (filtered)')
+
+                            ax1.plot((ground_max_x, ground_max_x), (ground_min_y,ground_max_y), "-k")
+                            ax1.plot((ground_min_x, ground_min_x), (ground_max_y,ground_min_y), "-k")
+
+                            ax1.plot((ground_max_x, ground_min_x), (ground_max_y,ground_max_y), "-k")
+                            ax1.plot((ground_min_x, ground_max_x), (ground_min_y,ground_min_y), "-k")
+
+                            ax2.text(-1, 0.4, pcd_file)
+
+                            ax2.plot(np.array(hand.points)[:,1], np.array(hand.points)[:,2], ".g", label = 'hand')
+
+                            ax2.plot((hand_max_y, hand_max_y), (hand_min_z,hand_max_z), "-g")
+                            ax2.plot((hand_min_y, hand_min_y), (hand_max_z,hand_min_z), "-g")
+
+                            ax2.plot((hand_max_y, hand_min_y), (hand_max_z,hand_max_z), "-g")
+                            ax2.plot((hand_min_y, hand_max_y), (hand_min_z,hand_min_z), "-g")
+
                             ax2.plot(np.array(ground.points)[:,1], np.array(ground.points)[:,2], ".k", label = 'ground frame 0 (filtered)')
+
+                            ax2.plot((ground_max_y, ground_max_y), (ground_min_z,ground_max_z), "-k")
+                            ax2.plot((ground_min_y, ground_min_y), (ground_max_z,ground_min_z), "-k")
+
+                            ax2.plot((ground_max_y, ground_min_y), (ground_max_z,ground_max_z), "-k")
+                            ax2.plot((ground_min_y, ground_max_y), (ground_min_z,ground_min_z), "-k")
 
                             if(count1 == 1):
         #                         hand.paint_uniform_color([1, 0, 0])
         #                         o1.paint_uniform_color([0, 1, 0])
         #                         ground.paint_uniform_color([0, 0, 0])
         #                         o3d.visualization.draw_geometries([o1, hand,ground])
+
+                                o1_box = o1.get_axis_aligned_bounding_box()
+                                points_o1 = np.asarray(o1_box.get_box_points())
+                                o1_max_x, o1_max_y, o1_max_z = np.max(points_o1[:,0]), np.max(points_o1[:,1]), np.max(points_o1[:,2])
+                                o1_min_x, o1_min_y, o1_min_z = np.min(points_o1[:,0]), np.min(points_o1[:,1]), np.min(points_o1[:,2])
                                 ax1.plot(np.array(o1.points)[:,0], np.array(o1.points)[:,1], ".r", label = 'o1 label:%d'%total_unique_labels[o1_label])
+                                
+                                ax1.plot((o1_max_x, o1_max_x), (o1_min_y,o1_max_y), "-r")
+                                ax1.plot((o1_min_x, o1_min_x), (o1_max_y,o1_min_y), "-r")
+
+                                ax1.plot((o1_max_x, o1_min_x), (o1_max_y,o1_max_y), "-r")
+                                ax1.plot((o1_min_x, o1_max_x), (o1_min_y,o1_min_y), "-r")
+
                                 ax2.plot(np.array(o1.points)[:,1], np.array(o1.points)[:,2], ".r", label = 'o1 label:%d'%total_unique_labels[o1_label])
+                                ax2.plot((o1_max_y, o1_max_y), (o1_min_z,o1_max_z), "-r")
+                                ax2.plot((o1_min_y, o1_min_y), (o1_max_z,o1_min_z), "-r")
+
+                                ax2.plot((o1_max_y, o1_min_y), (o1_max_z,o1_max_z), "-r")
+                                ax2.plot((o1_min_y, o1_max_y), (o1_min_z,o1_min_z), "-r")
+                                
                                 if(count2 == 1):
+
+                                    o2_box = o2.get_axis_aligned_bounding_box()
+                                    points_o2 = np.asarray(o2_box.get_box_points())
+                                    o2_max_x, o2_max_y, o2_max_z = np.max(points_o2[:,0]), np.max(points_o2[:,1]), np.max(points_o2[:,2])
+                                    o2_min_x, o2_min_y, o2_min_z = np.min(points_o2[:,0]), np.min(points_o2[:,1]), np.min(points_o2[:,2])
+                                    
                                     ax1.plot(np.array(o2.points)[:,0], np.array(o2.points)[:,1], ".b", label = 'o2 label:%d'%total_unique_labels[o2_label])
+                                    
+                                    ax1.plot((o2_max_x, o2_max_x), (o2_min_y,o2_max_y), "-b")
+                                    ax1.plot((o2_min_x, o2_min_x), (o2_max_y,o2_min_y), "-b")
+
+                                    ax1.plot((o2_max_x, o2_min_x), (o2_max_y,o2_max_y), "-b")
+                                    ax1.plot((o2_min_x, o2_max_x), (o2_min_y,o2_min_y), "-b")
+                                    
                                     ax2.plot(np.array(o2.points)[:,1], np.array(o2.points)[:,2], ".b", label = 'o2 label:%d'%total_unique_labels[o2_label])
+
+                                    ax2.plot((o2_max_y, o2_max_y), (o2_min_z,o2_max_z), "-b")
+                                    ax2.plot((o2_min_y, o2_min_y), (o2_max_z,o2_min_z), "-b")
+
+                                    ax2.plot((o2_max_y, o2_min_y), (o2_max_z,o2_max_z), "-b")
+                                    ax2.plot((o2_min_y, o2_max_y), (o2_min_z,o2_min_z), "-b")
+                                    
                                     if count3 == 1:
+
+                                        o3_box = o3.get_axis_aligned_bounding_box()
+                                        points_o3 = np.asarray(o3_box.get_box_points())
+                                        o3_max_x, o3_max_y, o3_max_z = np.max(points_o3[:,0]), np.max(points_o3[:,1]), np.max(points_o3[:,2])
+                                        o3_min_x, o3_min_y, o3_min_z = np.min(points_o3[:,0]), np.min(points_o3[:,1]), np.min(points_o3[:,2])
                                         ax1.plot(np.array(o3.points)[:,0], np.array(o3.points)[:,1], ".y", label = 'o3 label:%d'%total_unique_labels[o3_label])
+                                        
+                                        ax1.plot((o3_max_x, o3_max_x), (o3_min_y,o3_max_y), "-y")
+                                        ax1.plot((o3_min_x, o3_min_x), (o3_max_y,o3_min_y), "-y")
+
+                                        ax1.plot((o3_max_x, o3_min_x), (o3_max_y,o3_max_y), "-y")
+                                        ax1.plot((o3_min_x, o3_max_x), (o3_min_y,o3_min_y), "-y")
+                                        
                                         ax2.plot(np.array(o3.points)[:,1], np.array(o3.points)[:,2], ".y", label = 'o3 label:%d'%total_unique_labels[o3_label])
+
+                                        ax2.plot((o3_max_y, o3_max_y), (o3_min_z,o3_max_z), "-y")
+                                        ax2.plot((o3_min_y, o3_min_y), (o3_max_z,o3_min_z), "-y")
+
+                                        ax2.plot((o3_max_y, o3_min_y), (o3_max_z,o3_max_z), "-y")
+                                        ax2.plot((o3_min_y, o3_max_y), (o3_min_z,o3_min_z), "-y")
+                        
                         ax1.legend(loc = 'upper right')
                         ax2.legend(loc = 'upper right')
                         #plt.axis('off')
