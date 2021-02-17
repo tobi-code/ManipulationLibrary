@@ -1021,8 +1021,8 @@ def _fillSSR_3(hand, ground, table):
            (hand_min_x < o1_min_x and hand_max_x > o1_max_x) and
            (hand_min_z < o1_min_z and hand_max_z > o1_max_z)):
             table[10][0] = 'Sa'       
-        elif(((hand_min_y < o1_min_y and o1_max_y > hand_max_y) or
-            (hand_min_y > o1_min_y and o1_max_y < hand_max_y))and
+        elif(((hand_min_y < o1_box.get_center()[2]  and o1_max_y > hand_max_y) or
+            (hand_min_y > o1_box.get_center()[2]  and o1_max_y < hand_max_y))and
            ((o1_min_x < hand_min_x and o1_max_x < hand_max_x) or
             (o1_min_x > hand_min_x and o1_max_x < hand_max_x) or
             (o1_min_x > hand_min_x and o1_max_x > hand_max_x) or
@@ -1055,8 +1055,8 @@ def _fillSSR_3(hand, ground, table):
            (hand_min_x < o2_min_x and hand_max_x > o2_max_x) and
            (hand_min_z < o2_min_z and hand_max_z > o2_max_z)):
             table[11][0] = 'Sa'      
-        elif(((hand_min_y < o2_min_y and o2_max_y > hand_max_y) or
-            (hand_min_y > o2_min_y and o2_max_y < hand_max_y)) and
+        elif(((hand_min_y < o2_box.get_center()[2]  and o2_max_y > hand_max_y) or
+            (hand_min_y > o2_box.get_center()[2]  and o2_max_y < hand_max_y)) and
            ((o2_min_x < hand_min_x and o2_max_x < hand_max_x) or
             (o2_min_x > hand_min_x and o2_max_x < hand_max_x) or
             (o2_min_x > hand_min_x and o2_max_x > hand_max_x) or
@@ -1090,8 +1090,8 @@ def _fillSSR_3(hand, ground, table):
            (hand_min_x < o3_min_x and hand_max_x > o3_max_x) and
            (hand_min_z < o3_min_z and hand_max_z > o3_max_z)):
             table[12][0] = 'Sa' 
-        elif(((hand_min_y < o3_min_y and o3_max_y > hand_max_y)or
-            (hand_min_y > o3_min_y and o3_max_y < hand_max_y)) and
+        elif(((hand_min_y < o3_box.get_center()[2]  and o3_max_y > hand_max_y)or
+            (hand_min_y > o3_box.get_center()[2]  and o3_max_y < hand_max_y)) and
            ((o3_min_x < hand_min_x and o3_max_x < hand_max_x) or
             (o3_min_x > hand_min_x and o3_max_x < hand_max_x) or
             (o3_min_x > hand_min_x and o3_max_x > hand_max_x) or
@@ -1119,8 +1119,8 @@ def _fillSSR_3(hand, ground, table):
            (hand_min_x < ground_min_x and hand_max_x > ground_max_x) and
            (hand_min_z < ground_min_z and hand_max_z > ground_max_z)):
             table[13][0] = 'Sa'    
-        elif(((hand_min_y < ground_min_y and ground_max_y > hand_max_y) or
-            (hand_min_y > ground_min_y and ground_max_y < hand_max_y)) and
+        elif(((hand_min_y < ground_box.get_center()[2]  and ground_max_y > hand_max_y) or
+            (hand_min_y > ground_box.get_center()[2]  and ground_max_y < hand_max_y)) and
            ((ground_min_x < hand_min_x and ground_max_x < hand_max_x) or
             (ground_min_x > hand_min_x and ground_max_x < hand_max_x) or
             (ground_min_x > hand_min_x and ground_max_x > hand_max_x) or
@@ -1165,8 +1165,8 @@ def _fillSSR_3(hand, ground, table):
        (o1_min_x < o2_min_x and o1_max_x > o2_max_x) and
        (o1_min_z < o2_min_z and o1_max_z > o2_max_z)):
         table[14][0] = 'Sa'       
-    elif(((o1_min_y < o2_min_y and o2_max_y > o1_max_y) or
-        (o1_min_y > o2_min_y and o2_max_y < o1_max_y)) and
+    elif(((o1_min_y < o2_box.get_center()[2]  and o2_max_y > o1_max_y) or
+        (o1_min_y > o2_box.get_center()[2]  and o2_max_y < o1_max_y)) and
            ((o2_min_x < o1_min_x and o2_max_x < o1_max_x) or
             (o2_min_x > o1_min_x and o2_max_x < o1_max_x) or
             (o2_min_x > o1_min_x and o2_max_x > o1_max_x) or
@@ -1175,7 +1175,6 @@ def _fillSSR_3(hand, ground, table):
             (o2_min_z > o1_min_z and o2_max_z < o1_max_z) or
             (o2_min_z > o1_min_z and o2_max_z > o1_max_z) or
             (o2_min_z < o1_min_z and o2_max_z > o1_max_z))):
-            print("jo")
             if table[4][0] == b'T':
                 table[14][0] = 'VArT'
             else:
@@ -1199,8 +1198,8 @@ def _fillSSR_3(hand, ground, table):
            (o1_min_x < o3_min_x and o1_max_x > o3_max_x) and
            (o1_min_z < o3_min_z and o1_max_z > o3_max_z)):
             table[15][0] = 'Sa'       
-    elif(((o1_min_y < o3_min_y and o3_max_y > o1_max_y) or
-        (o1_min_y > o3_min_y and o3_max_y < o1_max_y)) and
+    elif(((o1_min_y < o3_box.get_center()[2]  and o3_max_y > o1_max_y) or
+        (o1_min_y > o3_box.get_center()[2]  and o3_max_y < o1_max_y)) and
            ((o3_min_x < o1_min_x and o3_max_x < o1_max_x) or
             (o3_min_x > o1_min_x and o3_max_x < o1_max_x) or
             (o3_min_x > o1_min_x and o3_max_x > o1_max_x) or
@@ -1231,8 +1230,8 @@ def _fillSSR_3(hand, ground, table):
            (o1_min_x < ground_min_x and o1_max_x > ground_max_x) and
            (o1_min_z < ground_min_z and o1_max_z > ground_max_z)):
             table[16][0] = 'Sa'        
-    elif(((o1_min_y < ground_min_y and ground_max_y > o1_max_y) or
-        (o1_min_y > ground_min_y and ground_max_y < o1_max_y)) and
+    elif(((o1_min_y < ground_box.get_center()[2]  and ground_max_y > o1_max_y) or
+        (o1_min_y > ground_box.get_center()[2]  and ground_max_y < o1_max_y)) and
            ((ground_min_x < o1_min_x and ground_max_x < o1_max_x) or
             (ground_min_x > o1_min_x and ground_max_x < o1_max_x) or
             (ground_min_x > o1_min_x and ground_max_x > o1_max_x) or
@@ -1263,8 +1262,8 @@ def _fillSSR_3(hand, ground, table):
            (o2_min_x < o3_min_x and o2_max_x > o3_max_x) and
            (o2_min_z < o3_min_z and o2_max_z > o3_max_z)):
             table[17][0] = 'Sa'        
-    elif(((o2_min_y < o3_min_y and o3_max_y > o2_max_y) or
-        (o2_min_y > o3_min_y and o3_max_y < o2_max_y)) and
+    elif(((o2_min_y < o3_box.get_center()[2]  and o3_max_y > o2_max_y) or
+        (o2_min_y > o3_box.get_center()[2]  and o3_max_y < o2_max_y)) and
            ((o3_min_x < o2_min_x and o3_max_x < o2_max_x) or
             (o3_min_x > o2_min_x and o3_max_x < o2_max_x) or
             (o3_min_x > o2_min_x and o3_max_x > o2_max_x) or
@@ -1295,8 +1294,8 @@ def _fillSSR_3(hand, ground, table):
            (o2_min_x < ground_min_x and o2_max_x > ground_max_x) and
            (o2_min_z < ground_min_z and o2_max_z > ground_max_z)):
             table[18][0] = 'Sa'        
-    elif(((o2_min_y < ground_min_y and ground_max_y > o2_max_y) or
-        (o2_min_y > ground_min_y and ground_max_y < o2_max_y)) and
+    elif(((o2_min_y < ground_box.get_center()[2]  and ground_max_y > o2_max_y) or
+        (o2_min_y > ground_box.get_center()[2]  and ground_max_y < o2_max_y)) and
            ((ground_min_x < o2_min_x and ground_max_x < o2_max_x) or
             (ground_min_x > o2_min_x and ground_max_x < o2_max_x) or
             (ground_min_x > o2_min_x and ground_max_x > o2_max_x) or
@@ -1327,8 +1326,8 @@ def _fillSSR_3(hand, ground, table):
            (o3_min_x < ground_min_x and o3_max_x > ground_max_x) and
            (o3_min_z < ground_min_z and o3_max_z > ground_max_z)):
             table[19][0] = 'Sa'        
-    elif(((o3_min_y < ground_min_y and ground_max_y > o3_max_y) or
-        (o3_min_y > ground_min_y and ground_max_y < o3_max_y)) and
+    elif(((o3_min_y < ground_box.get_center()[2] and ground_max_y > o3_max_y) or
+        (o3_min_y > ground_box.get_center()[2] and ground_max_y < o3_max_y)) and
            ((ground_min_x < o3_min_x and ground_max_x < o3_max_x) or
             (ground_min_x > o3_min_x and ground_max_x < o3_max_x) or
             (ground_min_x > o3_min_x and ground_max_x > o3_max_x) or
@@ -1348,6 +1347,610 @@ def _fillSSR_3(hand, ground, table):
         else:
             table[19][0] = 'HAr'
 
+def _fillSSR_4(hand, ground, table):
+    '''
+    Creates the SSR with pre-defined point clouds of hand and ground.
+    
+    Parameters:
+        * hand: point cloud of the hand
+        * ground: point cloud of the ground
+        * table: chararray table   
+    '''
+#     SSR
+#     H, 1
+#     H, 2
+#     H, 3
+#     H, G
+#     1, 2
+#     1, 3
+#     1, G
+#     2, 3
+#     2, G
+#     3, G
+
+    #get global objects 1, 2 and 3
+    global o1, o2, o3
+    #--------------------------------------------------
+    #y-z replaced 
+    # |y
+    # |
+    # |    - z
+    # |   -
+    # |  -
+    # |-
+    #  - - - - - - - - - - - - - -x
+    #--------------------------------------------------
+    #create AABB around object1 if it is defined and not absecent in the scene
+    if(o1 != None and table[0][0] != b'A'):
+        o1_box = o1.get_axis_aligned_bounding_box()
+        points = np.asarray(o1_box.get_box_points())
+        o1_max_x, o1_max_z, o1_max_y = np.max(points[:,0]), np.max(points[:,1]), np.max(points[:,2])
+        o1_min_x, o1_min_z, o1_min_y = np.min(points[:,0]), np.min(points[:,1]), np.min(points[:,2])
+        
+    #create AABB around object2 if it is defined and not absecent in the scene   
+    if(o2 != None and table[1][0] != b'A'):
+        o2_box = o2.get_axis_aligned_bounding_box()
+        points = np.asarray(o2_box.get_box_points())
+        o2_max_x, o2_max_z, o2_max_y = np.max(points[:,0]), np.max(points[:,1]), np.max(points[:,2])
+        o2_min_x, o2_min_z, o2_min_y = np.min(points[:,0]), np.min(points[:,1]), np.min(points[:,2])
+    
+    #create AABB around object2 if it is defined and not absecent in the scene
+    if(o3 != None and table[2][0] != b'A'):
+        o3_box = o3.get_axis_aligned_bounding_box()
+        points = np.asarray(o3_box.get_box_points())
+        o3_max_x, o3_max_z, o3_max_y = np.max(points[:,0]), np.max(points[:,1]), np.max(points[:,2])
+        o3_min_x, o3_min_z, o3_min_y = np.min(points[:,0]), np.min(points[:,1]), np.min(points[:,2])
+        
+    #create AABB around hand if it has a point cloud
+    if(len(hand.points) > 0):
+        hand_box = hand.get_axis_aligned_bounding_box()
+        points = np.asarray(hand_box.get_box_points())
+        hand_max_x, hand_max_z, hand_max_y = np.max(points[:,0]), np.max(points[:,1]), np.max(points[:,2])
+        hand_min_x, hand_min_z, hand_min_y = np.min(points[:,0]), np.min(points[:,1]), np.min(points[:,2])
+    
+    #create AABB around ground
+    ground_box = ground.get_axis_aligned_bounding_box()
+    points = np.asarray(ground_box.get_box_points())
+    ground_max_x, ground_max_z, ground_max_y = np.max(points[:,0]), np.max(points[:,1]), np.max(points[:,2])
+    ground_min_x, ground_min_z, ground_min_y = np.min(points[:,0]), np.min(points[:,1]), np.min(points[:,2])
+    
+
+    
+    if(o1 == None):
+        table[10][0] = 'U'
+    elif(table[0][0] == b'A'):
+        table[10][0] = 'A'   
+    elif(len(hand.points) > 0):
+        if((hand_min_y > o1_min_y and hand_min_y < o1_max_y) and
+        #    (hand_min_x > o1_min_x and hand_max_x < o1_max_x) and
+           (hand_min_z > o1_min_z and hand_max_z < o1_max_z)):
+            table[10][0] = 'In'  
+            # print("Hand in o1:",
+            # "(",hand_min_y > o1_min_y, "and", hand_min_y < o1_max_y,")", "and",
+            # "(",hand_min_z > o1_min_z ,"and", hand_max_z < o1_max_z,"))") 
+
+        elif((hand_min_y < o1_min_y and hand_min_y > o1_max_y) and
+           (hand_min_x < o1_min_x and hand_max_x > o1_max_x) and
+           (hand_min_z < o1_min_z and hand_max_z > o1_max_z)):
+            table[10][0] = 'Sa'       
+        elif(((hand_min_y >= o1_min_y) or
+              (hand_max_y <= o1_max_y) or
+              (o1_max_y >= hand_max_y) or
+              (o1_min_y <=hand_min_y))and
+             ((hand_max_x < o1_max_x) or
+              (hand_min_x > o1_min_x) or
+              (hand.get_center()[0] <= o1_max_x) or
+              (hand.get_center()[0] >= o1_min_x))and
+             ((hand_max_z < o1_max_z) or
+              (hand_min_z > o1_min_z) or
+              (hand.get_center()[1] <= o1_max_z) or
+              (hand.get_center()[1] >= o1_min_z))):
+            if table[0][0] == b'T':
+                table[10][0] = 'VArT'
+            else:
+                table[10][0] = 'VAr'
+        elif(((hand_min_y > o1_min_y) or
+              (hand_max_y < o1_max_y) or
+              (hand.get_center()[2] <= o1_max_y) or
+              (hand.get_center()[2] >= o1_min_y)) and
+             ((hand_max_x < o1_max_x) or
+              (hand_min_x > o1_min_x) or
+              (hand_min_x < o1_min_x) or 
+              (hand_max_x > o1_max_x))and
+             ((hand_max_z < o1_max_z) or
+              (hand_min_z > o1_min_z) or
+              (hand_max_z > o1_max_z) or
+              (hand_min_z < o1_min_z))):
+            if table[0][0] == b'T':
+                table[10][0] = 'HArT'
+            else:
+                table[10][0] = 'HAr'
+        else:
+            print("Fehler: H,o1")
+            # print("\n",
+            # "((",hand_min_y >= o1_box.get_center()[2],")", "or","\n",
+            # "(",hand_max_y <=o1_min_y,')', 'or',"\n",
+            # '(',o1_min_y >= hand_max_y,")", "or","\n",
+            # "(",o1_box.get_center()[2] <=hand_min_y,"))","and","\n",
+            # "((",hand_max_x < o1_max_x,")", "or","\n",
+            # "(",hand_min_x > o1_min_x,")", "or","\n",
+            # "(",hand.get_center()[0] <= o1_max_x,")", "or","\n",
+            # "(",hand.get_center()[0] >= o1_min_x,"))","and","\n",
+            # "((",hand_max_z < o1_max_z,")", "or","\n",
+            # "(",hand_min_z > o1_min_z,")", "or","\n",
+            # "(",hand.get_center()[1] <= o1_max_z,")", "or","\n",
+            # "(",hand.get_center()[1] >= o1_min_z,"))","\n",
+            # "\n\n",
+            # "((",hand_min_y > o1_min_y,")", "or","\n",
+            # "(",hand_max_y < o1_max_y,")", "or","\n",
+            # "(",hand.get_center()[2] <= o1_max_y,")", "or","\n",
+            # "(",hand.get_center()[2] >= o1_min_y,"))", "and","\n",
+            # "((",hand_max_x < o1_min_x,")", "or","\n",
+            # "(",hand_min_x > o1_max_x,"))","and","\n",
+            # "((",hand_max_z < o1_min_z,")", "or","\n",
+            # "(",hand_min_z > o1_max_z,")))")
+        
+        
+    if(o2 == None):
+        table[11][0] = 'U'
+    elif(table[1][0] == b'A'):
+        table[11][0] = 'A'
+    elif(len(hand.points) > 0):
+        if((hand_min_y > o2_min_y and hand_min_y < o2_max_y) and
+        #    (hand_min_x > o2_min_x and hand_max_x < o2_max_x) and
+           (hand_min_z > o2_min_z and hand_max_z < o2_max_z)):
+            table[11][0] = 'In'     
+        elif((hand_min_y < o2_min_y and hand_min_y > o2_max_y) and
+           (hand_min_x < o2_min_x and hand_max_x > o2_max_x) and
+           (hand_min_z < o2_min_z and hand_max_z > o2_max_z)):
+            table[11][0] = 'Sa'      
+        elif(((hand_min_y >= o2_min_y) or
+              (hand_max_y <=o2_max_y) or
+              (o2_max_y >= hand_max_y) or
+              (o2_min_y <=hand_min_y))and
+             ((hand_max_x < o2_max_x) or
+              (hand_min_x > o2_min_x) or
+              (hand.get_center()[0] <= o2_max_x) or
+              (hand.get_center()[0] >= o2_min_x))and
+             ((hand_max_z < o2_max_z) or
+              (hand_min_z > o2_min_z) or
+              (hand.get_center()[1] <= o2_max_z) or
+              (hand.get_center()[1] >= o2_min_z))):
+            if table[1][0] == b'T':
+                table[11][0] = 'VArT'
+            else:
+                table[11][0] = 'VAr'
+        elif(((hand_min_y > o2_min_y) or
+              (hand_max_y < o2_max_y) or
+              (hand.get_center()[2] <= o2_max_y) or
+              (hand.get_center()[2] >= o2_min_y)) and
+             ((hand_max_x < o2_max_x) or
+              (hand_min_x > o2_min_x) or
+              (hand_max_x > o2_max_x) or
+              (hand_min_x < o2_min_x))and
+             ((hand_max_z < o2_max_z) or
+              (hand_min_z > o2_min_z) or
+              (hand_max_z > o2_max_z) or
+              (hand_min_z < o2_min_z))):
+                if table[1][0] == b'T':
+                    table[11][0] = 'HArT'
+                else:
+                    table[11][0] = 'HAr'
+        else:
+            print("Fehler: H,o2")
+            print("\n",
+            "((",hand_min_y >= o2_box.get_center()[2],")", "or","\n",
+            "(",hand_max_y <=o2_min_y,')', 'or',"\n",
+            '(',o2_min_y >= hand_max_y,")", "or","\n",
+            "(",o2_box.get_center()[2] <=hand_min_y,"))","and","\n",
+            "((",hand_max_x < o2_max_x,")", "or","\n",
+            "(",hand_min_x > o2_min_x,")", "or","\n",
+            "(",hand.get_center()[0] <= o2_max_x,")", "or","\n",
+            "(",hand.get_center()[0] >= o2_min_x,"))","and","\n",
+            "((",hand_max_z < o2_max_z,")", "or","\n",
+            "(",hand_min_z > o2_min_z,")", "or","\n",
+            "(",hand.get_center()[1] <= o2_max_z,")", "or","\n",
+            "(",hand.get_center()[1] >= o2_min_z,"))","\n",
+            "\n\n",
+            "((",hand_min_y > o2_min_y,")", "or","\n",
+            "(",hand_max_y < o2_max_y,")", "or","\n",
+            "(",hand.get_center()[2] <= o2_max_y,")", "or","\n",
+            "(",hand.get_center()[2] >= o2_min_y,"))", "and","\n",
+            "((",hand_max_x < o2_min_x,")", "or","\n",
+            "(",hand_min_x > o2_max_x,"))","and","\n",
+            "((",hand_max_z < o2_min_z,")", "or","\n",
+            "(",hand_min_z > o2_max_z,")))")
+
+    #print(table[11][0])
+
+    if(o3 == None):
+        table[12][0] = 'U'
+    elif(table[2][0] == b'A'):
+        table[12][0] = 'A'
+    elif(len(hand.points) > 0):
+        if((hand_min_y > o3_min_y and hand_min_y < o3_max_y) and
+        #    (hand_min_x > o3_min_x and hand_max_x < o3_max_x) and
+           (hand_min_z > o3_min_z and hand_max_z < o3_max_z)):
+            table[12][0] = 'In'   
+        if((hand_min_y < o3_min_y and hand_min_y > o3_max_y) and
+           (hand_min_x < o3_min_x and hand_max_x > o3_max_x) and
+           (hand_min_z < o3_min_z and hand_max_z > o3_max_z)):
+            table[12][0] = 'Sa' 
+        elif(((hand_min_y >= o3_min_y) or
+              (hand_max_y <=o3_max_y) or
+              (o3_max_y >= hand_max_y) or
+              (o3_min_y <=hand_min_y))and
+             ((hand_max_x < o3_max_x) or
+              (hand_min_x > o3_min_x) or
+              (hand.get_center()[0] <= o3_max_x) or
+              (hand.get_center()[0] >= o3_min_x))and
+             ((hand_max_z < o3_max_z) or
+              (hand_min_z > o3_min_z) or
+              (hand.get_center()[1] <= o3_max_z) or
+              (hand.get_center()[1] >= o3_min_z))):
+            if table[2][0] == b'T':
+                table[12][0] = 'VArT'
+            else:
+                table[12][0] = 'VAr'
+        elif(((hand_min_y > o3_min_y) or
+              (hand_max_y < o3_max_y) or
+              (hand.get_center()[2] <= o3_max_y) or
+              (hand.get_center()[2] >= o3_min_y)) and
+             ((hand_max_x < o3_max_x) or
+              (hand_min_x > o3_min_x) or
+              (hand_max_x > o3_max_x) or
+              (hand_min_x < o3_min_x))and
+             ((hand_max_z < o3_max_z) or
+              (hand_min_z > o3_min_z) or
+              (hand_max_z > o3_max_z) or
+              (hand_min_z < o3_min_z))):
+                if table[2][0] == b'T':
+                    table[12][0] = 'HArT'
+                else:
+                    table[12][0] = 'HAr'
+        else:
+            print("Fehler: H,o3")
+        
+    if(len(hand.points) > 0): 
+        # if((hand_min_y > ground_min_y and hand_min_y < ground_max_y) and
+        # #    (hand_min_x > ground_min_x and hand_max_x < ground_max_x) and
+        #    (hand_min_z > ground_min_z and hand_max_z < ground_max_z)):
+        #     table[13][0] = 'In' 
+        # if((hand_min_y < ground_min_y and hand_min_y > ground_max_y) and
+        #    (hand_min_x < ground_min_x and hand_max_x > ground_max_x) and
+        #    (hand_min_z < ground_min_z and hand_max_z > ground_max_z)):
+        #     table[13][0] = 'Sa'    
+        if(((hand_min_y >= ground_min_y) or
+              (hand_max_y <=ground_max_y) or
+              (ground_max_y >= hand_max_y) or
+              (ground_min_y <=hand_min_y))and
+             ((hand_max_x < ground_max_x) or
+              (hand_min_x > ground_min_x) or
+              (hand.get_center()[0] <= ground_max_x) or
+              (hand.get_center()[0] >= ground_min_x))and
+             ((hand_max_z < ground_max_z) or
+              (hand_min_z > ground_min_z) or
+              (hand.get_center()[1] <= ground_max_z) or
+              (hand.get_center()[1] >= ground_min_z))):
+            if table[3][0] == b'T':
+                table[13][0] = 'VArT'
+            else:
+                table[13][0] = 'VAr'
+        elif(((hand_min_y > ground_min_y) or
+              (hand_max_y < ground_max_y) or
+              (hand.get_center()[2] <= ground_max_y) or
+              (hand.get_center()[2] >= ground_min_y)) and
+             ((hand_max_x < ground_max_x) or
+              (hand_min_x > ground_min_x) or
+              (hand_max_x > ground_max_x) or
+              (hand_min_x < ground_min_x))and
+             ((hand_max_z < ground_max_z) or
+              (hand_min_z > ground_min_z) or
+              (hand_max_z > ground_max_z) or
+              (hand_min_z < ground_min_z))):
+                if table[3][0] == b'T':
+                    table[13][0] = 'HArT'
+                else:
+                    table[13][0] = 'HAr'
+        else:
+            print("Fehler: H,G")
+    else:
+        table[13][0] = 'U'
+
+    # if(o1 != None and o2 != None):
+    #     print("\n","(",o1_min_y < o2_min_y, "and", o2_max_y > o1_max_y,")", "or","\n",
+    #         "(",o1_min_y > o2_min_y, "and", o2_max_y < o1_max_y,"))", "and","\n",
+    #         "((",o2_min_x < o1_min_x, "and", o2_max_x < o1_max_x,")", "or","\n",
+    #         "(",o2_min_x > o1_min_x, "and", o2_max_x < o1_max_x,")" ,"or","\n",
+    #         "(",o2_min_x > o1_min_x, "and", o2_max_x > o1_max_x,")", "or","\n",
+    #         "(",o2_min_x < o1_min_x ,"and" ,o2_max_x > o1_max_x,"))","and","\n",
+    #         "((",o2_min_z < o1_min_z, "and" ,o2_max_z < o1_max_z,")","or","\n",
+    #         "(",o2_min_z > o1_min_z ,"and", o2_max_z < o1_max_z,")", "or","\n",
+    #         "(",o2_min_z > o1_min_z, "and", o2_max_z > o1_max_z,")", "or","\n",
+    #         "(",o2_min_z < o1_min_z,"and", o2_max_z > o1_max_z,")))")
+
+    if(o1 == None or o2 == None):
+        table[14][0] = 'U'
+    elif(table[4][0] == b'A'):
+        table[14][0] = 'A'
+    elif((o1_min_y > o2_min_y and o1_min_y < o2_max_y) and
+        #    (o1_min_x > o2_min_x and o1_max_x < o2_max_x) and
+           (o1_min_z > o2_min_z and o1_max_z < o2_max_z)):
+            table[14][0] = 'In'
+    elif((o1_min_y < o2_min_y and o1_min_y > o2_max_y) and
+       (o1_min_x < o2_min_x and o1_max_x > o2_max_x) and
+       (o1_min_z < o2_min_z and o1_max_z > o2_max_z)):
+        table[14][0] = 'Sa'       
+    elif(((o1_min_y >= o2_min_y) or
+              (o1_max_y <=o2_max_y) or
+              (o2_max_y >= o1_max_y) or
+              (o2_min_y <=o1_min_y))and
+             ((o1_max_x < o2_max_x) or
+              (o1_min_x > o2_min_x) or
+              (o1.get_center()[0] <= o2_max_x) or
+              (o1.get_center()[0] >= o2_min_x))and
+             ((o1_max_z < o2_max_z) or
+              (o1_min_z > o2_min_z) or
+              (o1.get_center()[1] <= o2_max_z) or
+              (o1.get_center()[1] >= o2_min_z))):
+            if table[4][0] == b'T':
+                table[14][0] = 'VArT'
+            else:
+                table[14][0] = 'VAr'
+    elif(((o1_min_y > o2_min_y) or
+            (o1_max_y < o2_max_y) or
+            (o1.get_center()[2] <= o2_max_y) or
+            (o1.get_center()[2] >= o2_min_y)) and
+            ((o1_max_x < o2_max_x) or
+            (o1_min_x > o2_min_x) or
+            (o1_max_x > o2_max_x) or
+            (o1_min_x < o2_min_x))and
+            ((o1_max_z < o2_max_z) or
+            (o1_min_z > o2_min_z) or 
+            (o1_max_z > o2_max_z) or
+            (o1_min_z < o2_min_z))):
+            if table[4][0] == b'T':
+                table[14][0] = 'HArT'
+            else:
+                table[14][0] = 'HAr'
+    else:
+        print("Fehler: o1,o2")
+    
+ 
+    if(o1 == None or o3 == None):
+        table[15][0] = 'U'
+    elif(table[5][0] == b'A'):
+        table[15][0] = 'A'
+    elif((o1_min_y > o3_min_y and o1_min_y < o3_max_y) and
+        #    (o1_min_x > o3_min_x and o1_max_x < o3_max_x) and
+           (o1_min_z > o3_min_z and o1_max_z < o3_max_z)):
+            table[15][0] = 'In' 
+    elif((o1_min_y < o3_min_y and o1_min_y > o3_max_y) and
+           (o1_min_x < o3_min_x and o1_max_x > o3_max_x) and
+           (o1_min_z < o3_min_z and o1_max_z > o3_max_z)):
+            table[15][0] = 'Sa'       
+    elif(((o1_min_y >= o3_min_y) or
+              (o1_max_y <=o3_max_y) or
+              (o3_max_y >= o1_max_y) or
+              (o3_min_y <=o1_min_y))and
+             ((o1_max_x < o3_max_x) or
+              (o1_min_x > o3_min_x) or
+              (o1.get_center()[0] <= o3_max_x) or
+              (o1.get_center()[0] >= o3_min_x))and
+             ((o1_max_z < o3_max_z) or
+              (o1_min_z > o3_min_z) or
+              (o1.get_center()[1] <= o3_max_z) or
+              (o1.get_center()[1] >= o3_min_z))):
+            if table[5][0] == b'T':
+                table[15][0] = 'VArT'
+            else:
+                table[15][0] = 'VAr'
+    elif(((o1_min_y > o3_min_y) or
+            (o1_max_y < o3_max_y) or
+            (o1.get_center()[2] <= o3_max_y) or
+            (o1.get_center()[2] >= o3_min_y)) and
+            ((o1_max_x < o3_max_x) or
+            (o1_min_x > o3_min_x) or
+            (o1_max_x > o3_max_x) or
+            (o1_min_x < o3_min_x))and
+            ((o1_max_z < o3_max_z) or
+            (o1_min_z > o3_min_z) or
+            (o1_max_z > o3_max_z) or
+            (o1_min_z < o3_min_z))):
+            if table[5][0] == b'T':
+                table[15][0] = 'HArT'
+            else:
+                table[15][0] = 'HAr'
+    else:
+        print("Fehler: o1,o3")
+
+    if(o1 == None):
+        table[16][0] = 'U'
+    elif(table[6][0] == b'A'):
+        table[16][0] = 'A'
+    # elif((o1_min_y > ground_min_y and o1_min_y < ground_max_y) and
+    #     #    (o1_min_x > ground_min_x and o1_max_x < ground_max_x) and
+    #        (o1_min_z > ground_min_z and o1_max_z < ground_max_z)):
+    #         table[16][0] = 'In'
+    # elif((o1_min_y < ground_min_y and o1_min_y > ground_max_y) and
+    #        (o1_min_x < ground_min_x and o1_max_x > ground_max_x) and
+    #        (o1_min_z < ground_min_z and o1_max_z > ground_max_z)):
+    #         table[16][0] = 'Sa'        
+    elif(((o1_min_y >= ground_min_y) or
+              (o1_max_y <=ground_max_y) or
+              (ground_max_y >= o1_max_y) or
+              (ground_min_y <=o1_min_y))and
+             ((o1_max_x < ground_max_x) or
+              (o1_min_x > ground_min_x) or
+              (o1.get_center()[0] <= ground_max_x) or
+              (o1.get_center()[0] >= ground_min_x))and
+             ((o1_max_z < ground_max_z) or
+              (o1_min_z > ground_min_z) or
+              (o1.get_center()[1] <= ground_max_z) or
+              (o1.get_center()[1] >= ground_min_z))):
+            if table[6][0] == b'T':
+                table[16][0] = 'VArT'
+            else:
+                table[16][0] = 'VAr'
+    elif(((o1_min_y > ground_min_y) or
+            (o1_max_y < ground_max_y) or
+            (o1.get_center()[2] <= ground_max_y) or
+            (o1.get_center()[2] >= ground_min_y)) and
+            ((o1_max_x < ground_max_x) or
+            (o1_min_x > ground_min_x) or
+            (o1_max_x > ground_max_x) or
+            (o1_min_x < ground_min_x))and
+            ((o1_max_z < ground_max_z) or
+            (o1_min_z > ground_min_z) or
+            (o1_max_z > ground_max_z) or
+            (o1_min_z < ground_min_z))):
+            if table[6][0] == b'T':
+                table[16][0] = 'HArT'
+            else:
+                table[16][0] = 'HAr'
+    else:
+        print("Fehler: o1,G")
+        
+    if(o2 == None or o3 == None):
+        table[17][0] = 'U'
+    elif(table[7][0] == b'A'):
+        table[17][0] = 'A'
+    elif((o2_min_y > o3_min_y and o2_min_y < o3_max_y) and
+        #    (o2_min_x > o3_min_x and o2_max_x < o3_max_x) and
+           (o2_min_z > o3_min_z and o2_max_z < o3_max_z)):
+            table[17][0] = 'In'
+    elif((o2_min_y < o3_min_y and o2_min_y > o3_max_y) and
+           (o2_min_x < o3_min_x and o2_max_x > o3_max_x) and
+           (o2_min_z < o3_min_z and o2_max_z > o3_max_z)):
+            table[17][0] = 'Sa'        
+    elif(((o2_min_y >= o3_min_y) or
+              (o2_max_y <=o3_max_y) or
+              (o3_max_y >= o2_max_y) or
+              (o3_min_y <=o2_min_y))and
+             ((o2_max_x < o3_max_x) or
+              (o2_min_x > o3_min_x) or
+              (o2.get_center()[0] <= o3_max_x) or
+              (o2.get_center()[0] >= o3_min_x))and
+             ((o2_max_z < o3_max_z) or
+              (o2_min_z > o3_min_z) or
+              (o2.get_center()[1] <= o3_max_z) or
+              (o2.get_center()[1] >= o3_min_z))):
+            if table[7][0] == b'T':
+                table[17][0] = 'VArT'
+            else:
+                table[17][0] = 'VAr'
+    elif(((o2_min_y > o3_min_y) or
+            (o2_max_y < o3_max_y) or
+            (o2.get_center()[2] <= o3_max_y) or
+            (o2.get_center()[2] >= o3_min_y)) and
+            ((o2_max_x < o3_max_x) or
+            (o2_min_x > o3_min_x) or
+            (o2_max_x > o3_max_x) or
+            (o2_min_x < o3_min_x))and
+            ((o2_max_z < o3_max_z) or
+            (o2_min_z > o3_min_z) or 
+            (o2_max_z > o3_max_z) or
+            (o2_min_z < o3_min_z))):
+            if table[7][0] == b'T':
+                table[17][0] = 'HArT'
+            else:
+                table[17][0] = 'HAr'
+    else:
+        print("Fehler: o2,o3")
+    
+    if(o2 == None):
+        table[18][0] = 'U'
+    elif(table[8][0] == b'A'):
+        table[18][0] = 'A'
+    # elif((o2_min_y > ground_min_y and o2_min_y < ground_max_y) and
+    #     #    (o2_min_x > ground_min_x and o2_max_x < ground_max_x) and
+    #        (o2_min_z > ground_min_z and o2_max_z < ground_max_z)):
+    #         table[18][0] = 'In'
+    # elif((o2_min_y < ground_min_y and o2_min_y > ground_max_y) and
+    #        (o2_min_x < ground_min_x and o2_max_x > ground_max_x) and
+    #        (o2_min_z < ground_min_z and o2_max_z > ground_max_z)):
+    #         table[18][0] = 'Sa'        
+    elif(((o2_min_y >= ground_min_y) or
+              (o2_max_y <=ground_max_y) or
+              (ground_max_y >= o2_max_y) or
+              (ground_min_y <=o2_min_y))and
+             ((o2_max_x < ground_max_x) or
+              (o2_min_x > ground_min_x) or
+              (o2.get_center()[0] <= ground_max_x) or
+              (o2.get_center()[0] >= ground_min_x))and
+             ((o2_max_z < ground_max_z) or
+              (o2_min_z > ground_min_z) or
+              (o2.get_center()[1] <= ground_max_z) or
+              (o2.get_center()[1] >= ground_min_z))):
+            if table[8][0] == b'T':
+                table[18][0] = 'VArT'
+            else:
+                table[18][0] = 'VAr'
+    elif(((o2_min_y > ground_min_y) or
+            (o2_max_y < ground_max_y) or
+            (o2.get_center()[2] <= ground_max_y) or
+            (o2.get_center()[2] >= ground_min_y)) and
+            ((o2_max_x < ground_max_x) or
+            (o2_min_x > ground_min_x) or
+            (o2_max_x > ground_max_x) or
+            (o2_min_x < ground_min_x))and
+            ((o2_max_z < ground_max_z) or
+            (o2_min_z > ground_min_z) or
+            (o2_max_z > ground_max_z) or
+            (o2_min_z < ground_min_z))):
+            if table[8][0] == b'T':
+                table[18][0] = 'HArT'
+            else:
+                table[18][0] = 'HAr'
+    else:
+        print("Fehler: o2,G")
+            
+    if(o3 == None):
+        table[19][0] = 'U'
+    elif(table[9][0] == b'A'):
+        table[19][0] = 'A'
+    # elif((o3_min_y > ground_min_y and o3_min_y < ground_max_y) and
+    #     #    (o3_min_x > ground_min_x and o3_max_x < ground_max_x) and
+    #        (o3_min_z > ground_min_z and o3_max_z < ground_max_z)):
+    #         table[19][0] = 'In'
+    # elif((o3_min_y < ground_min_y and o3_min_y > ground_max_y) and
+    #        (o3_min_x < ground_min_x and o3_max_x > ground_max_x) and
+    #        (o3_min_z < ground_min_z and o3_max_z > ground_max_z)):
+    #         table[19][0] = 'Sa'        
+    elif(((o3_min_y >= ground_min_y) or
+              (o3_max_y <=ground_max_y) or
+              (ground_max_y >= o3_max_y) or
+              (ground_min_y <=o3_min_y))and
+             ((o3_max_x < ground_max_x) or
+              (o3_min_x > ground_min_x) or
+              (o3.get_center()[0] <= ground_max_x) or
+              (o3.get_center()[0] >= ground_min_x))and
+             ((o3_max_z < ground_max_z) or
+              (o3_min_z > ground_min_z) or
+              (o3.get_center()[1] <= ground_max_z) or
+              (o3.get_center()[1] >= ground_min_z))):
+            if table[9][0] == b'T':
+                table[19][0] = 'VArT'
+            else:
+                table[19][0] = 'VAr'
+    elif(((o3_min_y > ground_min_y) or
+            (o3_max_y < ground_max_y) or
+            (o3.get_center()[2] <= ground_max_y) or
+            (o3.get_center()[2] >= ground_min_y)) and
+            ((o3_max_x < ground_max_x) or
+            (o3_min_x > ground_min_x) or
+            (o3_max_x > ground_max_x) or
+            (o3_min_x < ground_min_x))and
+            ((o3_max_z < ground_max_z) or
+            (o3_min_z > ground_min_z) or
+            (o3_max_z > ground_max_z) or
+            (o3_min_z < ground_min_z))):
+            if table[9][0] == b'T':
+                table[19][0] = 'HArT'
+            else:
+                table[19][0] = 'HAr'
+    else:
+        print("Fehler: o3,G")
 
 def _fillDSR(hand, ground, previous_array, thresh, table):
     '''
@@ -2070,7 +2673,15 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
     ground_box = ground.get_axis_aligned_bounding_box()
     pground_box = pground.get_axis_aligned_bounding_box()
         
-    
+    # if(o1 != None and po1 != None and table[0][0] != b'A'):   
+    #     print("\n Distance: ", _distance(o1_box.get_center(), po1_box.get_center()))
+        # p = o3d.geometry.PointCloud()
+        # p.points = o3d.utility.Vector3dVector([o1_box.get_center()])
+        # q = o3d.geometry.PointCloud()
+        # q.points = o3d.utility.Vector3dVector([po1_box.get_center()])
+        # p.paint_uniform_color([1, 0, 0])
+        # q.paint_uniform_color([0, 1, 0])
+        # o3d.visualization.draw_geometries([o1_box, po1_box, p, q, ground])
     #multi = 1.5
     threshold = thresh
     center_distance = threshold/10
@@ -2685,7 +3296,7 @@ def _process_rotation(pcd_file, label_file, ground_label, hand_label,
             _fillTN_absent(hand, ground, thresh, add)
             
             #find SSR and fill the table
-            _fillSSR_3(hand, ground, add)
+            _fillSSR_4(hand, ground, add)
             compare_array = np.reshape(ESEC_table[:,count_esec], (-1, 1))
             
             #for the first frame the eSEC table is just this add array
@@ -2721,7 +3332,7 @@ def _process_rotation(pcd_file, label_file, ground_label, hand_label,
                 _fillTN_absent(hand, ground, thresh, add)
                 
                 #find SSR relations and fill the table
-                _fillSSR_3(hand, ground, add)
+                _fillSSR_4(hand, ground, add)
                 
                 #find DSR relations and fill the table
                 _fillDSR(hand, ground, previous_array, thresh, add)
@@ -2768,7 +3379,7 @@ def _process_rotation(pcd_file, label_file, ground_label, hand_label,
         #                         hand.paint_uniform_color([1, 0, 0])
         #                         o1.paint_uniform_color([0, 1, 0])
         #                         ground.paint_uniform_color([0, 0, 0])
-        #                         o3d.visualization.draw_geometries([o1, hand,ground])
+                                # o3d.visualization.draw_geometries([o1, hand])
                                 ax1.plot(np.array(o1.points)[:,0], np.array(o1.points)[:,1], ".r", label = 'o1 label:%d'%total_unique_labels[o1_label])
                                 ax2.plot(np.array(o1.points)[:,1], np.array(o1.points)[:,2], ".r", label = 'o1 label:%d'%total_unique_labels[o1_label])
                                 if(count2 == 1):
@@ -2867,7 +3478,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     if replace == True:
         label_resized = _replace_labels(label_resized, old, new)
     label_resized = label_resized.flatten()
-    
+
     #load pcd file with nan points to map lables     
     pcd = o3d.io.read_point_cloud(pcd_file, remove_nan_points=False)
     
@@ -3122,6 +3733,8 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     #thresh_registration = 0.01
     thresh_registration = 0.05
     if o1 != None:
+        #print("original vol: ",pcd[o1_label].get_axis_aligned_bounding_box().volume(), " new vol: ", o1.get_axis_aligned_bounding_box().volume())
+
         trans_init = np.asarray([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
         if (len(pcd[o1_label].points)) != 0:
             if ao1 == 0:
@@ -3146,7 +3759,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                         first_o2, pcd[o2_label], thresh_registration, trans_init,
                         o3d.pipelines.registration.TransformationEstimationPointToPoint())
                 o2 = first_o2.transform(reg_p2p2.transformation)
-                ao2 == 2
+                ao2 = 2
             else:
                 reg_p2p2 = o3d.pipelines.registration.registration_icp(
                         o2, pcd[o2_label], thresh_registration, trans_init,
@@ -3172,6 +3785,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         else:
             o3 = o3d.geometry.PointCloud()
 
+    
     global count_esec
     #if hand is in the frame continue to proceed else return translation and eSEC table
     if(len(hand.points) > 0):
@@ -3208,7 +3822,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             _fillTN_absent(hand, ground, thresh, add)
             
             #find SSR and fill the table
-            _fillSSR_3(hand, ground, add)
+            _fillSSR_4(hand, ground, add)
             compare_array = np.reshape(ESEC_table[:,count_esec], (-1, 1))
             
             #for the first frame the eSEC table is just this add array
@@ -3231,7 +3845,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             #dont consider first appearance of manipulation
             #save first objects into previous_array
             if (len(hand.points) > 0 and internal_count == 0):
-                previous_array = [hand, ground, o1, o2, o3]
+                previous_array = [hand, ground, copy.deepcopy(o1), copy.deepcopy(o2), copy.deepcopy(o3)]
                 internal_count = 1
                 return translation, roll, ESEC_table
             
@@ -3244,7 +3858,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                 _fillTN_absent(hand, ground, thresh, add)
                 
                 #find SSR relations and fill the table
-                _fillSSR_3(hand, ground, add)
+                _fillSSR_4(hand, ground, add)
                 
                 #find DSR relations and fill the table
                 _fillDSR_new(hand, ground, previous_array, thresh, add)
@@ -3254,7 +3868,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                 #     o3d.io.write_point_cloud("after_spoon%d.pcd"%frame,o1)
 
                 #define the new previous array after calculation of TNR, SSR, DSR
-                previous_array = [hand, ground, o1, o2, o3]
+                previous_array = [hand, ground, copy.deepcopy(o1), copy.deepcopy(o2), copy.deepcopy(o3)]
                 compare_array = np.reshape(ESEC_table[:,count_esec], (-1, 1))
                 
                 #for the first frame the eSEC table is just this add array
@@ -3339,21 +3953,20 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         #                         o1.paint_uniform_color([0, 1, 0])
         #                         ground.paint_uniform_color([0, 0, 0])
                                 # o3d.visualization.draw_geometries([o1, hand,ground, mesh_frame])
-
+                                # o1 = pcd[o1_label]
                                 o1_box = o1.get_axis_aligned_bounding_box()
                                 points_o1 = np.asarray(o1_box.get_box_points())
                                 o1_max_x, o1_max_y, o1_max_z = np.max(points_o1[:,0]), np.max(points_o1[:,1]), np.max(points_o1[:,2])
                                 o1_min_x, o1_min_y, o1_min_z = np.min(points_o1[:,0]), np.min(points_o1[:,1]), np.min(points_o1[:,2])
-
-
+                           
                                 ax1.plot(np.array(o1.points)[:,0], np.array(o1.points)[:,1], ".r", label = 'o1 label:%d'%total_unique_labels[o1_label])
-        
+
                                 ax1.plot((o1_max_x, o1_max_x), (o1_min_y,o1_max_y), "-r")
                                 ax1.plot((o1_min_x, o1_min_x), (o1_max_y,o1_min_y), "-r")
 
                                 ax1.plot((o1_max_x, o1_min_x), (o1_max_y,o1_max_y), "-r")
                                 ax1.plot((o1_min_x, o1_max_x), (o1_min_y,o1_min_y), "-r")
-
+                          
                                 ax2.plot(np.array(o1.points)[:,1], np.array(o1.points)[:,2], ".r", label = 'o1 label:%d'%total_unique_labels[o1_label])
                                 ax2.plot((o1_max_y, o1_max_y), (o1_min_z,o1_max_z), "-r")
                                 ax2.plot((o1_min_y, o1_min_y), (o1_max_z,o1_min_z), "-r")
@@ -3362,7 +3975,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                                 ax2.plot((o1_min_y, o1_max_y), (o1_min_z,o1_min_z), "-r")
                                 
                                 if(count2 == 1):
-
+                                   
                                     o2_box = o2.get_axis_aligned_bounding_box()
                                     points_o2 = np.asarray(o2_box.get_box_points())
                                     o2_max_x, o2_max_y, o2_max_z = np.max(points_o2[:,0]), np.max(points_o2[:,1]), np.max(points_o2[:,2])
@@ -3376,6 +3989,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                                     ax1.plot((o2_max_x, o2_min_x), (o2_max_y,o2_max_y), "-b")
                                     ax1.plot((o2_min_x, o2_max_x), (o2_min_y,o2_min_y), "-b")
 
+
                                     #ax2.scatter(o2_min_y, o2_max_x, "y")
                                     ax2.plot(np.array(o2.points)[:,1], np.array(o2.points)[:,2], ".b", label = 'o2 label:%d'%total_unique_labels[o2_label])
 
@@ -3386,7 +4000,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                                     ax2.plot((o2_min_y, o2_max_y), (o2_min_z,o2_min_z), "-b")
                                     
                                     if count3 == 1:
-
+                                        
                                         o3_box = o3.get_axis_aligned_bounding_box()
                                         points_o3 = np.asarray(o3_box.get_box_points())
                                         o3_max_x, o3_max_y, o3_max_z = np.max(points_o3[:,0]), np.max(points_o3[:,1]), np.max(points_o3[:,2])

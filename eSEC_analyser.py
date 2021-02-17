@@ -448,11 +448,14 @@ def plotDissi(rows, label, save = False):
 	| Warning: needs the output from removeCobinationRowsSave()
 
 	Parameters:
-		* rows: indicates which rows will be considered (int, tuple) 
+		* rows: indicates which rows will be considered (int, tuple) (None if nothing is removed)
 		* label: name of the manipulations in the right order [string array]
 		* save: paramter if figure need to be saved (bool)
 	'''
 	#load the dissimilarity matrix
+	if (isinstance(rows, bool)):
+		D_shaped = np.load("arrays/nothing_removed/nothing_removed.npy")
+		indexes = "nothing_removed"
 	if (isinstance(rows, int) and not(isinstance(rows, tuple))):
 		D_shaped = np.load("arrays/single/matrix_removed_%d.npy"%rows)
 		indexes = "%d"%rows

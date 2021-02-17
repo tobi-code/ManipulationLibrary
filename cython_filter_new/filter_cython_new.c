@@ -3103,7 +3103,7 @@ __pyx_v_mean_distance = (__pyx_v_mean_distance + __pyx_f_17filter_cython_new_dis
  *     cdef int temp = 0
  *     cdef int length_deleted = 0             # <<<<<<<<<<<<<<
  *     if hand_cloud:
- *         mean_distance = 6 * mean_distance
+ *         mean_distance = 7 * mean_distance
  */
   __pyx_v_length_deleted = 0;
 
@@ -3111,7 +3111,7 @@ __pyx_v_mean_distance = (__pyx_v_mean_distance + __pyx_f_17filter_cython_new_dis
  *     cdef int temp = 0
  *     cdef int length_deleted = 0
  *     if hand_cloud:             # <<<<<<<<<<<<<<
- *         mean_distance = 6 * mean_distance
+ *         mean_distance = 7 * mean_distance
  *     else:
  */
   __pyx_t_5 = (__pyx_v_hand_cloud != 0);
@@ -3120,37 +3120,37 @@ __pyx_v_mean_distance = (__pyx_v_mean_distance + __pyx_f_17filter_cython_new_dis
     /* "filter_cython_new.pyx":46
  *     cdef int length_deleted = 0
  *     if hand_cloud:
- *         mean_distance = 6 * mean_distance             # <<<<<<<<<<<<<<
+ *         mean_distance = 7 * mean_distance             # <<<<<<<<<<<<<<
  *     else:
- *         mean_distance = 2 * mean_distance
+ *         mean_distance = 5 * mean_distance
  */
-    __pyx_v_mean_distance = (6.0 * __pyx_v_mean_distance);
+    __pyx_v_mean_distance = (7.0 * __pyx_v_mean_distance);
 
     /* "filter_cython_new.pyx":45
  *     cdef int temp = 0
  *     cdef int length_deleted = 0
  *     if hand_cloud:             # <<<<<<<<<<<<<<
- *         mean_distance = 6 * mean_distance
+ *         mean_distance = 7 * mean_distance
  *     else:
  */
     goto __pyx_L9;
   }
 
   /* "filter_cython_new.pyx":48
- *         mean_distance = 6 * mean_distance
+ *         mean_distance = 7 * mean_distance
  *     else:
- *         mean_distance = 2 * mean_distance             # <<<<<<<<<<<<<<
+ *         mean_distance = 5 * mean_distance             # <<<<<<<<<<<<<<
  *     while (abort < 30):
  *         indices = []
  */
   /*else*/ {
-    __pyx_v_mean_distance = (2.0 * __pyx_v_mean_distance);
+    __pyx_v_mean_distance = (5.0 * __pyx_v_mean_distance);
   }
   __pyx_L9:;
 
   /* "filter_cython_new.pyx":49
  *     else:
- *         mean_distance = 2 * mean_distance
+ *         mean_distance = 5 * mean_distance
  *     while (abort < 30):             # <<<<<<<<<<<<<<
  *         indices = []
  *         temp = len(pcd)
@@ -3160,7 +3160,7 @@ __pyx_v_mean_distance = (__pyx_v_mean_distance + __pyx_f_17filter_cython_new_dis
     if (!__pyx_t_5) break;
 
     /* "filter_cython_new.pyx":50
- *         mean_distance = 2 * mean_distance
+ *         mean_distance = 5 * mean_distance
  *     while (abort < 30):
  *         indices = []             # <<<<<<<<<<<<<<
  *         temp = len(pcd)
