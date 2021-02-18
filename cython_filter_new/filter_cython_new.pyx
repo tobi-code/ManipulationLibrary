@@ -43,7 +43,7 @@ cpdef double[:,::1] region_filter_cython(double[:] center, double[:,::1] pcd, in
     cdef int temp = 0
     cdef int length_deleted = 0
     if hand_cloud:
-        mean_distance = 7 * mean_distance
+        mean_distance = 10 * mean_distance
     else:
         mean_distance = 5 * mean_distance
     while (abort < 30):

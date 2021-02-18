@@ -21,8 +21,8 @@ import shutil
 import sys
 import random
 
-from ManipulationLibrary.cython_filter_new import filter_cython_new as filter_cython
-#from cython_filter_new import filter_cython_new as filter_cython
+#from ManipulationLibrary.cython_filter_new import filter_cython_new as filter_cython
+from cython_filter_new import filter_cython_new as filter_cython
 
 ##define global variables
 #o1,o2,o3 are the three main objects of the manipulation
@@ -1433,10 +1433,8 @@ def _fillSSR_4(hand, ground, table):
            (hand_min_x < o1_min_x and hand_max_x > o1_max_x) and
            (hand_min_z < o1_min_z and hand_max_z > o1_max_z)):
             table[10][0] = 'Sa'       
-        elif(((hand_min_y >= o1_min_y) or
-              (hand_max_y <= o1_max_y) or
-              (o1_max_y >= hand_max_y) or
-              (o1_min_y <= hand_min_y))and
+        elif(((hand.get_center()[2] >= o1_max_y) or
+            (hand.get_center()[2] <= o1_min_y))and
              ((hand_max_x < o1_max_x) or
               (hand_min_x > o1_min_x) or
               (hand.get_center()[0] <= o1_max_x) or
@@ -1449,9 +1447,7 @@ def _fillSSR_4(hand, ground, table):
                 table[10][0] = 'VArT'
             else:
                 table[10][0] = 'VAr'
-        elif(((hand_min_y > o1_min_y) or
-              (hand_max_y < o1_max_y) or
-              (hand.get_center()[2] <= o1_max_y) or
+        elif(((hand.get_center()[2] <= o1_max_y) or
               (hand.get_center()[2] >= o1_min_y)) and
              ((hand_max_x < o1_max_x) or
               (hand_min_x > o1_min_x) or
@@ -1504,10 +1500,8 @@ def _fillSSR_4(hand, ground, table):
            (hand_min_x < o2_min_x and hand_max_x > o2_max_x) and
            (hand_min_z < o2_min_z and hand_max_z > o2_max_z)):
             table[11][0] = 'Sa'      
-        elif(((hand_min_y >= o2_min_y) or
-              (hand_max_y <=o2_max_y) or
-              (o2_max_y >= hand_max_y) or
-              (o2_min_y <=hand_min_y))and
+        elif(((hand.get_center()[2] >= o2_max_y) or
+            (hand.get_center()[2] <= o2_min_y))and
              ((hand_max_x < o2_max_x) or
               (hand_min_x > o2_min_x) or
               (hand.get_center()[0] <= o2_max_x) or
@@ -1520,9 +1514,7 @@ def _fillSSR_4(hand, ground, table):
                 table[11][0] = 'VArT'
             else:
                 table[11][0] = 'VAr'
-        elif(((hand_min_y > o2_min_y) or
-              (hand_max_y < o2_max_y) or
-              (hand.get_center()[2] <= o2_max_y) or
+        elif(((hand.get_center()[2] <= o2_max_y) or
               (hand.get_center()[2] >= o2_min_y)) and
              ((hand_max_x < o2_max_x) or
               (hand_min_x > o2_min_x) or
@@ -1538,28 +1530,28 @@ def _fillSSR_4(hand, ground, table):
                     table[11][0] = 'HAr'
         else:
             print("Fehler: H,o2")
-            print("\n",
-            "((",hand_min_y >= o2_box.get_center()[2],")", "or","\n",
-            "(",hand_max_y <=o2_min_y,')', 'or',"\n",
-            '(',o2_min_y >= hand_max_y,")", "or","\n",
-            "(",o2_box.get_center()[2] <=hand_min_y,"))","and","\n",
-            "((",hand_max_x < o2_max_x,")", "or","\n",
-            "(",hand_min_x > o2_min_x,")", "or","\n",
-            "(",hand.get_center()[0] <= o2_max_x,")", "or","\n",
-            "(",hand.get_center()[0] >= o2_min_x,"))","and","\n",
-            "((",hand_max_z < o2_max_z,")", "or","\n",
-            "(",hand_min_z > o2_min_z,")", "or","\n",
-            "(",hand.get_center()[1] <= o2_max_z,")", "or","\n",
-            "(",hand.get_center()[1] >= o2_min_z,"))","\n",
-            "\n\n",
-            "((",hand_min_y > o2_min_y,")", "or","\n",
-            "(",hand_max_y < o2_max_y,")", "or","\n",
-            "(",hand.get_center()[2] <= o2_max_y,")", "or","\n",
-            "(",hand.get_center()[2] >= o2_min_y,"))", "and","\n",
-            "((",hand_max_x < o2_min_x,")", "or","\n",
-            "(",hand_min_x > o2_max_x,"))","and","\n",
-            "((",hand_max_z < o2_min_z,")", "or","\n",
-            "(",hand_min_z > o2_max_z,")))")
+            # print("\n",
+            # "((",hand_min_y >= o2_box.get_center()[2],")", "or","\n",
+            # "(",hand_max_y <=o2_min_y,')', 'or',"\n",
+            # '(',o2_min_y >= hand_max_y,")", "or","\n",
+            # "(",o2_box.get_center()[2] <=hand_min_y,"))","and","\n",
+            # "((",hand_max_x < o2_max_x,")", "or","\n",
+            # "(",hand_min_x > o2_min_x,")", "or","\n",
+            # "(",hand.get_center()[0] <= o2_max_x,")", "or","\n",
+            # "(",hand.get_center()[0] >= o2_min_x,"))","and","\n",
+            # "((",hand_max_z < o2_max_z,")", "or","\n",
+            # "(",hand_min_z > o2_min_z,")", "or","\n",
+            # "(",hand.get_center()[1] <= o2_max_z,")", "or","\n",
+            # "(",hand.get_center()[1] >= o2_min_z,"))","\n",
+            # "\n\n",
+            # "((",hand_min_y > o2_min_y,")", "or","\n",
+            # "(",hand_max_y < o2_max_y,")", "or","\n",
+            # "(",hand.get_center()[2] <= o2_max_y,")", "or","\n",
+            # "(",hand.get_center()[2] >= o2_min_y,"))", "and","\n",
+            # "((",hand_max_x < o2_min_x,")", "or","\n",
+            # "(",hand_min_x > o2_max_x,"))","and","\n",
+            # "((",hand_max_z < o2_min_z,")", "or","\n",
+            # "(",hand_min_z > o2_max_z,")))")
 
     #print(table[11][0])
 
@@ -1576,10 +1568,8 @@ def _fillSSR_4(hand, ground, table):
            (hand_min_x < o3_min_x and hand_max_x > o3_max_x) and
            (hand_min_z < o3_min_z and hand_max_z > o3_max_z)):
             table[12][0] = 'Sa' 
-        elif(((hand_min_y >= o3_min_y) or
-              (hand_max_y <=o3_max_y) or
-              (o3_max_y >= hand_max_y) or
-              (o3_min_y <=hand_min_y))and
+        elif(((hand.get_center()[2] >= o3_max_y) or
+            (hand.get_center()[2] <= o3_min_y))and
              ((hand_max_x < o3_max_x) or
               (hand_min_x > o3_min_x) or
               (hand.get_center()[0] <= o3_max_x) or
@@ -1592,9 +1582,7 @@ def _fillSSR_4(hand, ground, table):
                 table[12][0] = 'VArT'
             else:
                 table[12][0] = 'VAr'
-        elif(((hand_min_y > o3_min_y) or
-              (hand_max_y < o3_max_y) or
-              (hand.get_center()[2] <= o3_max_y) or
+        elif(((hand.get_center()[2] <= o3_max_y) or
               (hand.get_center()[2] >= o3_min_y)) and
              ((hand_max_x < o3_max_x) or
               (hand_min_x > o3_min_x) or
@@ -1620,10 +1608,8 @@ def _fillSSR_4(hand, ground, table):
         #    (hand_min_x < ground_min_x and hand_max_x > ground_max_x) and
         #    (hand_min_z < ground_min_z and hand_max_z > ground_max_z)):
         #     table[13][0] = 'Sa'    
-        if(((hand_min_y >= ground_min_y) or
-              (hand_max_y <=ground_max_y) or
-              (ground_max_y >= hand_max_y) or
-              (ground_min_y <=hand_min_y))and
+        if(((hand.get_center()[2] >= ground_max_y) or
+            (hand.get_center()[2] <= ground_min_y))and
              ((hand_max_x < ground_max_x) or
               (hand_min_x > ground_min_x) or
               (hand.get_center()[0] <= ground_max_x) or
@@ -1636,9 +1622,7 @@ def _fillSSR_4(hand, ground, table):
                 table[13][0] = 'VArT'
             else:
                 table[13][0] = 'VAr'
-        elif(((hand_min_y > ground_min_y) or
-              (hand_max_y < ground_max_y) or
-              (hand.get_center()[2] <= ground_max_y) or
+        elif(((hand.get_center()[2] <= ground_max_y) or
               (hand.get_center()[2] >= ground_min_y)) and
              ((hand_max_x < ground_max_x) or
               (hand_min_x > ground_min_x) or
@@ -1681,10 +1665,8 @@ def _fillSSR_4(hand, ground, table):
        (o1_min_x < o2_min_x and o1_max_x > o2_max_x) and
        (o1_min_z < o2_min_z and o1_max_z > o2_max_z)):
         table[14][0] = 'Sa'       
-    elif(((o1_min_y >= o2_min_y) or
-              (o1_max_y <=o2_max_y) or
-              (o2_max_y >= o1_max_y) or
-              (o2_min_y <=o1_min_y))and
+    elif(((o1.get_center()[2] >= o2_max_y) or
+            (o1.get_center()[2] <= o2_min_y)) and
              ((o1_max_x < o2_max_x) or
               (o1_min_x > o2_min_x) or
               (o1.get_center()[0] <= o2_max_x) or
@@ -1697,9 +1679,7 @@ def _fillSSR_4(hand, ground, table):
                 table[14][0] = 'VArT'
             else:
                 table[14][0] = 'VAr'
-    elif(((o1_min_y > o2_min_y) or
-            (o1_max_y < o2_max_y) or
-            (o1.get_center()[2] <= o2_max_y) or
+    elif((  (o1.get_center()[2] <= o2_max_y) or
             (o1.get_center()[2] >= o2_min_y)) and
             ((o1_max_x < o2_max_x) or
             (o1_min_x > o2_min_x) or
@@ -1729,10 +1709,8 @@ def _fillSSR_4(hand, ground, table):
            (o1_min_x < o3_min_x and o1_max_x > o3_max_x) and
            (o1_min_z < o3_min_z and o1_max_z > o3_max_z)):
             table[15][0] = 'Sa'       
-    elif(((o1_min_y >= o3_min_y) or
-              (o1_max_y <=o3_max_y) or
-              (o3_max_y >= o1_max_y) or
-              (o3_min_y <=o1_min_y))and
+    elif(((o1.get_center()[2] >= o3_max_y) or
+            (o1.get_center()[2] <= o3_min_y))and
              ((o1_max_x < o3_max_x) or
               (o1_min_x > o3_min_x) or
               (o1.get_center()[0] <= o3_max_x) or
@@ -1745,9 +1723,7 @@ def _fillSSR_4(hand, ground, table):
                 table[15][0] = 'VArT'
             else:
                 table[15][0] = 'VAr'
-    elif(((o1_min_y > o3_min_y) or
-            (o1_max_y < o3_max_y) or
-            (o1.get_center()[2] <= o3_max_y) or
+    elif(((o1.get_center()[2] <= o3_max_y) or
             (o1.get_center()[2] >= o3_min_y)) and
             ((o1_max_x < o3_max_x) or
             (o1_min_x > o3_min_x) or
@@ -1776,10 +1752,8 @@ def _fillSSR_4(hand, ground, table):
     #        (o1_min_x < ground_min_x and o1_max_x > ground_max_x) and
     #        (o1_min_z < ground_min_z and o1_max_z > ground_max_z)):
     #         table[16][0] = 'Sa'        
-    elif(((o1_min_y >= ground_min_y) or
-              (o1_max_y <=ground_max_y) or
-              (ground_max_y >= o1_max_y) or
-              (ground_min_y <=o1_min_y))and
+    elif(((o1.get_center()[2] >= ground_max_y) or
+            (o1.get_center()[2] <= ground_min_y))and
              ((o1_max_x < ground_max_x) or
               (o1_min_x > ground_min_x) or
               (o1.get_center()[0] <= ground_max_x) or
@@ -1792,9 +1766,7 @@ def _fillSSR_4(hand, ground, table):
                 table[16][0] = 'VArT'
             else:
                 table[16][0] = 'VAr'
-    elif(((o1_min_y > ground_min_y) or
-            (o1_max_y < ground_max_y) or
-            (o1.get_center()[2] <= ground_max_y) or
+    elif((  (o1.get_center()[2] <= ground_max_y) or
             (o1.get_center()[2] >= ground_min_y)) and
             ((o1_max_x < ground_max_x) or
             (o1_min_x > ground_min_x) or
@@ -1823,10 +1795,8 @@ def _fillSSR_4(hand, ground, table):
            (o2_min_x < o3_min_x and o2_max_x > o3_max_x) and
            (o2_min_z < o3_min_z and o2_max_z > o3_max_z)):
             table[17][0] = 'Sa'        
-    elif(((o2_min_y >= o3_min_y) or
-              (o2_max_y <=o3_max_y) or
-              (o3_max_y >= o2_max_y) or
-              (o3_min_y <=o2_min_y))and
+    elif(((o2.get_center()[2] >= o3_max_y) or
+            (o2.get_center()[2] <= o3_min_y))and
              ((o2_max_x < o3_max_x) or
               (o2_min_x > o3_min_x) or
               (o2.get_center()[0] <= o3_max_x) or
@@ -1839,9 +1809,7 @@ def _fillSSR_4(hand, ground, table):
                 table[17][0] = 'VArT'
             else:
                 table[17][0] = 'VAr'
-    elif(((o2_min_y > o3_min_y) or
-            (o2_max_y < o3_max_y) or
-            (o2.get_center()[2] <= o3_max_y) or
+    elif((  (o2.get_center()[2] <= o3_max_y) or
             (o2.get_center()[2] >= o3_min_y)) and
             ((o2_max_x < o3_max_x) or
             (o2_min_x > o3_min_x) or
@@ -1870,10 +1838,8 @@ def _fillSSR_4(hand, ground, table):
     #        (o2_min_x < ground_min_x and o2_max_x > ground_max_x) and
     #        (o2_min_z < ground_min_z and o2_max_z > ground_max_z)):
     #         table[18][0] = 'Sa'        
-    elif(((o2_min_y >= ground_min_y) or
-              (o2_max_y <=ground_max_y) or
-              (ground_max_y >= o2_max_y) or
-              (ground_min_y <=o2_min_y))and
+    elif(((o2.get_center()[2] >= ground_max_y) or
+            (o2.get_center()[2] <= ground_min_y))and
              ((o2_max_x < ground_max_x) or
               (o2_min_x > ground_min_x) or
               (o2.get_center()[0] <= ground_max_x) or
@@ -1886,9 +1852,7 @@ def _fillSSR_4(hand, ground, table):
                 table[18][0] = 'VArT'
             else:
                 table[18][0] = 'VAr'
-    elif(((o2_min_y > ground_min_y) or
-            (o2_max_y < ground_max_y) or
-            (o2.get_center()[2] <= ground_max_y) or
+    elif((  (o2.get_center()[2] <= ground_max_y) or
             (o2.get_center()[2] >= ground_min_y)) and
             ((o2_max_x < ground_max_x) or
             (o2_min_x > ground_min_x) or
@@ -1917,10 +1881,8 @@ def _fillSSR_4(hand, ground, table):
     #        (o3_min_x < ground_min_x and o3_max_x > ground_max_x) and
     #        (o3_min_z < ground_min_z and o3_max_z > ground_max_z)):
     #         table[19][0] = 'Sa'        
-    elif(((o3_min_y >= ground_min_y) or
-              (o3_max_y <=ground_max_y) or
-              (ground_max_y >= o3_max_y) or
-              (ground_min_y <=o3_min_y))and
+    elif(((o3.get_center()[2] >= ground_max_y) or
+            (o3.get_center()[2] <= ground_min_y))and
              ((o3_max_x < ground_max_x) or
               (o3_min_x > ground_min_x) or
               (o3.get_center()[0] <= ground_max_x) or
@@ -1933,9 +1895,7 @@ def _fillSSR_4(hand, ground, table):
                 table[19][0] = 'VArT'
             else:
                 table[19][0] = 'VAr'
-    elif(((o3_min_y > ground_min_y) or
-            (o3_max_y < ground_max_y) or
-            (o3.get_center()[2] <= ground_max_y) or
+    elif((  (o3.get_center()[2] <= ground_max_y) or
             (o3.get_center()[2] >= ground_min_y)) and
             ((o3_max_x < ground_max_x) or
             (o3_min_x > ground_min_x) or
@@ -2651,28 +2611,43 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
     if(o1 != None and po1 != None and table[0][0] != b'A'):
         o1_box = o1.get_axis_aligned_bounding_box()
         po1_box = po1.get_axis_aligned_bounding_box()
+        # o1_box_edges = o1_box.get_box_points()
+        # po1_box_edges = po1_box.get_box_points()
         
     #creates AABB around object2 if o2 and po2 are defined and if TNR relation is not abscent    
     if(o2 != None and po2 != None and table[1][0] != b'A'):
         if len(o2.points) != 0:
             o2_box = o2.get_axis_aligned_bounding_box()
             po2_box = po2.get_axis_aligned_bounding_box()
+            # o2_box_edges = o2_box.get_box_points()
+            # po2_box_edges = po2_box.get_box_points()
         
     #creates AABB around object1 if o3 and po3 are defined and if TNR relation is not abscent
     if(o3 != None and po3 != None and table[2][0] != b'A'):
         if len(o3.points) != 0:
             o3_box = o3.get_axis_aligned_bounding_box()
             po3_box = po3.get_axis_aligned_bounding_box()
+            # o3_box_edges = o3_box.get_box_points()
+            # po3_box_edges = po3_box.get_box_points()
         
     #creates AABB around hand if point cloud is in the frame
     if(len(hand.points) > 0):
         hand_box = hand.get_axis_aligned_bounding_box()
         phand_box = phand.get_axis_aligned_bounding_box()
+        # hand_box_edges = hand_box.get_box_points()
+        # phand_box_edges = phand_box.get_box_points()
     
     #creates AABB around ground
     ground_box = ground.get_axis_aligned_bounding_box()
     pground_box = pground.get_axis_aligned_bounding_box()
-        
+    # ground_box_edges = ground_box.get_box_points()
+    # pground_box_edges = pground_box.get_box_points()
+          
+
+    # o1_left_bot_front, o1_left_bot_back   = [o1_], []
+    # o1_left_top_front, o1_left_top_back   = [], []
+    # o1_right_bot_front, o1_right_bot_back = [], []
+    # o1_right_top_front, o1_right_top_back = [], []
     # if(o1 != None and po1 != None and table[0][0] != b'A'):   
     #     print("\n Distance: ", _distance(o1_box.get_center(), po1_box.get_center()))
         # p = o3d.geometry.PointCloud()
@@ -2697,17 +2672,17 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
     elif(table[0][0] == b'A'):
         table[20][0] = 'A'
     elif(len(hand.points) > 0):
-        #print("\n", _distance(hand_box.get_center(), phand_box.get_center()), " > ", center_distance)
-        if ((P1[0] and _distance(hand_box.get_center(), phand_box.get_center()) > center_distance and _distance(o1_box.get_center(), po1_box.get_center()) > center_distance) or 
-              (P1[0] and (xor(_distance(hand_box.get_center(), phand_box.get_center()) > center_distance, _distance(o1_box.get_center(), po1_box.get_center()) > center_distance)))):
+        #print("\n", _distance(hand.get_center(), phand.get_center()), " > ", center_distance)
+        if ((P1[0] and _distance(hand.get_center(), phand.get_center()) > center_distance and _distance(o1_box.get_center(), po1_box.get_center()) > center_distance) or 
+              (P1[0] and (xor(_distance(hand.get_center(), phand.get_center()) > center_distance, _distance(o1_box.get_center(), po1_box.get_center()) > center_distance)))):
             table[20][0] = 'MT' 
-        elif (P1[0] and not _distance(hand_box.get_center(), phand_box.get_center()) > center_distance and not _distance(o1_box.get_center(),po1_box.get_center()) > center_distance):
+        elif (P1[0] and not _distance(hand.get_center(), phand.get_center()) > center_distance and not _distance(o1_box.get_center(),po1_box.get_center()) > center_distance):
             table[20][0] = 'HT' 
-        elif ((_distance(hand_box.get_center(), o1_box.get_center()) - _distance(phand_box.get_center(), po1_box.get_center())) > -stable_dist and (_distance(hand_box.get_center(), o1_box.get_center()) - _distance(phand_box.get_center(), po1_box.get_center())) < stable_dist):
-            table[20][0] = 'S'
-        elif ((_distance(hand_box.get_center(), o1_box.get_center()) > _distance(phand_box.get_center(), po1_box.get_center()))):
+        # elif ((_distance(hand.get_center(), o1_box.get_center()) - _distance(phand.get_center(), po1_box.get_center())) > -stable_dist and (_distance(hand.get_center(), o1_box.get_center()) - _distance(phand.get_center(), po1_box.get_center())) < stable_dist):
+        #     table[20][0] = 'S'
+        elif ((_distance(hand.get_center(), o1_box.get_center()) > _distance(phand.get_center(), po1_box.get_center()))):
             table[20][0] = 'MA'
-        elif ((_distance(hand_box.get_center(), o1_box.get_center()) < _distance(phand_box.get_center(), po1_box.get_center()))):
+        elif ((_distance(hand.get_center(), o1_box.get_center()) < _distance(phand.get_center(), po1_box.get_center()))):
             table[20][0] = 'GC'
         else:
             table[20][0] = 'Q'
@@ -2719,16 +2694,16 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
     elif(table[1][0] == b'A'):
         table[21][0] = 'A'
     elif(len(hand.points) > 0):
-        if ((P1[1] and _distance(hand_box.get_center() , phand_box.get_center() > center_distance) and _distance(o2_box.get_center() , po2_box.get_center()) > center_distance) or 
-              (P1[1] and (xor(_distance(hand_box.get_center() , phand_box.get_center()) > center_distance, _distance(o2_box.get_center() , po2_box.get_center()) > center_distance)))):
+        if ((P1[1] and _distance(hand.get_center() , phand.get_center() > center_distance) and _distance(o2_box.get_center() , po2_box.get_center()) > center_distance) or 
+              (P1[1] and (xor(_distance(hand.get_center() , phand.get_center()) > center_distance, _distance(o2_box.get_center() , po2_box.get_center()) > center_distance)))):
             table[21][0] = 'MT' 
-        elif (P1[1] and not _distance(hand_box.get_center() , phand_box.get_center()) > center_distance and not _distance(o2_box.get_center() , po2_box.get_center()) > center_distance):
+        elif (P1[1] and not _distance(hand.get_center() , phand.get_center()) > center_distance and not _distance(o2_box.get_center() , po2_box.get_center()) > center_distance):
             table[21][0] = 'HT'
-        elif ((_distance(hand_box.get_center(), o2_box.get_center()) - _distance(phand_box.get_center(), po2_box.get_center())) > -stable_dist and (_distance(hand_box.get_center(), o2_box.get_center()) - _distance(phand_box.get_center(), po2_box.get_center())) < stable_dist):
-            table[21][0] = 'S'
-        elif ((_distance(hand_box.get_center(), o2_box.get_center()) > _distance(phand_box.get_center(), po2_box.get_center()))):
+        # elif ((_distance(hand.get_center(), o2_box.get_center()) - _distance(phand.get_center(), po2_box.get_center())) > -stable_dist and (_distance(hand.get_center(), o2_box.get_center()) - _distance(phand.get_center(), po2_box.get_center())) < stable_dist):
+        #     table[21][0] = 'S'
+        elif ((_distance(hand.get_center(), o2_box.get_center()) > _distance(phand.get_center(), po2_box.get_center()))):
             table[21][0] = 'MA'
-        elif ((_distance(hand_box.get_center(), o2_box.get_center()) < _distance(phand_box.get_center(), po2_box.get_center()))):
+        elif ((_distance(hand.get_center(), o2_box.get_center()) < _distance(phand.get_center(), po2_box.get_center()))):
             table[21][0] = 'GC' 
         else:
             table[21][0] = 'Q'
@@ -2739,31 +2714,31 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
     elif(table[2][0] == b'A'):
         table[22][0] = 'A'
     elif(len(hand.points) > 0):
-        if ((P1[2] and _distance(hand_box.get_center() , phand_box.get_center() > center_distance) and _distance(o3_box.get_center() , po3_box.get_center()) > center_distance) or 
-              (P1[2] and (xor(_distance(hand_box.get_center() , phand_box.get_center()) > center_distance, _distance(o3_box.get_center() , po3_box.get_center()) > center_distance)))):
+        if ((P1[2] and _distance(hand.get_center() , phand.get_center() > center_distance) and _distance(o3_box.get_center() , po3_box.get_center()) > center_distance) or 
+              (P1[2] and (xor(_distance(hand.get_center() , phand.get_center()) > center_distance, _distance(o3_box.get_center() , po3_box.get_center()) > center_distance)))):
             table[22][0] = 'MT' 
-        elif (P1[2] and not _distance(hand_box.get_center() , phand_box.get_center()) > center_distance and not _distance(o3_box.get_center() , po3_box.get_center()) > center_distance):
+        elif (P1[2] and not _distance(hand.get_center() , phand.get_center()) > center_distance and not _distance(o3_box.get_center() , po3_box.get_center()) > center_distance):
             table[22][0] = 'HT' 
-        elif ((_distance(hand_box.get_center(),o3_box.get_center()) - _distance(phand_box.get_center(), po3_box.get_center())) > -stable_dist and (_distance(hand_box.get_center(),o3_box.get_center()) - _distance(phand_box.get_center(), po3_box.get_center())) < stable_dist):
-            table[22][0] = 'S'
-        elif ((_distance(hand_box.get_center(),o3_box.get_center()) > _distance(phand_box.get_center(), po3_box.get_center()))):
+        # elif ((_distance(hand.get_center(),o3_box.get_center()) - _distance(phand.get_center(), po3_box.get_center())) > -stable_dist and (_distance(hand.get_center(),o3_box.get_center()) - _distance(phand.get_center(), po3_box.get_center())) < stable_dist):
+        #     table[22][0] = 'S'
+        elif ((_distance(hand.get_center(),o3_box.get_center()) > _distance(phand.get_center(), po3_box.get_center()))):
             table[22][0] = 'MA'
-        elif ((_distance(hand_box.get_center(),o3_box.get_center()) < _distance(phand_box.get_center(), po3_box.get_center()))):
+        elif ((_distance(hand.get_center(),o3_box.get_center()) < _distance(phand.get_center(), po3_box.get_center()))):
             table[22][0] = 'GC'
         else:
             table[22][0] = 'Q'
          
     if(len(hand.points) > 0):
-        if ((P1[3] and _distance(hand_box.get_center() , phand_box.get_center()) > center_distance and _distance(ground_box.get_center() , pground_box.get_center()) > center_distance) or 
-              (P1[3] and (xor(_distance(hand_box.get_center() , phand_box.get_center()) > center_distance, _distance(ground_box.get_center() , pground_box.get_center()) > center_distance)))):
+        if ((P1[3] and _distance(hand.get_center() , phand.get_center()) > center_distance and _distance(ground_box.get_center() , pground_box.get_center()) > center_distance) or 
+              (P1[3] and (xor(_distance(hand.get_center() , phand.get_center()) > center_distance, _distance(ground_box.get_center() , pground_box.get_center()) > center_distance)))):
             table[23][0] = 'MT' 
-        elif (P1[3] and not _distance(hand_box.get_center() , phand_box.get_center()) > center_distance and not _distance(ground_box.get_center() , pground_box.get_center()) > center_distance):
+        elif (P1[3] and not _distance(hand.get_center() , phand.get_center()) > center_distance and not _distance(ground_box.get_center() , pground_box.get_center()) > center_distance):
             table[23][0] = 'HT' 
-        elif ((_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) > -stable_dist and (_distance(hand_box.get_center(), ground_box.get_center()) - _distance(phand_box.get_center(), pground_box.get_center())) < stable_dist):
+        elif ((abs(hand.get_center()[2] - ground_box.get_center()[2]) - abs(phand.get_center()[2] - pground_box.get_center()[2])) > -stable_dist and (abs(hand.get_center()[2] - ground_box.get_center()[2]) - abs(phand.get_center()[2] - pground_box.get_center()[2])) < stable_dist):
             table[23][0] = 'S'
-        elif ((_distance(hand_box.get_center(), ground_box.get_center()) > _distance(phand_box.get_center(), pground_box.get_center()))):
+        elif ((abs(hand.get_center()[2] - ground_box.get_center()[2]) > abs(phand.get_center()[2] - pground_box.get_center()[2]))):
             table[23][0] = 'MA'
-        elif ((_distance(hand_box.get_center(), ground_box.get_center()) < _distance(phand_box.get_center(), pground_box.get_center()))):
+        elif ((abs(hand.get_center()[2] - ground_box.get_center()[2]) < abs(phand.get_center()[2] - pground_box.get_center()[2]))):
             table[23][0] = 'GC'
         else:
             table[23][0] = 'Q'
@@ -2783,17 +2758,20 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
         #print("\nMT: (",P1[4], "and", _distance(o1_box.get_center() , po1_box.get_center()) > center_distance, "and", _distance(o2_box.get_center() , po2_box.get_center()) > center_distance, ") or (",P1[5], "and", (xor(_distance(o1_box.get_center() , po1_box.get_center()) > center_distance, _distance(o2_box.get_center() , po2_box.get_center()) > center_distance)))
         #print("\nMA: (",not (_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center()) < threshold), "or", ((_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) < threshold))
         table[24][0] = 'HT' 
-    elif ((_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) > -stable_dist and (_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) < stable_dist):
-        table[24][0] = 'S'
+    # elif ((_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) > -stable_dist and (_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) < stable_dist):
+    #     table[24][0] = 'S'
     elif ((_distance(o1_box.get_center(), o2_box.get_center()) > _distance(po1_box.get_center(), po2_box.get_center()))):
         table[24][0] = 'MA'
     elif ((_distance(o1_box.get_center(), o2_box.get_center()) < _distance(po1_box.get_center(), po2_box.get_center()))):
         table[24][0] = 'GC'
     else:
         table[24][0] = 'Q'
-    if o1 != None and o2 != None and po1 != None and po2 != None:
-        print((_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())), center_distance)
-    
+    # if o1 != None and o2 != None and po1 != None and po2 != None:
+        #print("\n", "center cloud: ", o1.get_center(),"center aabb: ", o1_box.get_center())
+        # print("\n",(_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())))
+        # print((_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())), center_distance)
+        
+
     if(o1 == None or o3 == None or po1 == None or po3 == None):
         table[25][0] = 'U'
     elif(table[5][0] == b'A'):
@@ -2803,8 +2781,8 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
         table[25][0] = 'MT' 
     elif (P1[5] and not _distance(o1_box.get_center() , po1_box.get_center()) > center_distance and not _distance(o3_box.get_center() , po3_box.get_center()) > center_distance):
         table[25][0] = 'HT' 
-    elif ((_distance(o1_box.get_center(), o3_box.get_center()) - _distance(po1_box.get_center(), po3_box.get_center())) > -stable_dist and (_distance(o1_box.get_center(), o3_box.get_center()) - _distance(po1_box.get_center(), po3_box.get_center())) < stable_dist):
-        table[25][0] = 'S'
+    # elif ((_distance(o1_box.get_center(), o3_box.get_center()) - _distance(po1_box.get_center(), po3_box.get_center())) > -stable_dist and (_distance(o1_box.get_center(), o3_box.get_center()) - _distance(po1_box.get_center(), po3_box.get_center())) < stable_dist):
+    #     table[25][0] = 'S'
     elif ((_distance(o1_box.get_center(), o3_box.get_center()) > _distance(po1_box.get_center(), po3_box.get_center()))):
         table[25][0] = 'MA'
     elif ((_distance(o1_box.get_center(), o3_box.get_center()) < _distance(po1_box.get_center(), po3_box.get_center()))):
@@ -2822,12 +2800,14 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
         table[26][0] = 'MT' 
     elif (P1[6] and not _distance(o1_box.get_center() , po1_box.get_center()) > center_distance and not _distance(ground_box.get_center() , pground_box.get_center()) > center_distance):
         table[26][0] = 'HT' 
-    elif ((_distance(o1_box.get_center(), ground_box.get_center()) - _distance(po1_box.get_center(), pground_box.get_center())) > -stable_dist and (_distance(o1_box.get_center(), ground_box.get_center()) - _distance(po1_box.get_center(), pground_box.get_center())) < stable_dist):
+    elif ((abs(o1_box.get_center()[2] - ground_box.get_center()[2]) - abs(po1_box.get_center()[2] - pground_box.get_center()[2])) > -stable_dist and (abs(o1_box.get_center()[2] - ground_box.get_center()[2]) - abs(po1_box.get_center()[2] - pground_box.get_center()[2])) < stable_dist):
         table[26][0] = 'S'
-    elif ((_distance(o1_box.get_center(), ground_box.get_center()) > _distance(po1_box.get_center(), pground_box.get_center()))):
+    elif ((abs(o1_box.get_center()[2] - ground_box.get_center()[2]) > abs(po1_box.get_center()[2] - pground_box.get_center()[2]))):
         table[26][0] = 'MA'
-    elif ((_distance(o1_box.get_center(), ground_box.get_center()) < _distance(po1_box.get_center(), pground_box.get_center()))):
+    elif ((abs(o1_box.get_center()[2] - ground_box.get_center()[2]) < abs(po1_box.get_center()[2] - pground_box.get_center()[2]))):
         table[26][0] = 'GC'
+        #print("\n",(_distance(o1.get_center(), ground_box.get_center()), "<", _distance(po1.get_center(), pground_box.get_center())))
+        print("\n",(_distance(o1_box.get_center(), ground_box.get_center()), "<", _distance(po1_box.get_center(), pground_box.get_center())))
     else:
         table[26][0] = 'Q'
     
@@ -2841,8 +2821,8 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
         table[27][0] = 'MT' 
     elif (P1[7] and not _distance(o2_box.get_center() , po2_box.get_center()) > center_distance and not _distance(o3_box.get_center() , po3_box.get_center()) > center_distance):
         table[27][0] = 'HT' 
-    elif ((_distance(o2_box.get_center(), o3_box.get_center()) - _distance(po2_box.get_center(), po3_box.get_center())) > -stable_dist and (_distance(o2_box.get_center(), o3_box.get_center()) - _distance(po2_box.get_center(), po3_box.get_center())) < stable_dist):
-        table[27][0] = 'S'
+    # elif ((_distance(o2_box.get_center(), o3_box.get_center()) - _distance(po2_box.get_center(), po3_box.get_center())) > -stable_dist and (_distance(o2_box.get_center(), o3_box.get_center()) - _distance(po2_box.get_center(), po3_box.get_center())) < stable_dist):
+    #     table[27][0] = 'S'
     elif ((_distance(o2_box.get_center(), o3_box.get_center()) > _distance(po2_box.get_center(), po3_box.get_center()))):
         table[27][0] = 'MA'
     elif ((_distance(o2_box.get_center(), o3_box.get_center()) < _distance(po2_box.get_center(), po3_box.get_center()))):
@@ -2862,11 +2842,11 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
         table[28][0] = 'MT' 
     elif (P1[8] and not _distance(o2_box.get_center() , po2_box.get_center()) > center_distance and not _distance(ground_box.get_center() , pground_box.get_center()) > center_distance):
         table[28][0] = 'HT'
-    elif ((_distance(o2_box.get_center(), ground_box.get_center()) - _distance(po2_box.get_center(), pground_box.get_center())) > -stable_dist and (_distance(o2_box.get_center(), ground_box.get_center()) - _distance(po2_box.get_center(), pground_box.get_center())) < stable_dist):
+    elif ((abs(o2_box.get_center()[2] - ground_box.get_center()[2]) - abs(po2_box.get_center()[2] - pground_box.get_center()[2])) > -stable_dist and (abs(o2_box.get_center()[2] - ground_box.get_center()[2]) - abs(po2_box.get_center()[2] - pground_box.get_center()[2])) < stable_dist):
         table[28][0] = 'S' 
-    elif ((_distance(o2_box.get_center(), ground_box.get_center()) > _distance(po2_box.get_center(), pground_box.get_center()))):
+    elif ((abs(o2_box.get_center()[2] - ground_box.get_center()[2]) > abs(po2_box.get_center()[2] - pground_box.get_center()[2]))):
         table[28][0] = 'MA'
-    elif ((_distance(o2_box.get_center(), ground_box.get_center()) < _distance(po2_box.get_center(), pground_box.get_center()))):
+    elif ((abs(o2_box.get_center()[2] - ground_box.get_center()[2]) < abs(po2_box.get_center()[2] - pground_box.get_center()[2]))):
         table[28][0] = 'GC'
     else:
         table[28][0] = 'Q'
@@ -2880,11 +2860,11 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
         table[29][0] = 'MT' 
     elif (P1[9] and not _distance(o3_box.get_center() , po3_box.get_center()) > center_distance and not _distance(ground_box.get_center() , pground_box.get_center()) > center_distance):
         table[29][0] = 'HT' 
-    elif ((_distance(o3_box.get_center(), ground_box.get_center()) - _distance(po3_box.get_center(), pground_box.get_center())) > -stable_dist and (_distance(o3_box.get_center(), ground_box.get_center()) - _distance(po3_box.get_center(), pground_box.get_center())) < stable_dist):
+    elif ((abs(o3_box.get_center()[2] - ground_box.get_center()[2]) - abs(po3_box.get_center()[2] - pground_box.get_center()[2])) > -stable_dist and (abs(o3_box.get_center()[2] - ground_box.get_center()[2]) - abs(po3_box.get_center()[2] - pground_box.get_center()[2])) < stable_dist):
         table[29][0] = 'S'
-    elif ((_distance(o3_box.get_center(), ground_box.get_center()) > _distance(po3_box.get_center(), pground_box.get_center()))):
+    elif ((abs(o3_box.get_center()[2], ground_box.get_center()[2]) > abs(po3_box.get_center()[2] - pground_box.get_center()[2]))):
         table[29][0] = 'MA'
-    elif ((_distance(o3_box.get_center(), ground_box.get_center()) < _distance(po3_box.get_center(), pground_box.get_center()))):
+    elif ((abs(o3_box.get_center()[2] - ground_box.get_center()[2]) < abs(po3_box.get_center()[2] - pground_box.get_center()[2]))):
         table[29][0] = 'GC'
     else:
         table[29][0] = 'Q'
@@ -3909,7 +3889,12 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                             ground_min_x, ground_min_y, ground_min_z = np.min(points_ground[:,0]), np.min(points_ground[:,1]), np.min(points_ground[:,2])
 
                             ax1.plot(np.array(hand.points)[:,0], np.array(hand.points)[:,1], ".g", label = 'hand')
-
+                            
+                            # ax1.plot(np.array(hand.get_center())[0], np.array(hand.get_center())[1], ".r", label = 'hand')
+                            # ax1.plot(np.array(ground_box.get_center())[0], np.array(ground_box.get_center())[1], ".g", label = 'hand')
+                            # # ax2.plot(np.array(hand.get_center())[1], np.array(hand.get_center())[2], ".r", label = 'hand')
+                            # ax2.plot(np.array(ground_box.get_center())[1], np.array(ground_box.get_center())[2], ".g", label = 'hand')
+                            
                             ax1.plot((hand_max_x, hand_max_x), (hand_min_y,hand_max_y), "-g")
                             ax1.plot((hand_min_x, hand_min_x), (hand_max_y,hand_min_y), "-g")
 
@@ -3923,7 +3908,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
 
                             ax1.plot((ground_max_x, ground_min_x), (ground_max_y,ground_max_y), "-k")
                             ax1.plot((ground_min_x, ground_max_x), (ground_min_y,ground_min_y), "-k")
-
+                            
                             ax2.text(-0.9, 0.4, pcd_file)
                             #------------------------------------------------------------------
                             #print relations to plot
@@ -3989,6 +3974,15 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                            
                                 ax1.plot(np.array(o1.points)[:,0], np.array(o1.points)[:,1], ".r", label = 'o1 label:%d'%total_unique_labels[o1_label])
 
+                                # ax1.plot(np.array(o1.points)[:,0], np.array(o1.points)[:,1], ".g", label = 'hand')
+                                # ax1.plot(np.array(o1.get_center())[0], np.array(o1.get_center())[1], ".r", label = 'hand')
+                                # ax1.plot(np.array(o1_box.get_center())[0], np.array(o1_box.get_center())[1], ".g", label = 'hand')
+                                # ax2.plot(np.array(o1.get_center())[1], np.array(o1.get_center())[2], ".r", label = 'hand')
+                                # ax2.plot(np.array(o1_box.get_center())[1], np.array(o1_box.get_center())[2], ".g", label = 'hand')
+                                # ax1.plot(np.array(ground_box.get_center())[0], np.array(ground_box.get_center())[1], ".g", label = 'hand')
+                                # ax2.plot(np.array(hand.get_center())[1], np.array(hand.get_center())[2], ".r", label = 'hand')
+                                # ax2.plot(np.array(ground_box.get_center())[1], np.array(ground_box.get_center())[2], ".g", label = 'hand')
+    
                                 ax1.plot((o1_max_x, o1_max_x), (o1_min_y,o1_max_y), "-r")
                                 ax1.plot((o1_min_x, o1_min_x), (o1_max_y,o1_min_y), "-r")
 
@@ -3996,6 +3990,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                                 ax1.plot((o1_min_x, o1_max_x), (o1_min_y,o1_min_y), "-r")
                           
                                 ax2.plot(np.array(o1.points)[:,1], np.array(o1.points)[:,2], ".r", label = 'o1 label:%d'%total_unique_labels[o1_label])
+                                
                                 ax2.plot((o1_max_y, o1_max_y), (o1_min_z,o1_max_z), "-r")
                                 ax2.plot((o1_min_y, o1_min_y), (o1_max_z,o1_min_z), "-r")
 
