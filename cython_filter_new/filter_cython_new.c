@@ -3247,7 +3247,7 @@ __pyx_v_mean_distance = (__pyx_v_mean_distance + __pyx_f_17filter_cython_new_dis
  *     cdef int length_deleted = 0
  * 
  *     if hand_cloud:             # <<<<<<<<<<<<<<
- *         mean_distance = median_distance * 0.9
+ *         mean_distance = median_distance
  * 
  */
   __pyx_t_1 = (__pyx_v_hand_cloud != 0);
@@ -3256,17 +3256,17 @@ __pyx_v_mean_distance = (__pyx_v_mean_distance + __pyx_f_17filter_cython_new_dis
     /* "filter_cython_new.pyx":56
  * 
  *     if hand_cloud:
- *         mean_distance = median_distance * 0.9             # <<<<<<<<<<<<<<
+ *         mean_distance = median_distance             # <<<<<<<<<<<<<<
  * 
  *     else:
  */
-    __pyx_v_mean_distance = (__pyx_v_median_distance * 0.9);
+    __pyx_v_mean_distance = __pyx_v_median_distance;
 
     /* "filter_cython_new.pyx":55
  *     cdef int length_deleted = 0
  * 
  *     if hand_cloud:             # <<<<<<<<<<<<<<
- *         mean_distance = median_distance * 0.9
+ *         mean_distance = median_distance
  * 
  */
     goto __pyx_L13;

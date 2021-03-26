@@ -1373,7 +1373,7 @@ def _fillSSR_4(hand, ground, table):
     #get global objects 1, 2 and 3
     global o1, o2, o3
     #--------------------------------------------------
-    #y-z replaced 
+    #y-z swapped 
     # |y
     # |
     # |    - z
@@ -2662,13 +2662,9 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
     #multi = 1.5
     threshold = thresh
     #center_distance = threshold/10
-    #center_distance = threshold/20
     center_distance = threshold/10
     stable_dist = threshold/20
-
-    # center_distance = threshold * 2
-    # stable_dist = threshold/50
-
+    #stable_dist = threshold/50
     #center_distance = 0.02
 
     P1 = [table[0][0] == b'T', table[1][0] == b'T', table[2][0] == b'T', table[3][0] == b'T', table[4][0] == b'T', table[5][0] == b'T', table[6][0] == b'T', table[7][0] == b'T', table[8][0] == b'T', table[9][0] == b'T']
@@ -3411,7 +3407,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         * table: ESEC table
     '''
  
-    # print("\n",fps, frame)
+    
     #resize labels to point cloud size
     my_mat = np.zeros((640, 480))
     label = pd.read_csv(label_file,delim_whitespace=True, dtype =np.float64, header=None)
@@ -3426,7 +3422,6 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         #rotation = _rotateSceneNewNew(pcd_file, label_file, ground_label)
         ground = _getGroundiNewNew(pcd_file, label_file, ground_label)
         translation, roll = _getTranslation(ground)
-        # print(translation, roll)
         ground = ground.transform(translation)
         ground = ground.transform(roll)
         count_ground = 1
@@ -3590,10 +3585,13 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     # if frame > 200:
     #     o3d.io.write_point_cloud("ownCloud/bowl_unfiltered_%d.pcd"%frame, pcd[3])
     #     o3d.io.write_point_cloud("ownCloud/bowl_filtered_%d.pcd"%frame, filtered_pcd_voxel[3])
-
-    #o3d.visualization.draw_geometries([ground])
+    # filtered_pcd_voxel[1].paint_uniform_color([0, 0, 0])
+    # filtered_pcd_voxel[2].paint_uniform_color([1, 0, 0])
+    # filtered_pcd_voxel[3].paint_uniform_color([0, 0, 1])
+    # filtered_pcd_voxel[4].paint_uniform_color([1, 0, 1])
+    # filtered_pcd_voxel[5].paint_uniform_color([0, 1, 0])
+    # o3d.visualization.draw_geometries([filtered_pcd_voxel[1], filtered_pcd_voxel[2], filtered_pcd_voxel[3], filtered_pcd_voxel[4], filtered_pcd_voxel[5]])
     #cutted = filtered_pcd_voxel[int(len(total_unique_labels)-2)]
-
     #if hand has no points return translation and eSEC table
     if len(hand.points) == 0:
         #print('Hand is misssing 3')
@@ -3834,7 +3832,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             else:
                 ESEC_table = np.column_stack((ESEC_table,add))
                 #save image of manipulation in this frame
-                # plt.imsave("event_images/%s.png"%label_file[-21:-16], label)
+                plt.imsave("event_images/%s.png"%label_file[-21:-16], label)
                 count_esec += 1
                 
         #relation == 3 means TNR, SSR and DSR
@@ -3907,4 +3905,263 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                             ground_box = ground.get_axis_aligned_bounding_box()
                             points_ground = np.asarray(ground_box.get_box_points())
                             ground_max_x, ground_max_y, ground_max_z = np.max(points_ground[:,0]), np.max(points_ground[:,1]), np.max(points_ground[:,2])
+                            ground_min_x, ground_min_y, ground_min_z = np.min(points_ground[:,0]), np.min(points_ground[:,1]), np.min(points_ground[:,2])
+
+                            ax1.plot(np.array(hand.points)[:,0], np.array(hand.points)[:,1], ".g", label = 'hand')
+                            
+                           
+                            ax1.plot((hand_max_x, hand_max_x), (hand_min_y,hand_max_y), "-g")
+                            ax1.plot((hand_min_x, hand_min_x), (hand_max_y,hand_min_y), "-g")
+
+                            ax1.plot((hand_max_x, hand_min_x), (hand_max_y,hand_max_y), "-g")
+                            ax1.plot((hand_min_x, hand_max_x), (hand_min_y,hand_min_y), "-g")
+
+                            ax1.plot(np.array(ground.points)[:,0], np.array(ground.points)[:,1], ".k", label = 'ground frame 0 (filtered)')
+
+                            ax1.plot((ground_max_x, ground_max_x), (ground_min_y,ground_max_y), "-k")
+                            ax1.plot((ground_min_x, ground_min_x), (ground_max_y,ground_min_y), "-k")
+
+                            ax1.plot((ground_max_x, ground_min_x), (ground_max_y,ground_max_y), "-k")
+                            ax1.plot((ground_min_x, ground_max_x), (ground_min_y,ground_min_y), "-k")
+                            
+                            ax2.text(-0.9, 0.4, pcd_file)
+                            #------------------------------------------------------------------
+                            #print relations to plot
+                            ax2.text(-0.9, 0.35, "TNR")
+                            ax2.text(-0.9, 0.32, "H,o1  : %s"%add[0][0].decode("utf-8") )
+                            ax2.text(-0.9, 0.28, "H,o2  : %s"%add[1][0].decode("utf-8") )
+                            ax2.text(-0.9, 0.24, "H,o3  : %s"%add[2][0].decode("utf-8") )
+                            ax2.text(-0.9, 0.20, "o1,o2 : %s"%add[4][0].decode("utf-8") )
+                            ax2.text(-0.9, 0.16, "o1,o3 : %s"%add[5][0].decode("utf-8") )
+                            ax2.text(-0.9, 0.12, "o1,G  : %s"%add[6][0].decode("utf-8") )
+                            ax2.text(-0.9, 0.08, "o2,o3 : %s"%add[7][0].decode("utf-8") )
+                            ax2.text(-0.9, 0.04, "o2,G  : %s"%add[8][0].decode("utf-8") )
+
+                            ax2.text(-0.6, 0.35, "SSR")
+                            ax2.text(-0.6, 0.32, "H,o1  : %s"%add[10][0].decode("utf-8") )
+                            ax2.text(-0.6, 0.28, "H,o2  : %s"%add[11][0].decode("utf-8") )
+                            ax2.text(-0.6, 0.24, "H,o3  : %s"%add[12][0].decode("utf-8") )
+                            ax2.text(-0.6, 0.20, "o1,o2 : %s"%add[14][0].decode("utf-8") )
+                            ax2.text(-0.6, 0.16, "o1,o3 : %s"%add[15][0].decode("utf-8") )
+                            ax2.text(-0.6, 0.12, "o1,G  : %s"%add[16][0].decode("utf-8") )
+                            ax2.text(-0.6, 0.08, "o2,o3 : %s"%add[17][0].decode("utf-8") )
+                            ax2.text(-0.6, 0.04, "o2,G  : %s"%add[18][0].decode("utf-8") )
+
+                            ax2.text(-0.3, 0.35, "DSR")
+                            ax2.text(-0.3, 0.32, "H,o1  : %s"%add[20][0].decode("utf-8") )
+                            ax2.text(-0.3, 0.28, "H,o2  : %s"%add[21][0].decode("utf-8") )
+                            ax2.text(-0.3, 0.24, "H,o3  : %s"%add[22][0].decode("utf-8") )
+                            ax2.text(-0.3, 0.20, "o1,o2 : %s"%add[24][0].decode("utf-8") )
+                            ax2.text(-0.3, 0.16, "o1,o3 : %s"%add[25][0].decode("utf-8") )
+                            ax2.text(-0.3, 0.12, "o1,G  : %s"%add[26][0].decode("utf-8") )
+                            ax2.text(-0.3, 0.08, "o2,o3 : %s"%add[27][0].decode("utf-8") )
+                            ax2.text(-0.3, 0.04, "o2,G  : %s"%add[28][0].decode("utf-8") )
+                            #------------------------------------------------------------------
+
+                            ax2.plot(np.array(hand.points)[:,1], np.array(hand.points)[:,2], ".g", label = 'hand')
+
+                            ax2.plot((hand_max_y, hand_max_y), (hand_min_z,hand_max_z), "-g")
+                            ax2.plot((hand_min_y, hand_min_y), (hand_max_z,hand_min_z), "-g")
+
+                            ax2.plot((hand_max_y, hand_min_y), (hand_max_z,hand_max_z), "-g")
+                            ax2.plot((hand_min_y, hand_max_y), (hand_min_z,hand_min_z), "-g")
+
+                            ax2.plot(np.array(ground.points)[:,1], np.array(ground.points)[:,2], ".k", label = 'ground frame 0 (filtered)')
+
+                            ax2.plot((ground_max_y, ground_max_y), (ground_min_z,ground_max_z), "-k")
+                            ax2.plot((ground_min_y, ground_min_y), (ground_max_z,ground_min_z), "-k")
+
+                            ax2.plot((ground_max_y, ground_min_y), (ground_max_z,ground_max_z), "-k")
+                            ax2.plot((ground_min_y, ground_max_y), (ground_min_z,ground_min_z), "-k")
+
+                            if(count1 == 1):
+                                # mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(
+                                            #  size=0.6, origin=[0,0,0])
+        #                         hand.paint_uniform_color([1, 0, 0])
+        #                         o1.paint_uniform_color([0, 1, 0])
+        #                         ground.paint_uniform_color([0, 0, 0])
+                                # o3d.visualization.draw_geometries([o1, hand,ground, mesh_frame])
+                                # o1 = pcd[o1_label]
+                                o1_box = o1.get_axis_aligned_bounding_box()
+                                points_o1 = np.asarray(o1_box.get_box_points())
+                                o1_max_x, o1_max_y, o1_max_z = np.max(points_o1[:,0]), np.max(points_o1[:,1]), np.max(points_o1[:,2])
+                                o1_min_x, o1_min_y, o1_min_z = np.min(points_o1[:,0]), np.min(points_o1[:,1]), np.min(points_o1[:,2])
+                           
+                                ax1.plot(np.array(o1.points)[:,0], np.array(o1.points)[:,1], ".r", label = 'o1 label:%d'%total_unique_labels[o1_label])
+
+                                
+    
+                                ax1.plot((o1_max_x, o1_max_x), (o1_min_y,o1_max_y), "-r")
+                                ax1.plot((o1_min_x, o1_min_x), (o1_max_y,o1_min_y), "-r")
+
+                                ax1.plot((o1_max_x, o1_min_x), (o1_max_y,o1_max_y), "-r")
+                                ax1.plot((o1_min_x, o1_max_x), (o1_min_y,o1_min_y), "-r")
                           
+                                ax2.plot(np.array(o1.points)[:,1], np.array(o1.points)[:,2], ".r", label = 'o1 label:%d'%total_unique_labels[o1_label])
+                                
+                                ax2.plot((o1_max_y, o1_max_y), (o1_min_z,o1_max_z), "-r")
+                                ax2.plot((o1_min_y, o1_min_y), (o1_max_z,o1_min_z), "-r")
+
+                                ax2.plot((o1_max_y, o1_min_y), (o1_max_z,o1_max_z), "-r")
+                                ax2.plot((o1_min_y, o1_max_y), (o1_min_z,o1_min_z), "-r")
+                                
+                                if(count2 == 1):
+                                   
+                                    o2_box = o2.get_axis_aligned_bounding_box()
+                                    points_o2 = np.asarray(o2_box.get_box_points())
+                                    o2_max_x, o2_max_y, o2_max_z = np.max(points_o2[:,0]), np.max(points_o2[:,1]), np.max(points_o2[:,2])
+                                    o2_min_x, o2_min_y, o2_min_z = np.min(points_o2[:,0]), np.min(points_o2[:,1]), np.min(points_o2[:,2])
+                                    
+                                    ax1.plot(np.array(o2.points)[:,0], np.array(o2.points)[:,1], ".b", label = 'o2 label:%d'%total_unique_labels[o2_label])
+                                    
+                                    ax1.plot((o2_max_x, o2_max_x), (o2_min_y,o2_max_y), "-b")
+                                    ax1.plot((o2_min_x, o2_min_x), (o2_max_y,o2_min_y), "-b")
+
+                                    ax1.plot((o2_max_x, o2_min_x), (o2_max_y,o2_max_y), "-b")
+                                    ax1.plot((o2_min_x, o2_max_x), (o2_min_y,o2_min_y), "-b")
+
+
+                                    #ax2.scatter(o2_min_y, o2_max_x, "y")
+                                    ax2.plot(np.array(o2.points)[:,1], np.array(o2.points)[:,2], ".b", label = 'o2 label:%d'%total_unique_labels[o2_label])
+
+                                    ax2.plot((o2_max_y, o2_max_y), (o2_min_z,o2_max_z), "-b")
+                                    ax2.plot((o2_min_y, o2_min_y), (o2_max_z,o2_min_z), "-b")
+
+                                    ax2.plot((o2_max_y, o2_min_y), (o2_max_z,o2_max_z), "-b")
+                                    ax2.plot((o2_min_y, o2_max_y), (o2_min_z,o2_min_z), "-b")
+                                    
+                                    if count3 == 1:
+                                        
+                                        o3_box = o3.get_axis_aligned_bounding_box()
+                                        points_o3 = np.asarray(o3_box.get_box_points())
+                                        o3_max_x, o3_max_y, o3_max_z = np.max(points_o3[:,0]), np.max(points_o3[:,1]), np.max(points_o3[:,2])
+                                        o3_min_x, o3_min_y, o3_min_z = np.min(points_o3[:,0]), np.min(points_o3[:,1]), np.min(points_o3[:,2])
+                                        ax1.plot(np.array(o3.points)[:,0], np.array(o3.points)[:,1], ".y", label = 'o3 label:%d'%total_unique_labels[o3_label])
+                                        
+                                        ax1.plot((o3_max_x, o3_max_x), (o3_min_y,o3_max_y), "-y")
+                                        ax1.plot((o3_min_x, o3_min_x), (o3_max_y,o3_min_y), "-y")
+
+                                        ax1.plot((o3_max_x, o3_min_x), (o3_max_y,o3_max_y), "-y")
+                                        ax1.plot((o3_min_x, o3_max_x), (o3_min_y,o3_min_y), "-y")
+                                        
+                                        ax2.plot(np.array(o3.points)[:,1], np.array(o3.points)[:,2], ".y", label = 'o3 label:%d'%total_unique_labels[o3_label])
+
+                                        ax2.plot((o3_max_y, o3_max_y), (o3_min_z,o3_max_z), "-y")
+                                        ax2.plot((o3_min_y, o3_min_y), (o3_max_z,o3_min_z), "-y")
+
+                                        ax2.plot((o3_max_y, o3_min_y), (o3_max_z,o3_max_z), "-y")
+                                        ax2.plot((o3_min_y, o3_max_y), (o3_min_z,o3_min_z), "-y")
+                        
+                        ax1.legend(loc = 'upper right')
+                        ax2.legend(loc = 'upper right')
+                        #plt.axis('off')
+                        #plt.savefig("debug/%d.png"%frame)
+                        plt.savefig("debug_images/"+savename+"/%d.png"%(count_esec+1), bbox_inches='tight')
+                        plt.clf()  
+                        plt.imsave("event_images/"+savename+"/%s.png"%label_file[-21:-16], label)
+                    count_esec += 1
+
+    
+    return translation, roll, ESEC_table
+
+def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, support_hand, relations,
+                                replace, old, new, ignored_labels, thresh, cutted_labels = [],  debug = False, cython = False, savename = ""):
+    '''
+    Analyses a complete manipulation from the MANIAC dataset. Therefore, it needs the path
+    of the folder that contains all the .pcd files (pcl_path) and the label files(label_path). 
+    The other parameters are listed below.
+    This functions returns and saves the calculated e2SEC matrix.
+    
+    Parameters:
+        * pcl_path: path to pcl files (string)
+        * label_path: path to label files (string)
+        * ground_label: label of the ground (int)
+        * hand_label: label of the hand (int)
+        * support_hand: label of the support hand (int)
+        * relations: relations to proceed in the computation 1:T/N; 2:T/N, SSR; 3:T/N, SSR, DSR (int)
+        * replace: True if labels should be replaces, False otherwise (bool)
+        * old: old labels to raplace [int]
+        * new: new labels that will replace old labels [int]
+        * ignored_labels: labels that will be ignored in this manipulation [int]
+        * thresh: threshold that defines distance for touching (float)
+        * cython: if true a self created filter will be used (experimental)
+        * savename: name of the saved e2SEC file
+    
+    Returns:
+        e2SEC matrix in the current folder as "e2sec_matrix.npy"
+    '''
+
+    #create folder for event images in case it does not exist yet
+    if debug == True:
+        if not os.path.exists("debug_images/"+savename+"/"):
+            os.makedirs("debug_images/"+savename)
+        else:
+            shutil.rmtree("debug_images/"+savename+"/")
+            os.makedirs("debug_images/"+savename+"/")
+        if not os.path.exists("event_images/"+savename+"/"):
+            os.makedirs("event_images/"+savename)
+        else:
+            shutil.rmtree("event_images/"+savename+"/")
+            os.makedirs("event_images/"+savename+"/")
+
+    ##define global variables
+    global o1, o2, o3, count1, count2, count3, o1_label, o2_label, o3_label, previous_array, internal_count, total_unique_labels, hand_label_inarray, count_esec, ground, count_ground, absent_o1, absent_o2, absent_o3
+    #o1,o2,o3 are the three main objects of the manipulation
+    o1 = None
+    o2 = None
+    o3 = None
+    #count variables esnure o1, o2, o3 are only once defined
+    #count1 is assigned to object1 and so on
+    count1, count2, count3 = 0, 0, 0
+
+    #define variables for labels of o1, o2 and o3
+    o1_label = 0
+    o2_label = 0
+    o3_label = 0
+
+    #define previous frame for DSR
+    previous_array = None
+
+    #define variables for the internal of the algorithm
+    internal_count = 0
+    total_unique_labels = 0
+    hand_label_inarray = -1
+    count_esec = 0
+    ground = 0
+    count_ground = 0
+    absent_o1, absent_o2, absent_03 = False, False, False
+    
+    if relations == 1:
+        table = np.chararray((10,1), itemsize=5)
+    if relations == 2:
+        table = np.chararray((20,1), itemsize=5)
+    if relations == 3:
+        table = np.chararray((30,1), itemsize=5)
+    
+    #define first column of tables as "-"
+    table[:] = '-'
+    translation = 0
+    roll = 0
+    i = 0
+
+    #define fps
+    fps = 10
+    # fps = 5
+    frames = int(30/fps)
+    relations = relations
+   
+    for file in progressbar.progressbar(sorted(os.listdir(pcl_path))):
+        if(i%frames == 0):
+            #print(file)
+            translation, roll, table = _process(pcl_path+file[0:-7]+"_pc.pcd",
+                               label_path+file[0:-7]+"_left-labels.dat",
+                               ground_label = ground_label ,hand_label = hand_label, support_hand = support_hand, translation = translation, roll = roll, frame = i, fps=fps,
+                                ESEC_table = table, relations = relations,
+                                replace = replace, old = old, new = new, 
+                                ignored_labels = ignored_labels,
+                                thresh = thresh, cutted_labels = cutted_labels, debug = debug, cython = cython, savename = savename)
+        i+=1
+        
+    e2sec, esec = esec_to_e2sec(table,relations)
+    np.save("e2sec_%s.npy"%savename.replace("/", "_"),e2sec)
+    plt.close('all')
