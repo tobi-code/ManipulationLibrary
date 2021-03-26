@@ -2662,8 +2662,13 @@ def _fillDSR_new(hand, ground, previous_array, thresh, table):
     #multi = 1.5
     threshold = thresh
     #center_distance = threshold/10
-    center_distance = threshold/20
-    stable_dist = threshold/50
+    #center_distance = threshold/20
+    center_distance = threshold/10
+    stable_dist = threshold/20
+
+    # center_distance = threshold * 2
+    # stable_dist = threshold/50
+
     #center_distance = 0.02
 
     P1 = [table[0][0] == b'T', table[1][0] == b'T', table[2][0] == b'T', table[3][0] == b'T', table[4][0] == b'T', table[5][0] == b'T', table[6][0] == b'T', table[7][0] == b'T', table[8][0] == b'T', table[9][0] == b'T']
@@ -3406,7 +3411,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         * table: ESEC table
     '''
  
-    
+    # print("\n",fps, frame)
     #resize labels to point cloud size
     my_mat = np.zeros((640, 480))
     label = pd.read_csv(label_file,delim_whitespace=True, dtype =np.float64, header=None)
@@ -3421,6 +3426,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         #rotation = _rotateSceneNewNew(pcd_file, label_file, ground_label)
         ground = _getGroundiNewNew(pcd_file, label_file, ground_label)
         translation, roll = _getTranslation(ground)
+        # print(translation, roll)
         ground = ground.transform(translation)
         ground = ground.transform(roll)
         count_ground = 1
@@ -3828,7 +3834,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             else:
                 ESEC_table = np.column_stack((ESEC_table,add))
                 #save image of manipulation in this frame
-                plt.imsave("event_images/%s.png"%label_file[-21:-16], label)
+                # plt.imsave("event_images/%s.png"%label_file[-21:-16], label)
                 count_esec += 1
                 
         #relation == 3 means TNR, SSR and DSR
@@ -4137,6 +4143,7 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
     ground = 0
     count_ground = 0
     absent_o1, absent_o2, absent_03 = False, False, False
+    relations = relations
     
     if relations == 1:
         table = np.chararray((10,1), itemsize=5)
@@ -4153,12 +4160,13 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
 
     #define fps
     fps = 10
+    # fps = 5
     frames = int(30/fps)
-    relations = relations
+
    
     for file in progressbar.progressbar(sorted(os.listdir(pcl_path))):
         if(i%frames == 0):
-            #print(file)
+            # print("\n", i)
             translation, roll, table = _process(pcl_path+file[0:-7]+"_pc.pcd",
                                label_path+file[0:-7]+"_left-labels.dat",
                                ground_label = ground_label ,hand_label = hand_label, support_hand = support_hand, translation = translation, roll = roll, frame = i, fps=fps,

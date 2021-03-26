@@ -3275,17 +3275,17 @@ __pyx_v_mean_distance = (__pyx_v_mean_distance + __pyx_f_17filter_cython_new_dis
   /* "filter_cython_new.pyx":59
  * 
  *     else:
- *         mean_distance = median_distance * 0.9             # <<<<<<<<<<<<<<
+ *         mean_distance = median_distance             # <<<<<<<<<<<<<<
  * 
  *     while (abort < 30):
  */
   /*else*/ {
-    __pyx_v_mean_distance = (__pyx_v_median_distance * 0.9);
+    __pyx_v_mean_distance = __pyx_v_median_distance;
   }
   __pyx_L13:;
 
   /* "filter_cython_new.pyx":61
- *         mean_distance = median_distance * 0.9
+ *         mean_distance = median_distance
  * 
  *     while (abort < 30):             # <<<<<<<<<<<<<<
  *         indices = []

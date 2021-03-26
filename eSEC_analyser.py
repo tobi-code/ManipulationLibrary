@@ -431,7 +431,8 @@ def plotDendrogramFromMatrix(D_shaped, labels, figsize = (30,16), threshold = 0.
 	#define the linkage, color threshold and produce dendrogram
 	Z = hierarchy.linkage(dissimilarity, method = 'complete', optimal_ordering = True)
 	ax = fig.add_subplot(1, 1, 1)
-	dn = hierarchy.dendrogram(Z,orientation='right', labels = labels, ax = ax, count_sort = 'ascending', color_threshold = threshold)
+	dn = hierarchy.dendrogram(Z,orientation='right', labels = labels, ax = ax,
+							count_sort = 'ascending', color_threshold = threshold)
 
 	#define plot parameters				
 	ax.tick_params(axis='x', which='major', labelsize=27)

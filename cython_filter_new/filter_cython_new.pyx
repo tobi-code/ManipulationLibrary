@@ -56,7 +56,7 @@ cpdef double[:,::1] region_filter_cython(double[:] center, double[:,::1] pcd, in
         mean_distance = median_distance * 0.9
 
     else:
-        mean_distance = median_distance * 0.9
+        mean_distance = median_distance
 
     while (abort < 30):
         indices = []
