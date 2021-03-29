@@ -27,6 +27,8 @@ You can find examples on how to use this library in the "example" folder in GitH
 If you have trouble with the "filter_cython" function you can try to compile it with the
 following command in the "cython_filter" folder: ``python3 setup.py build_ext --inplace``
 
+You can find a detailed documentation here: ``https://manipulationlibrary.readthedocs.io/en/latest/``
+
 Depends on external librabies:
 ------------------------------
 
