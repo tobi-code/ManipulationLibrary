@@ -12,11 +12,17 @@
 #
 import os
 import sys
+import mock
+
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.append('../../ManipulationLibrary/')
 sys.path.append('../../')
 autodoc_mock_imports = ["tabula", "pandas", "numpy", "matplotlib", "scipy", "itertools", "seaborn", "open3d", "cv2", "progressbar"]
+
+MOCK_MODULES = ['manipulation_analyser', 'filter_cython_new', 'cython_filter_new']
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock()
 
 # -- Project information -----------------------------------------------------
 
