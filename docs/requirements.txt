@@ -4,6 +4,4 @@ numpy
 matplotlib
 scipy
 seaborn
-manipulation_analyser
-filter_cython_new
-cython_filter_new
+
