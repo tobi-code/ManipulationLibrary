@@ -18,13 +18,16 @@ sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.insert(0, os.path.abspath('../ManipulationLibrary/'))
+sys.path.insert(0, os.path.abspath('../ManipulationLibrary/cython_filter_new'))
+#sys.path.append(os.path.join(os.path.dirname(__name__), '..'))
+print(sys.path)
 # sys.path.append('.')
 # sys.path.append('..')
 # sys.path.append('../..')
 # sys.path.append('../ManipulationLibrary')
 # sys.path.append('../../ManipulationLibrary/')
 # sys.path.append('../../')
-autodoc_mock_imports = ["tabula", "pandas", "numpy", "matplotlib", "scipy", "itertools", "seaborn", "open3d", "cv2", "progressbar", "filter_cython_new"]
+autodoc_mock_imports = ["tabula", "pandas", "numpy", "matplotlib", "scipy", "itertools", "seaborn", "open3d", "cv2", "progressbar"]
 
 
 # -- Project information -----------------------------------------------------
