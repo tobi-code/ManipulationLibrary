@@ -409,7 +409,7 @@ def plotDendrogram(rows, labels, threshold = 0.4, save = False):
 	if save == True:
 		plt.savefig("dendrogram_rows_%s.png"%indexes, bbox_inches = 'tight')
 
-def plotDendrogramFromMatrix(D_shaped, labels, figsize = (30,16), threshold = 0.4, save = False, name_of_plot = ""):
+def plotDendrogramFromMatrix(D_shaped, labels, figsize = (30,16), threshold = 0.4, save = False, lablesize = 27, fontsize = 40, name_of_plot = ""):
 	'''
 	| Plots the dendrogram for specific rows for the .npy arrays.
 	| Warning: needs the output from removeCobinationRowsSave()
@@ -420,6 +420,8 @@ def plotDendrogramFromMatrix(D_shaped, labels, figsize = (30,16), threshold = 0.
 		* figsize: size of plot in case labels are squeezed
 		* threshold: color threshold for the dendrogram (float)
 		* save: paramter if figure need to be saved (bool)
+		* lablesize: fontsize of x- and y-labels
+		* fontsize: fontsize of x label
 		* name_of_plot: name of the plot that will be saved (string)
 	'''
 	
@@ -435,12 +437,12 @@ def plotDendrogramFromMatrix(D_shaped, labels, figsize = (30,16), threshold = 0.
 							count_sort = 'ascending', color_threshold = threshold)
 
 	#define plot parameters				
-	ax.tick_params(axis='x', which='major', labelsize=27)
-	ax.tick_params(axis='y', which='major', labelsize=27)
-	ax.set_xlabel('Dissimilarity', fontsize=40)
+	ax.tick_params(axis='x', which='major', labelsize=lablesize)
+	ax.tick_params(axis='y', which='major', labelsize=lablesize)
+	ax.set_xlabel('Dissimilarity', fontsize=fontsize)
 	plt.tight_layout()
 	if save == True:
-		plt.savefig("dendrogram_%s.png"%name_of_plot, bbox_inches = 'tight')
+		plt.savefig(name_of_plot, bbox_inches = 'tight')
 
 
 def plotDissi(rows, label, save = False):
