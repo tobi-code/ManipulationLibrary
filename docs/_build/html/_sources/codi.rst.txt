@@ -1,6 +1,7 @@
-Code
-====
+eSEC analyser
+=============
 
-.. automodule:: ESEC
+.. automodule:: eSEC_analyser
 	:members:
+
 	

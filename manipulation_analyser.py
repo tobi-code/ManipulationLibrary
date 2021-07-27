@@ -22,7 +22,7 @@ import sys
 import random
 from scipy.spatial.distance import pdist
 
-#from ManipulationLibrary.cython_filter_new import filter_cython_new as filter_cython
+# from ManipulationLibrary.cython_filter_new import filter_cython_new as filter_cython
 from cython_filter_new import filter_cython_new as filter_cython
 
 ##define global variables
