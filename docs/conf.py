@@ -28,7 +28,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../ManipulationLibrary/
 # sys.path.append('../ManipulationLibrary')
 # sys.path.append('../../ManipulationLibrary/')
 # sys.path.append('../../')
-autodoc_mock_imports = ["tabula", "pandas", "numpy", "matplotlib", "scipy", "itertools", "seaborn", "open3d", "cv2", "progressbar"]
+autodoc_mock_imports = ["tabula", "pandas", "numpy", "matplotlib", "scipy", "itertools", "seaborn", "open3d", "cv2", "progressbar", "sklearn"]
 
 
 # -- Project information -----------------------------------------------------
