@@ -14,8 +14,8 @@ import os
 import sys
 
 
-sys.path.insert(0, os.path.abspath(os.getcwd()+"/.."))
-sys.path.insert(0, os.path.abspath(os.getcwd()+"/../cython_filter_new/"))
+sys.path.insert(1, os.path.abspath(os.getcwd()+"/.."))
+sys.path.insert(1, os.path.abspath(os.getcwd()+"/../cython_filter_new/"))
 
 sys.path.insert(1, os.path.abspath('../..'))
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
@@ -23,10 +23,13 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.insert(0, os.path.abspath('../ManipulationLibrary/'))
 
-from cython_filter_new import filter_cython_new
+# from cython_filter_new import filter_cython_new
 
 # print(sys.path)
 # print(os.path.abspath(os.getcwd()))
+
+if 'READTHEDOCS' not in os.environ:
+    from cython_filter_new import filter_cython_new
 
 autodoc_mock_imports = ["tabula", "pandas", "numpy", "matplotlib", "scipy", "itertools", "seaborn", "open3d", "cv2", "progressbar", "sklearn"]
 
