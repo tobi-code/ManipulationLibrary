@@ -1,7 +1,7 @@
 eSEC analyser
 =============
 
-.. automodule:: eSEC_analyser
+.. automodule:: ManipulationLibrary.eSEC_analyser
 	:members:
 
 	
