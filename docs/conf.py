@@ -17,11 +17,11 @@ import sys
 sys.path.insert(0, os.path.abspath(os.getcwd()+"/.."))
 sys.path.insert(0, os.path.abspath(os.getcwd()+"/../cython_filter_new/"))
 
-# sys.path.insert(1, os.path.abspath('../..'))
-# sys.path.insert(1, os.path.join(sys.path[0], '..'))
+sys.path.insert(1, os.path.abspath('../..'))
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
-# sys.path.insert(0, os.path.abspath('../..'))
-# sys.path.insert(0, os.path.abspath('../ManipulationLibrary/'))
+sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath('../ManipulationLibrary/'))
 
 from cython_filter_new import filter_cython_new
 
