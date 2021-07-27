@@ -18,7 +18,7 @@ The eSEC analyser is used to analyse existing eSEC matrices and is capable of:
 
 * measure the group dissimilarity
 
-The manipulation analyser is used calculate e²SEC matrices using the MANIAC dataset.
+The manipulation analyser is used calculate e²SEC matrices using the MANIAC dataset or others.
 
 You can find examples on how to use this library in the "example" folder in GitHub.
 
@@ -27,7 +27,6 @@ You can find examples on how to use this library in the "example" folder in GitH
 If you have trouble with the "filter_cython" function you can try to compile it with the
 following command in the "cython_filter" folder: ``python3 setup.py build_ext --inplace``
 
-You can find a detailed documentation here: ``https://manipulationlibrary.readthedocs.io/en/latest/``
 
 Depends on external librabies:
 ------------------------------
