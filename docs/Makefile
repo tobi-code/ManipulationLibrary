@@ -8,8 +8,6 @@ SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = .
 BUILDDIR      = _build
 
-html:
-  @cd /../cython_filter_new/; python setup.py build_ext --inplace
   
 # Put it first so that "make" without argument is like "make help".
 help:
