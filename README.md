@@ -14,7 +14,7 @@ You can find examples on how to use this library in the "example" folder in GitH
 If you have trouble with the "filter_cython_new" function compile it on your system
 with the following command in the "cython_filter_new" folder: ``python3 setup.py build_ext --inplace``
 
-If the "filter_cython_new" can't be imported, comment out line 27 instead of line 26 in "manipulation_analyser.py".
+If the "filter_cython_new" can't be imported, comment out line 28 instead of line 29 in "manipulation_analyser.py".
 
 How to use:
 -----------

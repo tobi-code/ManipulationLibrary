@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created 2020
+Created 2020-2021
 
 @author: Tobias Strübing
 """
@@ -792,11 +792,11 @@ def getDissimilarityMatrix(eSEC_matrices):
 
 def _compare_manipulations(manipulation_1, manipulation_2):
     '''
-    Compares lengths of two manipulations and returns True or False if when they have equal length or not.
+    Compares lengths of two eSEc matrices. If the length is not same, the last column of the shorter manipulation is repeated until size is same.
     
     Parameters:
-        * manipulation_1: first eSEC manipulation
-		* manipulation_2: second eSEC manipulation
+        * manipulation_1: first eSEC matrix
+		* manipulation_2: second eSEC matrix
     '''
     if (manipulation_1.shape[1] > manipulation_2.shape[1]):
         new_array = copy.copy(manipulation_2)
@@ -816,24 +816,38 @@ def _compare_manipulations(manipulation_1, manipulation_2):
         return(np.array_equal(manipulation_1, manipulation_2))
 		
 def _calc_D_shaped(table_triples):
+	'''
+    Calculates dissimilarity matrix.
+    
+    Parameters:
+        * table_triples: resulting triple matrix from _make_triple()
+    '''
 	D = np.zeros(len(table_triples)*len(table_triples))
 	index = 0
 	for i in range(len(table_triples)):
 		for j in range(len(table_triples)):
-				man_1, man_2 = _compare_triple_matrics(table_triples[i], table_triples[j])
-				L1 = np.array([(man_1[j][:,0] == man_2[j][:,0]) for j in range(len(man_1))])
-				L1 = np.invert(L1.T) * 1
-				L2 = np.array([(man_1[j][:,1] == man_2[j][:,1]) for j in range(len(man_1))])
-				L2 = np.invert(L2.T) * 1 
-				L3 = np.array([(man_1[j][:,2] == man_2[j][:,2]) for j in range(len(man_1))])
-				L3 = np.invert(L3.T) * 1 
-				d = (np.sqrt(L1+L2+L3))/(np.sqrt(3))
-				D[index] = (1/(L1.shape[1] * 10)) * np.sum(d)
-				index += 1
+			man_1, man_2 = _compare_triple_matrics(table_triples[i], table_triples[j])
+			L1 = np.array([(man_1[j][:,0] == man_2[j][:,0]) for j in range(len(man_1))])
+			L1 = np.invert(L1.T) * 1
+			L2 = np.array([(man_1[j][:,1] == man_2[j][:,1]) for j in range(len(man_1))])
+			L2 = np.invert(L2.T) * 1 
+			L3 = np.array([(man_1[j][:,2] == man_2[j][:,2]) for j in range(len(man_1))])
+			L3 = np.invert(L3.T) * 1 
+			d = (np.sqrt(L1+L2+L3))/(np.sqrt(3))
+			D[index] = (1/(L1.shape[1] * 10)) * np.sum(d)
+			index += 1
 	D_shaped = np.reshape(D , (len(table_triples),len(table_triples)))
 	return(D_shaped)
 
-def _similarity_manipulations(manipulation_1, manipulation_2):
+def similarity_manipulations(manipulation_1, manipulation_2):
+	'''
+    Calculates the similarity between two e2SEC matrices as percent.
+    
+    Parameters:
+        * manipulation_1: first e2SEC manipulation
+		* manipulation_2: second e2SEC manipulation
+    '''
+
 	man_1, man_2 = _compare_triple_matrics(_make_triple_one_manipualtion(manipulation_1), _make_triple_one_manipualtion(manipulation_2))
 	L1 = np.array([(man_1[j][:,0] == man_2[j][:,0]) for j in range(len(man_1))])
 	L1 = np.invert(L1.T) * 1
@@ -849,6 +863,13 @@ def _similarity_manipulations(manipulation_1, manipulation_2):
 	return(sim)
 
 def _make_triple(liste_array):
+	'''
+    Creates triples for 10-row eSEC matrix.
+    
+    Parameters:
+		* liste_array: eSEC matrices
+    '''
+	
 	table_triples = {}
 	frames_triples = {}
 	opal = int(liste_array[0].shape[0]/3)
@@ -856,9 +877,9 @@ def _make_triple(liste_array):
 	for k in range(len(liste_array)):
 		for j in range(liste_array[k][1].size):
 			for i in range(opal):
-				triple_frame[i][0] = liste_array[k][i]
-				triple_frame[i][1] = liste_array[k][i+opal]
-				triple_frame[i][2] = liste_array[k][i+2*opal]
+				triple_frame[i][0] = liste_array[k][i][j]
+				triple_frame[i][1] = liste_array[k][i+opal][j]
+				triple_frame[i][2] = liste_array[k][i+2*opal][j]
 			frames_triples[j] = copy.copy(triple_frame)
 			#print("new:",frames_triples)
 		table_triples[k] = copy.copy(frames_triples)
@@ -867,6 +888,13 @@ def _make_triple(liste_array):
 	return table_triples
 
 def _make_triple_one_manipualtion(liste_array):
+	'''
+    Creates triples for 10-row e2SEC matrix.
+    
+    Parameters:
+		* liste_array: e2SEC matrix
+    '''
+
 	table_triples = {}
 	frames_triples = {}
 	opal = int(liste_array.shape[0]/3)
@@ -885,7 +913,7 @@ def _make_triple_one_manipualtion(liste_array):
 
 def _compare_triple_matrics(manipulation_1, manipulation_2):
 	'''
-    Compares triple matrices (TNR, SSR, DSR) from two manipulations
+    Compares triple matrices (TNR, SSR, DSR) from two manipulations.
     
     Parameters:
         * manipulation_1: triples of first manipulation
@@ -915,14 +943,38 @@ def _compare_triple_matrics(manipulation_1, manipulation_2):
 		return(copy.copy(manipulation_1), copy.copy(manipulation_2))	
 
 def _delete_rows(relation, manipulation):
+	'''
+    Deletes one row in eSEC table.
+    
+    Parameters:
+        * relation: row to delete (int)
+		* manipulation: eSEC matrix
+    '''
+
 	return np.delete(manipulation, [relation,relation+10,relation+20], 0)
 
 def _delete_rows_two(combination, manipulation):
+	'''
+    Deletes two rows in eSEC table.
+    
+    Parameters:
+        * combination: two rows to delete [int]
+		* manipulation: eSEC matrix
+    '''
+
 	relation_1 = combination[0]
 	relation_2 = combination[1]
 	return np.delete(manipulation, [relation_1,relation_1+10,relation_1+20, relation_2,relation_2+10,relation_2+20], 0)
 
 def _delete_rows_three(combination, manipulation):
+	'''
+    Deletes three rows in eSEC table.
+    
+    Parameters:
+        * combination: three rows to delete [int]
+		* manipulation: eSEC matrix
+    '''
+
 	relation_1 = combination[0]
 	relation_2 = combination[1]
 	relation_3 = combination[2]
@@ -931,6 +983,14 @@ def _delete_rows_three(combination, manipulation):
 									relation_3,relation_3+10,relation_3+20], 0)
 
 def _delete_rows_four(combination, manipulation):
+	'''
+    Deletes four rows in eSEC table.
+    
+    Parameters:
+        * combination: four rows to delete [int]
+		* manipulation: eSEC matrix
+    '''
+
 	relation_1 = combination[0]
 	relation_2 = combination[1]
 	relation_3 = combination[2]
@@ -940,6 +1000,14 @@ def _delete_rows_four(combination, manipulation):
 									relation_3,relation_3+10,relation_3+20,
 									relation_4,relation_4+10,relation_4+20], 0)
 def _delete_rows_five(combination, manipulation):
+	'''
+    Deletes five rows in eSEC table.
+    
+    Parameters:
+        * combination: five rows to delete [int]
+		* manipulation: eSEC matrix
+    '''
+
 	relation_1 = combination[0]
 	relation_2 = combination[1]
 	relation_3 = combination[2]
@@ -1007,6 +1075,14 @@ def _dissimilarity_array_new(manipulation_1, manipulation_2, liste_array):
 # Availability: https://stackoverflow.com/questions/33272588/appending-elements-to-an-empty-dictionary-of-lists-in-python
 #*************************************************
 def _add_element(dict, key, value):
+	"""
+	Adds an element to dict
+
+	Parameters:
+		* dict: input dict
+		* key: index to add
+		* value: value to add
+	"""
 	if key not in dict:
 		dict[key] = []
 	dict[key].append(value)
@@ -1054,6 +1130,14 @@ def _plot_confusion_matrix(cm, classes,
 	plt.savefig("Confusion_matrix.png", bbox_inches = 'tight', dpi = 300)
 
 def _classify_monte_carlo(input_groups, manipulation, dissi_matrix):
+	"""
+	Calculates the confusion matrix for all 120 e2SEC matrices from the MANIAC dataset. 
+
+	Parameters:
+		* input_groups: train manipulations from _split()
+		* manipulation: test manipulations from _split()
+		* dissi_matrix: empty zeros 8x8 array
+	"""
 	#assign test manipulations to train manipulatios
 	for k in range(8):
 		for y in range(5):
@@ -1062,7 +1146,7 @@ def _classify_monte_carlo(input_groups, manipulation, dissi_matrix):
 			for i in range(8):
 				for j in range(10):
 					#calculate similatiry beweeen train groups (input_groups[i][j]) and test manipulation (manipulation[k][y])
-					sim_temp = _similarity_manipulations(input_groups[i][j], manipulation[k][y])
+					sim_temp = similarity_manipulations(input_groups[i][j], manipulation[k][y])
 					#save the biggest similarity from test manipulation (manipulation[k][y]) to a train manipulation (input_groups[i][j])
 					if sim_temp > sim:
 						sim = sim_temp

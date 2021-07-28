@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created 2020
+Created 2020-2021
 
 @author: Tobias Strübing
 """
@@ -22,9 +22,12 @@ import sys
 import random
 from scipy.spatial.distance import pdist
 
+#-------------------------------------------------------------------------------------------------
+#if you have problems importing the cython filter, uncomment line 28 instead of 29
 if 'READTHEDOCS' not in os.environ:
     # from ManipulationLibrary.cython_filter_new import filter_cython_new as filter_cython
     from cython_filter_new import filter_cython_new as filter_cython
+#-------------------------------------------------------------------------------------------------
 
 ##define global variables
 #o1,o2,o3 are the three main objects of the manipulation
@@ -155,12 +158,20 @@ def _final_cleaning(e2sec):
 
 
 def _clean_debug_images(final_columns, savename):
+    '''
+    Remove all debug images that are not part of the e2SEC matrix due to applied e2SEC rules.
+    
+    Parameters:
+        * final_columns: final columns in the e2SEC matrix (int)
+        * savename: name of the manipulation folder (string)
+    '''
+    #define path of debug images
     path = "debug_images/"+savename+"/"
+    #remove all images that are not in the e2SEC matrix
     for item in sorted(os.listdir(path)):
         if int(item[:-4]) not in final_columns:
             os.remove(path+item)
-        #print(int(item[:-4]) in final_columns)
-    # print(final_columns)
+
 
 def _replace_labels(label_resized, old, new):
     '''
@@ -188,93 +199,15 @@ def _replace_labels(label_resized, old, new):
 
 def _distance(p1, p2):
     '''
-    Calculates the euclidean distance between two points.
+    Calculates the euclidean distance between two points 3D points.
+
+    Parameters:
+        * p1: first 3D point
+        * p2: second 3D point
     '''
 
     return np.sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2 + (p1[2]-p2[2])**2)
 
-
-def _rotateSceneNewNew(pcd_file, label_file, ground_label):
-    '''
-    Calculates the rotation of the scene by using oriented bounding boxes 
-    from the RASNAC ground.
-    
-    Parameters:
-        * pcd_file: pcd file to process (.pcd)
-        * label_file: label file corresponding to pcd file (.dat)
-        * ground_label: label of the ground (int)
-        
-    Returns:
-        * rotation: rotation of the scene
-    '''
-    
-    #load pcd file with nan points to map lables 
-    pcd = o3d.io.read_point_cloud(pcd_file, remove_nan_points=False)
-    
-    #cast cloud to numpy array and replace nan values with int value -100
-    cloud = np.asarray(pcd.points)
-    cloud = np.nan_to_num(cloud, nan=-100)
-    
-    #resize labels to point cloud size
-    my_mat = np.zeros((640, 480))
-    label = np.loadtxt(label_file)
-    label_resized = cv2.resize(label, my_mat.shape, interpolation = cv2.INTER_NEAREST)
-    label_resized = label_resized.flatten()
-    
-    #add labels to points from the cloud
-    pcd_array =  np.column_stack((cloud, label_resized))
-    
-    #sort point cloud array by labels and calculate maximal label
-    pcd_array_sorted = pcd_array[pcd_array[:, 3].argsort()]
-   
-    #delete -100 values
-    result_1 = np.where(pcd_array_sorted == -100)
-    pcd_array_sorted = np.delete(pcd_array_sorted, np.unique(result_1[0]), 0)
-
-    #assign unique labels 
-    unique_labels = np.unique(label)
-    
-    #define index_0 as lower limit of ground cloud(i.e. cloud[lower_limit:upper_limit])
-    #this loop is nessesary to find the lower limit, sometimes the ground_label-1 is not
-    #assigned in labels so it finds the next lower label from ground_label
-    #i.e. best case gound_point_cloud = raw_point_cloud[ground_label-1:ground_label]
-    i = 1
-    index_0 = None
-    while(index_0 == None):
-        if(float(unique_labels[np.where(unique_labels == ground_label)[0][0]-i]) in pcd_array_sorted[:,3]):
-            index_0 = np.max(np.where(pcd_array_sorted[:,3] == float(unique_labels[np.where(unique_labels == ground_label)[0][0]-i])))
-        else:
-            i += 1
-    
-    #define index_1 as upper limit of ground cloud(i.e. cloud[lower_limit:upper_limit])
-    index_1 = np.max(np.where(pcd_array_sorted[:,3] == float(ground_label)))
-
-    
-    #delete the labels from cloud array
-    pcd_array_sorted = np.delete(pcd_array_sorted, 3,1)
-    
-    #create objects dict which contains ground point cloud
-    if(ground_label == 0):
-        objects = pcd_array_sorted[0:index_1]
-    else:
-        objects = pcd_array_sorted[index_0:index_1]  
-    
-    #obejects array to pointclouds
-    pcd = o3d.geometry.PointCloud()
-    pcd.points = o3d.utility.Vector3dVector(objects)
-    
-    #use RANSAC algorithm to extract ground plane, create obb and extract the rotation to return
-    plane_model, inliers = pcd.segment_plane(distance_threshold=0.01,
-                                         ransac_n=3,
-                                         num_iterations=100)
-    [a, b, c, d] = plane_model
-
-    filtered_pcd_voxel = pcd.select_by_index(inliers)
-    filtered_pcd_voxel = filtered_pcd_voxel.voxel_down_sample(voxel_size=0.02)
-    obb = o3d.geometry.OrientedBoundingBox.create_from_points(filtered_pcd_voxel.points)
-    rotation = obb.R
-    
-    return rotation
 
 def _getTranslation(ground_cloud):
     '''
@@ -343,6 +276,17 @@ def _getTranslation(ground_cloud):
     return reg_p2p.transformation, roll
 
 def _getGroundiNewNew(pcd_file, label_file, ground_label):
+    '''
+    Extracts a plane out of the ground in the scene, using a RANSAC algorithm.
+    
+    Parameters:
+        * pcd_file: location of the point cloud file (str)
+        * label_file: location of the label file (str)
+        * ground_label: label of the ground (int)
+        
+    Returns:
+        * ground_plane: filtered ground plane
+    '''
     #load pcd file with nan points to map lables 
     pcd = o3d.io.read_point_cloud(pcd_file, remove_nan_points=False)
     #cast cloud to numpy array and replace nan values with int value -100
@@ -356,14 +300,11 @@ def _getGroundiNewNew(pcd_file, label_file, ground_label):
     label_resized = label_resized.flatten()
 
     #load pcd file with nan points to map lables  
-    
     pcd = o3d.io.read_point_cloud(pcd_file, remove_nan_points=False)
     #cast cloud to numpy array and replace nan values with int value -100
     cloud = np.asarray(pcd.points)
     cloud = np.nan_to_num(cloud, nan=-100)
    
-    
-    
     #add labels to points from the cloud
     pcd_array = np.column_stack((cloud, label_resized))
     pcd_array_sorted = pcd_array[pcd_array[:, 3].argsort()]
@@ -392,7 +333,6 @@ def _getGroundiNewNew(pcd_file, label_file, ground_label):
     
     #delete the labels from cloud array
     pcd_array_sorted = np.delete(pcd_array_sorted, 3,1)
-    
     
     #rotate the point cloud with calculated rotation
     rotated_cloud = o3d.geometry.PointCloud()
@@ -426,10 +366,10 @@ def _fillTN_absent(hand, ground, thresh, table):
     Creates the T/N relations with pre-defined point clouds of hand and ground as input. Thresh defines the distance to recognize touching.
     
     Parameters:
-        * hand: point cloud of the hand
+        * hand: point cloud of the hand 
         * ground: point cloud of the ground
-        * thresh: threshold distance of touching
-        * table: chararray table   
+        * thresh: threshold distance of touching (float)
+        * table: chararray table
     '''
 #     T/N
 #     H, 1
@@ -446,7 +386,7 @@ def _fillTN_absent(hand, ground, thresh, table):
     #get global objects 1, 2 and 3
     global o1, o2, o3, absent_o1, absent_o2, absent_o3 
         
-    #fill in table with U,T or N corresponding to threshold distances
+    #fill in table with U,T or N corresponding to threshold distances from 0-9
     if(o1 == None):
         table[0][0] = 'U'
     elif(len(hand.points) > 0):
@@ -473,7 +413,6 @@ def _fillTN_absent(hand, ground, thresh, table):
         else:
             table[1][0] = 'N'
         
-
     if(o3 == None):
         table[2][0] = 'U'
     elif(len(hand.points) > 0):
@@ -486,7 +425,6 @@ def _fillTN_absent(hand, ground, thresh, table):
             table[2][0] = 'T'
         else:
             table[2][0] = 'N'
-
 
     if(len(hand.points) > 0):
         if(np.min(hand.compute_point_cloud_distance(ground)) < thresh):
@@ -548,33 +486,79 @@ def _fillTN_absent(hand, ground, thresh, table):
     else:
         table[9][0] = 'N'
 
-        
-#SSR definitions from eSEC
+ 
+#SSR definitions from eSEC 
 def _R(o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y):
+    '''
+    Definition of the "Right" relation.
+    
+    Parameters:
+        * o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y: vertices of the AABBs
+
+    Returns:
+        * True or False
+    '''
+
     if ((o1_max_x > o2_max_x) and (o1_min_y < o2_max_y) and (o1_max_y > o2_min_y) and (o1_min_z < o2_max_z) and (o1_max_z > o2_min_z)):
         return True
     else:
         return False
 
 def _L(o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y):
+    '''
+    Definition of the "Left" relation.
+    
+    Parameters:
+        * o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y: vertices of the AABBs
+
+    Returns:
+        * True or False
+    '''
     if ((o1_min_x < o2_min_x) and (o1_min_y < o2_max_y) and (o1_max_y > o2_min_y) and (o1_min_z < o2_max_z) and (o1_max_z > o2_min_z)):
         return True
     else:
         return False
 
 def _F(o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y):
+    '''
+    Definition of the "Front" relation.
+    
+    Parameters:
+        * o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y: vertices of the AABBs
+
+    Returns:
+        * True or False
+    '''
     if ((o1_max_z > o2_max_z) and (o1_min_x < o2_max_x)  and (o2_min_x < o1_max_x) and (o1_min_y < o2_max_y) and (o1_max_y > o2_min_y)):
         return True
     else:
         return False
 
 def _Ba(o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y):
+    '''
+    Definition of the "Back" relation.
+    
+    Parameters:
+        * o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y: vertices of the AABBs
+
+    Returns:
+        * True or False
+    '''
     if ((o1_min_z < o2_min_z) and (o1_min_x < o2_max_x) and (o2_min_x < o1_max_x) and (o1_min_y < o2_max_y) and (o1_max_y > o2_min_y)):
         return True
     else:
         return False
 
 def _Ar(o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y):
+    '''
+    Definition of the "Around" relation.
+    
+    Parameters:
+        * o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y: vertices of the AABBs
+
+    Returns:
+        * True or False
+    '''
     if (_R(o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y) or
         _L(o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y) or
         _F(o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y) or
@@ -584,12 +568,30 @@ def _Ar(o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2
         return False
 
 def _Ab(o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y):
+    '''
+    Definition of the "Above" relation.
+    
+    Parameters:
+        * o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y: vertices of the AABBs
+
+    Returns:
+        * True or False
+    '''
     if ((o1_max_y > o2_max_y)):
         return True
     else:
         return False
 
 def _Be(o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y):
+    '''
+    Definition of the "Below" relation.
+    
+    Parameters:
+        * o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y: vertices of the AABBs
+
+    Returns:
+        * True or False
+    '''
     if ((o1_min_y < o2_min_y)):
         return True
     else:
@@ -600,6 +602,16 @@ def _Bw(o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y,
         o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y,
         o3_max_x, o3_max_z, o3_max_y, o3_min_x, o3_min_z, o3_min_y,
         object):
+    '''
+    Definition of the "Below" relation.
+    
+    Parameters:
+        * o1_max_x, o1_max_z, o1_max_y, o1_min_x, o1_min_z, o1_min_y, o2_max_x, o2_max_z, o2_max_y, o2_min_x, o2_min_z, o2_min_y, o3_max_x, o3_max_z, o3_max_y, o3_min_x, o3_min_z, o3_min_y,: vertices of the AABBs
+        * object: objects which is considered to be "Between" in the current e2SEC row, i.e. 1,2,3,12,13,23 
+
+    Returns:
+        * True or False
+    '''
     if object == 2 and o2_min_x >= min(o1_max_x,o3_max_x) and o2_max_x <= max(o1_min_x, o3_min_x) and o2_min_y >= max(o1_min_y,o3_min_y) and o2_max_y <= min(o1_max_y,o3_max_y) and o2_min_z >= max(o1_min_z,o3_min_z) and o2_max_z <= min(o1_max_z,o3_max_z):
         return True
     
@@ -645,7 +657,7 @@ def _fillSSR_8(hand, ground, table):
     #get global objects 1, 2 and 3
     global o1, o2, o3
     #--------------------------------------------------
-    #y-z swapped 
+    #y-z swapped in the SSR relations
     # |y
     # |
     # |    - z
@@ -654,6 +666,7 @@ def _fillSSR_8(hand, ground, table):
     # |-
     #  - - - - - - - - - - - - - -x
     #--------------------------------------------------
+
     #create AABB around object1 if it is defined and not absecent in the scene
     if(o1 != None and table[0][0] != b'A'):
         o1_box = o1.get_axis_aligned_bounding_box()
@@ -692,7 +705,8 @@ def _fillSSR_8(hand, ground, table):
         all_objects_there = True
     else:
         all_objects_there = False
-    
+
+    #fill in table with SSR corresponding to objects relationsfrom 10-19
     if(o1 == None):
         table[10][0] = 'U'
     elif(table[0][0] == b'A'):
@@ -1080,71 +1094,37 @@ def _fillDSR_new_2(hand, ground, previous_array, thresh, table, savename):
     if(o1 != None and po1 != None and table[0][0] != b'A'):
         o1_box = o1.get_axis_aligned_bounding_box()
         po1_box = po1.get_axis_aligned_bounding_box()
-        # o1_box_edges = o1_box.get_box_points()
-        # po1_box_edges = po1_box.get_box_points()
         
     #creates AABB around object2 if o2 and po2 are defined and if TNR relation is not abscent    
     if(o2 != None and po2 != None and table[1][0] != b'A'):
         if len(o2.points) != 0:
             o2_box = o2.get_axis_aligned_bounding_box()
             po2_box = po2.get_axis_aligned_bounding_box()
-            # o2_box_edges = o2_box.get_box_points()
-            # po2_box_edges = po2_box.get_box_points()
         
     #creates AABB around object1 if o3 and po3 are defined and if TNR relation is not abscent
     if(o3 != None and po3 != None and table[2][0] != b'A'):
         if len(o3.points) != 0:
             o3_box = o3.get_axis_aligned_bounding_box()
             po3_box = po3.get_axis_aligned_bounding_box()
-            # o3_box_edges = o3_box.get_box_points()
-            # po3_box_edges = po3_box.get_box_points()
         
     #creates AABB around hand if point cloud is in the frame
     if(len(hand.points) > 0):
         hand_box = hand.get_axis_aligned_bounding_box()
         phand_box = phand.get_axis_aligned_bounding_box()
-        # hand_box_edges = hand_box.get_box_points()
-        # phand_box_edges = phand_box.get_box_points()
     
     #creates AABB around ground
     ground_box = ground.get_axis_aligned_bounding_box()
     pground_box = pground.get_axis_aligned_bounding_box()
-    # ground_box_edges = ground_box.get_box_points()
-    # pground_box_edges = pground_box.get_box_points()
-          
 
-    # o1_left_bot_front, o1_left_bot_back   = [o1_], []
-    # o1_left_top_front, o1_left_top_back   = [], []
-    # o1_right_bot_front, o1_right_bot_back = [], []
-    # o1_right_top_front, o1_right_top_back = [], []
-    # if(o1 != None and po1 != None and table[0][0] != b'A'):   
-    #     print("\n Distance: ", _distance(o1_box.get_center(), po1_box.get_center()))
-        # p = o3d.geometry.PointCloud()
-        # p.points = o3d.utility.Vector3dVector([o1_box.get_center()])
-        # q = o3d.geometry.PointCloud()
-        # q.points = o3d.utility.Vector3dVector([po1_box.get_center()])
-        # p.paint_uniform_color([1, 0, 0])
-        # q.paint_uniform_color([0, 1, 0])
-        # o3d.visualization.draw_geometries([o1_box, po1_box, p, q, ground])
-    #multi = 1.5
     threshold = thresh
-
-    # center_distance = 0.005
-    # stable_dist = 0.005
-
-    # center_distance = 0.004244682119772682
-    # stable_dist = 0.004681853940150129
 
     center_distance = 0.005107632747118286
     stable_dist = 0.0045302034127268085
 
-    #stable_dist = threshold/50
-    #center_distance = 0.02
-
     P1 = [table[0][0] == b'T', table[1][0] == b'T', table[2][0] == b'T', table[3][0] == b'T', table[4][0] == b'T', table[5][0] == b'T', table[6][0] == b'T', table[7][0] == b'T', table[8][0] == b'T', table[9][0] == b'T']
     P2 = [table[0][0] == b'N', table[1][0] == b'N', table[2][0] == b'N', table[3][0] == b'N', table[4][0] == b'N', table[5][0] == b'N', table[6][0] == b'N', table[7][0] == b'N', table[8][0] == b'N', table[9][0] == b'N']
 
-    #Figure out center distance
+    #Figure out center_distance if needed for all objects 
     #-------------------------------------------------------------------------------------------------------------------------------------------------
     # f = open("distances_hand_%s.txt"%savename, "a")
     # f.write("%f\n"%_distance(hand.get_center(), phand.get_center()))
@@ -1164,7 +1144,7 @@ def _fillDSR_new_2(hand, ground, previous_array, thresh, table, savename):
     #     f.close()
     #-------------------------------------------------------------------------------------------------------------------------------------------------
     
-    #Figure out stable distance
+    #Figure out stable_distance if needed for all objects 
     #-------------------------------------------------------------------------------------------------------------------------------------------------
     # if o1 != None and po1 != None:
     #     f = open("distances_hand_o1_%s.txt"%savename, "a")
@@ -1184,12 +1164,12 @@ def _fillDSR_new_2(hand, ground, previous_array, thresh, table, savename):
     #     f.close()
     #-------------------------------------------------------------------------------------------------------------------------------------------------
     
+    #fill in table with DSR corresponding to objects relationsfrom 20-29
     if(o1 == None or po1 == None):
         table[20][0] = 'U'
     elif(table[0][0] == b'A'):
         table[20][0] = 'A'
     elif(len(hand.points) > 0):
-        #print("\n", _distance(hand.get_center(), phand.get_center()), " > ", center_distance)
         if ((P1[0] and _distance(hand.get_center(), phand.get_center()) > center_distance and _distance(o1_box.get_center(), po1_box.get_center()) > center_distance)
             or (P1[0] and (xor(_distance(hand.get_center(), phand.get_center()) > center_distance, _distance(o1_box.get_center(), po1_box.get_center()) > center_distance)))):
             table[20][0] = 'MT' 
@@ -1266,14 +1246,8 @@ def _fillDSR_new_2(hand, ground, previous_array, thresh, table, savename):
         table[24][0] = 'A'
     elif ((P1[4] and _distance(o1_box.get_center() , po1_box.get_center()) > center_distance and _distance(o2_box.get_center() , po2_box.get_center()) > center_distance)
      or (P1[4] and (xor(_distance(o1_box.get_center() , po1_box.get_center()) > center_distance, _distance(o2_box.get_center() , po2_box.get_center()) > center_distance)))):
-        #print("\n!!!MT!!!")
-        #print("\nMT: (",P1[4], "and", _distance(o1_box.get_center() , po1_box.get_center()) > center_distance, "and", _distance(o2_box.get_center() , po2_box.get_center()) > center_distance, ") or (",P1[5], "and", (xor(_distance(o1_box.get_center() , po1_box.get_center()) > center_distance, _distance(o2_box.get_center() , po2_box.get_center()) > center_distance)))
-        #print("\nMA: (",not (_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center()) < threshold), "or", ((_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) < threshold))
         table[24][0] = 'MT' 
     elif (P1[4] and not _distance(o1_box.get_center() , po1_box.get_center()) > center_distance and not _distance(o2_box.get_center() , po2_box.get_center()) > center_distance):
-        #print("\n!!!HT!!!")
-        #print("\nMT: (",P1[4], "and", _distance(o1_box.get_center() , po1_box.get_center()) > center_distance, "and", _distance(o2_box.get_center() , po2_box.get_center()) > center_distance, ") or (",P1[5], "and", (xor(_distance(o1_box.get_center() , po1_box.get_center()) > center_distance, _distance(o2_box.get_center() , po2_box.get_center()) > center_distance)))
-        #print("\nMA: (",not (_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center()) < threshold), "or", ((_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) < threshold))
         table[24][0] = 'HT' 
     elif (P2[4] and abs(_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())) < stable_dist):
         table[24][0] = 'S'
@@ -1283,10 +1257,6 @@ def _fillDSR_new_2(hand, ground, previous_array, thresh, table, savename):
         table[24][0] = 'GC'
     else:
         table[24][0] = 'Q'
-    # if o1 != None and o2 != None and po1 != None and po2 != None:
-        #print("\n", "center cloud: ", o1.get_center(),"center aabb: ", o1_box.get_center())
-        # print("\n",(_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())))
-        # print((_distance(o1_box.get_center(), o2_box.get_center()) - _distance(po1_box.get_center(), po2_box.get_center())), center_distance)
         
 
     if(o1 == None or o3 == None or po1 == None or po3 == None):
@@ -1323,8 +1293,6 @@ def _fillDSR_new_2(hand, ground, previous_array, thresh, table, savename):
         table[26][0] = 'MA'
     elif ((abs(o1_box.get_center()[2] - ground_box.get_center()[2]) < abs(po1_box.get_center()[2] - pground_box.get_center()[2]))):
         table[26][0] = 'GC'
-        #print("\n",(_distance(o1.get_center(), ground_box.get_center()), "<", _distance(po1.get_center(), pground_box.get_center())))
-        # print("\n",(_distance(o1_box.get_center(), ground_box.get_center()), "<", _distance(po1_box.get_center(), pground_box.get_center())))
     else:
         table[26][0] = 'Q'
     
@@ -1346,9 +1314,7 @@ def _fillDSR_new_2(hand, ground, previous_array, thresh, table, savename):
         table[27][0] = 'GC'
     else:
         table[27][0] = 'Q'
-    
-    # if o2 , None and po2 , None:
-    #     print(len(o2.points), len(po2.points))
+
     
     if(o2 == None or po2 == None):
         table[28][0] = 'U'
@@ -1388,7 +1354,7 @@ def _fillDSR_new_2(hand, ground, previous_array, thresh, table, savename):
 
 def _process(pcd_file, label_file, ground_label, hand_label, 
                 support_hand, translation, roll, frame, fps, ESEC_table, 
-                relations, replace = False, old = [], new = [], ignored_labels = [], cutted_labels = [], thresh = 0.1, debug = False, cython = False, savename = ""):
+                relations, replace = False, old = [], new = [], ignored_labels = [], cutted_labels = [], thresh = 0.1, debug = False, cython = True, icp = True, savename = ""):
     '''
     Creates raw eSEC table from a point cloud with corresponding label file. 
     
@@ -1397,9 +1363,12 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         * label_file: label file corresponding to pcd file (.dat)
         * ground_label: label of the ground (int)
         * hand_label: label of the hand (int)
+        * support_hand: label of the support hand (int)
         * translation: translation of the scene, will be retured from function (start with 0)
+        * roll: roll of the scene, will be retured from function (start with 0)
         * frame: frame of manipulation, start with zero and count (int)
-        * ESEC_table: empty chararray 10x1 for T/N; 20x1 for T/N, SSR; 30x1 for T/N, SSR, DSR
+        * fps: desired fps (int)
+        * ESEC_table: empty chararray for spatial relations
         * relations: relations to proceed in the computation 1:T/N; 2:T/N, SSR; 3:T/N, SSR, DSR
         * replace: True if labels should be replaces, False otherwise
         * old: old labels to raplace [int]
@@ -1407,10 +1376,14 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         * ignored_labels: labels that will be ignored in this manipulation [int]
         * cutted_labels: label of the cutted object [int]
         * threshold that defines distance for touching
-        * cython: if true a self created filter will be used (experimental)
+        * debug: if True, debug_iamges will be created for each e2SEC column (bool)
+        * cython: if True a self created filter will be used (bool)
+        * icp: if True, an ICP algorithm will be used to align filtered objects (bool)
+        * savename: name of the manipulation (str)
     
     Returns:
         * translation: translation of the scene
+        * roll: roll of the scene
         * table: ESEC table
     '''
  
@@ -1426,7 +1399,6 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     if (frame == 0):
         #calculate the translation with the first frame and define ground
         global count_ground, ground
-        #rotation = _rotateSceneNewNew(pcd_file, label_file, ground_label)
         ground = _getGroundiNewNew(pcd_file, label_file, ground_label)
         translation, roll = _getTranslation(ground)
         ground = ground.transform(translation)
@@ -1514,8 +1486,6 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     rotated_cloud = rotated_cloud.transform(translation)
     rotated_cloud = rotated_cloud.transform(roll)
 
-    # o3d.visualization.draw_geometries([rotated_cloud])
-
     #extract points from rotated cloud
     pcd_array_sorted = np.asarray(rotated_cloud.points)
 
@@ -1549,9 +1519,6 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             #convert arrays to point clouds
             pcd[i] = o3d.geometry.PointCloud()
             pcd[i].points = o3d.utility.Vector3dVector(objects[i])
-            # if i == np.where(total_unique_labels == 3)[0][0]:
-            #     o3d.io.write_point_cloud("../%s.pcd"%pcd_file.replace("/", "_"), pcd[i])
-            #     print("saving")
             if  i != np.where(total_unique_labels == ground_label)[0][0] and i != 0 and len(objects[i]) > 3:
                 if cython == True:
                     center = np.array(pcd[i].get_center())
@@ -1559,12 +1526,6 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                     median_distance = np.median(pdist(objects[i]))
                     filtered_pcd_voxel_array = filter_cython.region_filter_cython(center, objects[i], i == hand_label_inarray, hand_center, hand_center, median_distance)
 
-                    #alpha = 0.02
-                    #tetra_mesh, pt_map = o3d.geometry.TetraMesh.create_from_point_cloud(pcd[i])
-                    #mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(pcd[i], alpha, tetra_mesh, pt_map)
-                    #mesh.compute_vertex_normals()
-                    
-                    #filtered_pcd_voxel[i] = mesh.sample_points_uniformly(number_of_points=10000)
                     if isinstance(filtered_pcd_voxel_array, int):
                         filtered_pcd_voxel[i] = o3d.geometry.PointCloud()
 
@@ -1587,23 +1548,9 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             pcd[i] = o3d.geometry.PointCloud()
 
             
-    #define hand variable as hand point cloud
-    #hand = pcd[hand_label_inarray]
     hand = filtered_pcd_voxel[hand_label_inarray]
-    #print("\n",len(pcd), len(filtered_pcd_voxel))
-    # if frame > 200:
-    #     o3d.io.write_point_cloud("ownCloud/bowl_unfiltered_%d.pcd"%frame, pcd[3])
-    #     o3d.io.write_point_cloud("ownCloud/bowl_filtered_%d.pcd"%frame, filtered_pcd_voxel[3])
-    # filtered_pcd_voxel[1].paint_uniform_color([0, 0, 0])
-    # filtered_pcd_voxel[2].paint_uniform_color([1, 0, 0])
-    # filtered_pcd_voxel[3].paint_uniform_color([0, 0, 1])
-    # filtered_pcd_voxel[4].paint_uniform_color([1, 0, 1])
-    # filtered_pcd_voxel[5].paint_uniform_color([0, 1, 0])
-    # o3d.visualization.draw_geometries([filtered_pcd_voxel[1], filtered_pcd_voxel[2], filtered_pcd_voxel[3], filtered_pcd_voxel[4], filtered_pcd_voxel[5]])
-    #cutted = filtered_pcd_voxel[int(len(total_unique_labels)-2)]
-    #if hand has no points return translation and eSEC table
+
     if len(hand.points) == 0:
-        #print('Hand is misssing 3')
         return translation, roll, ESEC_table
     
     #get global objects 1,2 and 3
@@ -1721,160 +1668,76 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     #     o2 = pcd[o2_label]
     # if count3 == 1:
     #     o3 = pcd[o3_label]
-
-    # if count1 == 1:
-    #     o1 = filtered_pcd_voxel[o1_label]
-    # if count2 == 1:
-    #     o2 = filtered_pcd_voxel[o2_label]
-    # if count3 == 1:
-    #     o3 = filtered_pcd_voxel[o3_label]
+    if icp == False:
+        if count1 == 1:
+            o1 = filtered_pcd_voxel[o1_label]
+        if count2 == 1:
+            o2 = filtered_pcd_voxel[o2_label]
+        if count3 == 1:
+            o3 = filtered_pcd_voxel[o3_label]
     #---------------------------------------------------------------------------------------------------------
+    if icp == True:
+        thresh_registration = 0.02
 
-    thresh_registration = 0.02
-    #thresh_registration = 0.05
-
-    if o1 != None:
-        #print("original vol: ",pcd[o1_label].get_axis_aligned_bounding_box().volume(), " new vol: ", o1.get_axis_aligned_bounding_box().volume())
-        if (len(filtered_pcd_voxel[o1_label].points)) > len(o1.points):
-            ao1 = 0
-            first_o1 = filtered_pcd_voxel[o1_label]
-        trans_init = np.asarray([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
-        if (len(pcd[o1_label].points)) != 0:
-            if ao1 == 0:
-                reg_p2p1 = o3d.pipelines.registration.registration_icp(
-                        first_o1, pcd[o1_label], thresh_registration, trans_init,
-                        o3d.pipelines.registration.TransformationEstimationPointToPoint())
-                o1 = first_o1.transform(reg_p2p1.transformation)
-                ao1 = 2
+        if o1 != None:
+            if (len(filtered_pcd_voxel[o1_label].points)) > len(o1.points):
+                ao1 = 0
+                first_o1 = filtered_pcd_voxel[o1_label]
+            trans_init = np.asarray([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
+            if (len(pcd[o1_label].points)) != 0:
+                if ao1 == 0:
+                    reg_p2p1 = o3d.pipelines.registration.registration_icp(
+                            first_o1, pcd[o1_label], thresh_registration, trans_init,
+                            o3d.pipelines.registration.TransformationEstimationPointToPoint())
+                    o1 = first_o1.transform(reg_p2p1.transformation)
+                    ao1 = 2
+                else:
+                    reg_p2p1 = o3d.pipelines.registration.registration_icp(
+                            o1, pcd[o1_label], thresh_registration, trans_init,
+                            o3d.pipelines.registration.TransformationEstimationPointToPoint())
+                    o1 = o1.transform(reg_p2p1.transformation)
             else:
-                reg_p2p1 = o3d.pipelines.registration.registration_icp(
-                        o1, pcd[o1_label], thresh_registration, trans_init,
-                        o3d.pipelines.registration.TransformationEstimationPointToPoint())
-                o1 = o1.transform(reg_p2p1.transformation)
-        else:
-            o1 = o3d.geometry.PointCloud()
+                o1 = o3d.geometry.PointCloud()
 
-    if o2 != None:
-        if (len(filtered_pcd_voxel[o2_label].points)) > len(o2.points):
-            ao2 = 0
-            first_o2 = filtered_pcd_voxel[o2_label]
-        trans_init = np.asarray([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
-        if (len(pcd[o2_label].points)) != 0:
-            if ao2 == 0:
-                # first_o2.estimate_normals(o3d.geometry.KDTreeSearchParamHybrid(radius=2, max_nn=30))
-                # pcd[o2_label].estimate_normals(o3d.geometry.KDTreeSearchParamHybrid(radius=2, max_nn=30))
-                # loss = o3d.pipelines.registration.TukeyLoss(k=0.1)
-                # p2l = o3d.pipelines.registration.TransformationEstimationPointToPoint(loss)
-                reg_p2p2 = o3d.pipelines.registration.registration_icp(
-                        first_o2, pcd[o2_label], thresh_registration, trans_init,
-                        o3d.pipelines.registration.TransformationEstimationPointToPoint())
-                o2 = first_o2.transform(reg_p2p2.transformation)
-                ao2 = 2
+        if o2 != None:
+            if (len(filtered_pcd_voxel[o2_label].points)) > len(o2.points):
+                ao2 = 0
+                first_o2 = filtered_pcd_voxel[o2_label]
+            trans_init = np.asarray([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
+            if (len(pcd[o2_label].points)) != 0:
+                if ao2 == 0:
+                    reg_p2p2 = o3d.pipelines.registration.registration_icp(
+                            first_o2, pcd[o2_label], thresh_registration, trans_init,
+                            o3d.pipelines.registration.TransformationEstimationPointToPoint())
+                    o2 = first_o2.transform(reg_p2p2.transformation)
+                    ao2 = 2
+                else:
+                    reg_p2p2 = o3d.pipelines.registration.registration_icp(
+                            o2, pcd[o2_label], thresh_registration, trans_init,
+                            o3d.pipelines.registration.TransformationEstimationPointToPoint())
+                    o2 = o2.transform(reg_p2p2.transformation)
             else:
-                # first_o2.estimate_normals(o3d.geometry.KDTreeSearchParamHybrid(radius=2, max_nn=30))
-                # pcd[o2_label].estimate_normals(o3d.geometry.KDTreeSearchParamHybrid(radius=2, max_nn=30))
-                # loss = o3d.pipelines.registration.TukeyLoss(k=0.1)
-                # p2l = o3d.pipelines.registration.TransformationEstimationPointToPoint(loss)
-                reg_p2p2 = o3d.pipelines.registration.registration_icp(
-                        o2, pcd[o2_label], thresh_registration, trans_init,
-                        o3d.pipelines.registration.TransformationEstimationPointToPoint())
-                o2 = o2.transform(reg_p2p2.transformation)
-        else:
-            o2 = o3d.geometry.PointCloud()
+                o2 = o3d.geometry.PointCloud()
 
-    if o3 != None:
-        if (len(filtered_pcd_voxel[o3_label].points)) > len(o3.points):
-            ao3 = 0
-            first_o3 = filtered_pcd_voxel[o3_label]
-        trans_init = np.asarray([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
-        if (len(pcd[o3_label].points)) != 0:
-            if ao3 == 0:
-                reg_p2p3 = o3d.pipelines.registration.registration_icp(
-                        first_o3, pcd[o3_label], thresh_registration, trans_init,
-                        o3d.pipelines.registration.TransformationEstimationPointToPoint())
-                o3 = first_o3.transform(reg_p2p3.transformation)
-                ao3 = 2
+        if o3 != None:
+            if (len(filtered_pcd_voxel[o3_label].points)) > len(o3.points):
+                ao3 = 0
+                first_o3 = filtered_pcd_voxel[o3_label]
+            trans_init = np.asarray([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
+            if (len(pcd[o3_label].points)) != 0:
+                if ao3 == 0:
+                    reg_p2p3 = o3d.pipelines.registration.registration_icp(
+                            first_o3, pcd[o3_label], thresh_registration, trans_init,
+                            o3d.pipelines.registration.TransformationEstimationPointToPoint())
+                    o3 = first_o3.transform(reg_p2p3.transformation)
+                    ao3 = 2
+                else:
+                    reg_p2p3 = o3d.pipelines.registration.registration_icp(
+                            o3, pcd[o3_label], thresh_registration, trans_init,
+                            o3d.pipelines.registration.TransformationEstimationPointToPoint())
+                    o3 = o3.transform(reg_p2p3.transformation)
             else:
-                reg_p2p3 = o3d.pipelines.registration.registration_icp(
-                        o3, pcd[o3_label], thresh_registration, trans_init,
-                        o3d.pipelines.registration.TransformationEstimationPointToPoint())
-                o3 = o3.transform(reg_p2p3.transformation)
-        else:
-            o3 = o3d.geometry.PointCloud()
-
-    #---------------------------------------------------------------------------------------------------------
-    #with loss
-
-    # mu, sigma = 0, 0.1
-    # loss = o3d.pipelines.registration.TukeyLoss(k=sigma)
-    # p2l = o3d.pipelines.registration.TransformationEstimationPointToPlane(loss)
-    # if o1 != None:
-    #     #print("original vol: ",pcd[o1_label].get_axis_aligned_bounding_box().volume(), " new vol: ", o1.get_axis_aligned_bounding_box().volume())
-    #     first_o1.estimate_normals()
-    #     pcd[o1_label].estimate_normals()
-    #     trans_init = np.asarray([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
-    #     if (len(pcd[o1_label].points)) != 0:
-    #         if ao1 == 0:
-    #             reg_p2p1 = o3d.pipelines.registration.registration_icp(
-    #                     first_o1, pcd[o1_label], thresh_registration, trans_init,
-    #                     p2l)
-    #             o1 = first_o1.transform(reg_p2p1.transformation)
-    #             ao1 = 2
-    #         else:
-    #             reg_p2p1 = o3d.pipelines.registration.registration_icp(
-    #                     o1, pcd[o1_label], thresh_registration, trans_init,
-    #                     p2l)
-    #             o1 = o1.transform(reg_p2p1.transformation)
-    #     else:
-    #         o1 = o3d.geometry.PointCloud()
-
-    # if o2 != None:
-    #     first_o2.estimate_normals()
-    #     pcd[o2_label].estimate_normals()
-    #     trans_init = np.asarray([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
-    #     if (len(pcd[o2_label].points)) != 0:
-    #         if ao2 == 0:
-    #             # first_o2.estimate_normals(o3d.geometry.KDTreeSearchParamHybrid(radius=2, max_nn=30))
-    #             # pcd[o2_label].estimate_normals(o3d.geometry.KDTreeSearchParamHybrid(radius=2, max_nn=30))
-    #             # loss = o3d.pipelines.registration.TukeyLoss(k=0.1)
-    #             # p2l = o3d.pipelines.registration.TransformationEstimationPointToPoint(loss)
-    #             reg_p2p2 = o3d.pipelines.registration.registration_icp(
-    #                     first_o2, pcd[o2_label], thresh_registration, trans_init,
-    #                     p2l)
-    #             o2 = first_o2.transform(reg_p2p2.transformation)
-    #             ao2 = 2
-    #         else:
-    #             # first_o2.estimate_normals(o3d.geometry.KDTreeSearchParamHybrid(radius=2, max_nn=30))
-    #             # pcd[o2_label].estimate_normals(o3d.geometry.KDTreeSearchParamHybrid(radius=2, max_nn=30))
-    #             # loss = o3d.pipelines.registration.TukeyLoss(k=0.1)
-    #             # p2l = o3d.pipelines.registration.TransformationEstimationPointToPoint(loss)
-    #             reg_p2p2 = o3d.pipelines.registration.registration_icp(
-    #                     o2, pcd[o2_label], thresh_registration, trans_init,
-    #                     p2l)
-    #             o2 = o2.transform(reg_p2p2.transformation)
-    #     else:
-    #         o2 = o3d.geometry.PointCloud()
-
-    # if o3 != None:
-    #     first_o3.estimate_normals()
-    #     pcd[o3_label].estimate_normals()
-    #     trans_init = np.asarray([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
-    #     if (len(pcd[o3_label].points)) != 0:
-    #         if ao3 == 0:
-    #             reg_p2p3 = o3d.pipelines.registration.registration_icp(
-    #                     first_o3, pcd[o3_label], thresh_registration, trans_init,
-    #                     p2l)
-    #             o3 = first_o3.transform(reg_p2p3.transformation)
-    #             ao3 = 2
-    #         else:
-    #             reg_p2p3 = o3d.pipelines.registration.registration_icp(
-    #                     o3, pcd[o3_label], thresh_registration, trans_init,
-    #                     p2l)
-    #             o3 = o3.transform(reg_p2p3.transformation)
-    #     else:
-    #         o3 = o3d.geometry.PointCloud()
-
-    #---------------------------------------------------------------------------------------------------------
+                o3 = o3d.geometry.PointCloud()
             
     global count_esec, final_columns
     #if hand is in the frame continue to proceed else return translation and eSEC table
@@ -1912,7 +1775,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             _fillTN_absent(hand, ground, thresh, add)
             
             #find SSR and fill the table
-            _fillSSR_4(hand, ground, add)
+            _fillSSR_8(hand, ground, add)
             compare_array = np.reshape(ESEC_table[:,count_esec], (-1, 1))
             
             #for the first frame the eSEC table is just this add array
@@ -1968,22 +1831,17 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                     internal_count = 2
                     if debug == True:
                         if count_ground > 0:
-                            # mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(
-                            # size=0.6, origin=[0,0,0])
-                            # o3d.visualization.draw_geometries([ground, hand, mesh_frame])
                             fig, (ax1, ax2) = plt.subplots(1, 2, figsize = (20,10))
                             ax1.set_title("x-y-view")
                             ax2.set_title("y-z-view")
-                            ax1.set_ylim(-0.8, 0.6)
+                            ax1.set_ylim(-0.6, 0.9)
                             ax2.set_ylim(-1.5,0.5)
-                            #ax1.set_xlim(-1,1)
-                            ax2.set_xlim(-1,0.75)
+                            ax2.set_xlim(-0.95,0.8)
                             ax1.set_ylabel("y")
                             ax1.set_xlabel("x")
                             ax2.set_ylabel("z")
                             ax2.set_xlabel("y")
 
-                            #ax1.plot(np.array(mesh_frame)[:,0], np.array(mesh_frame)[:,1], ".g", label = 'hand')
                             hand_box = hand.get_axis_aligned_bounding_box()
                             points_hand = np.asarray(hand_box.get_box_points())
                             hand_max_x, hand_max_y, hand_max_z = np.max(points_hand[:,0]), np.max(points_hand[:,1]), np.max(points_hand[:,2])
@@ -2062,13 +1920,6 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                             ax2.plot((ground_min_y, ground_max_y), (ground_min_z,ground_min_z), "-k")
 
                             if(count1 == 1):
-                                # mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(
-                                            #  size=0.6, origin=[0,0,0])
-        #                         hand.paint_uniform_color([1, 0, 0])
-        #                         o1.paint_uniform_color([0, 1, 0])
-        #                         ground.paint_uniform_color([0, 0, 0])
-                                # o3d.visualization.draw_geometries([o1, hand,ground, mesh_frame])
-                                # o1 = pcd[o1_label]
                                 o1_box = o1.get_axis_aligned_bounding_box()
                                 points_o1 = np.asarray(o1_box.get_box_points())
                                 o1_max_x, o1_max_y, o1_max_z = np.max(points_o1[:,0]), np.max(points_o1[:,1]), np.max(points_o1[:,2])
@@ -2107,8 +1958,6 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                                     ax1.plot((o2_max_x, o2_min_x), (o2_max_y,o2_max_y), "-b")
                                     ax1.plot((o2_min_x, o2_max_x), (o2_min_y,o2_min_y), "-b")
 
-
-                                    #ax2.scatter(o2_min_y, o2_max_x, "y")
                                     ax2.plot(np.array(o2.points)[:,1], np.array(o2.points)[:,2], ".b", label = 'o2 label:%d'%total_unique_labels[o2_label])
 
                                     ax2.plot((o2_max_y, o2_max_y), (o2_min_z,o2_max_z), "-b")
@@ -2158,27 +2007,21 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                 else:
                     final_columns.append(frame)
                     ESEC_table = np.column_stack((ESEC_table,add))
-                    #print(add)
                     #save image of manipulation in this frame
                     if debug == True:
                         if count_ground > 0:
-                            # mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(
-                            # size=0.6, origin=[0,0,0])
-                            # o3d.visualization.draw_geometries([ground, hand, mesh_frame])
                             plt.close("all") 
                             fig, (ax1, ax2) = plt.subplots(1, 2, figsize = (20,10))
                             ax1.set_title("x-y-view")
                             ax2.set_title("y-z-view")
-                            ax1.set_ylim(-0.8, 0.6)
+                            ax1.set_ylim(-0.6, 0.9)
                             ax2.set_ylim(-1.5,0.5)
-                            #ax1.set_xlim(-1,1)
-                            ax2.set_xlim(-1,0.75)
+                            ax2.set_xlim(-0.95,0.8)
                             ax1.set_ylabel("y")
                             ax1.set_xlabel("x")
                             ax2.set_ylabel("z")
                             ax2.set_xlabel("y")
 
-                            #ax1.plot(np.array(mesh_frame)[:,0], np.array(mesh_frame)[:,1], ".g", label = 'hand')
                             hand_box = hand.get_axis_aligned_bounding_box()
                             points_hand = np.asarray(hand_box.get_box_points())
                             hand_max_x, hand_max_y, hand_max_z = np.max(points_hand[:,0]), np.max(points_hand[:,1]), np.max(points_hand[:,2])
@@ -2258,13 +2101,6 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                             ax2.plot((ground_min_y, ground_max_y), (ground_min_z,ground_min_z), "-k")
 
                             if(count1 == 1):
-                                # mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(
-                                            #  size=0.6, origin=[0,0,0])
-        #                         hand.paint_uniform_color([1, 0, 0])
-        #                         o1.paint_uniform_color([0, 1, 0])
-        #                         ground.paint_uniform_color([0, 0, 0])
-                                # o3d.visualization.draw_geometries([o1, hand,ground, mesh_frame])
-                                # o1 = pcd[o1_label]
                                 o1_box = o1.get_axis_aligned_bounding_box()
                                 points_o1 = np.asarray(o1_box.get_box_points())
                                 o1_max_x, o1_max_y, o1_max_z = np.max(points_o1[:,0]), np.max(points_o1[:,1]), np.max(points_o1[:,2])
@@ -2303,8 +2139,6 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                                     ax1.plot((o2_max_x, o2_min_x), (o2_max_y,o2_max_y), "-b")
                                     ax1.plot((o2_min_x, o2_max_x), (o2_min_y,o2_min_y), "-b")
 
-
-                                    #ax2.scatter(o2_min_y, o2_max_x, "y")
                                     ax2.plot(np.array(o2.points)[:,1], np.array(o2.points)[:,2], ".b", label = 'o2 label:%d'%total_unique_labels[o2_label])
 
                                     ax2.plot((o2_max_y, o2_max_y), (o2_min_z,o2_max_z), "-b")
@@ -2450,8 +2284,8 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
     
     e2sec, esec = esec_to_e2sec(table,relations)
     #e2sec = _final_cleaning(e2sec)
-    print(final_columns)
-    print("lenght:", len(final_columns))
+    # print(final_columns)
+    # print("lenght:", len(final_columns))
     print(table.shape)
     np.save("e2sec_%s.npy"%savename.replace("/", "_"),e2sec)
     if debug == True:
