@@ -1,0 +1,466 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>eSEC analyser &mdash; ManipulationLibrary  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="manipulation analyser (work in progress)" href="codi2.html" />
+    <link rel="prev" title="Welcome to ManipulationLibrary’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ManipulationLibrary
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">eSEC analyser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codi2.html">manipulation analyser (work in progress)</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ManipulationLibrary</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>eSEC analyser</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/codi.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-eSEC_analyser">
+<span id="esec-analyser"></span><h1>eSEC analyser<a class="headerlink" href="#module-eSEC_analyser" title="Permalink to this headline">¶</a></h1>
+<p>Created 2020</p>
+<p>&#64;author: Tobias Strübing</p>
+<dl class="function">
+<dt id="eSEC_analyser.checkSimilarRows">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">checkSimilarRows</code><span class="sig-paren">(</span><em>esec_dict, combination, rows=[3, 2, 5, 7, 9]</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.checkSimilarRows" title="Permalink to this definition">¶</a></dt>
+<dd><p>This functions checks if manipulations are the same in case of removes rows. The input parameter combinations defines how much combinations are considered
+(e.g. 1 for single combinations, 3 for triple combinations).</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>esec_dict: dictionary with the ESEC tables (dict)</li>
+<li>combination: which type of combination (int)</li>
+<li>rows: rows that will be removed (array) (from 0 for row 1 to 9 for row 10)</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eSEC_analyser.classification_e2sec">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">classification_e2sec</code><span class="sig-paren">(</span><em>location_e2sec_matrices</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.classification_e2sec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the confusion matrix, the classification accuracy for each manipulation and average classification accuracy using cross validation .</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>location_e2sec_matrices: folder of all 120 e2SEC matrices</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eSEC_analyser.esec_to_e2sec">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">esec_to_e2sec</code><span class="sig-paren">(</span><em>pdf_path</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.esec_to_e2sec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes an pdf file with eSEC matrices as input and return these matrices as e2SEC matrices dict.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>pdf_path: path of the pdf file which contains eSEC matrices</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd>dict of e2SEC matrices</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eSEC_analyser.getDissimilarityMatrix">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">getDissimilarityMatrix</code><span class="sig-paren">(</span><em>eSEC_matrices</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.getDissimilarityMatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a dict of eSEC matrices as input to calculate the dissimilarity matrix from paper.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>eSEC_matrices: dict contains eSEC matrices</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd>dissimilarity matrix</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eSEC_analyser.plotAllMatrices">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">plotAllMatrices</code><span class="sig-paren">(</span><em>path</em>, <em>label</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.plotAllMatrices" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><div class="line-block">
+<div class="line">Plots the dendrogram and dissimilarity matrix for all combinations of removed rows in the “array” folder structure.</div>
+<div class="line">Warning: Needs folder structure from function removeCobinationRowsSave()</div>
+</div>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>path: path to the “array” folder from function removeCobinationRowsSave()</li>
+<li>label: name of the manipulations in the right order [string array]</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>plots of dendrogram and dissimilarity matrices</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eSEC_analyser.plotDendroDissimi">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">plotDendroDissimi</code><span class="sig-paren">(</span><em>rows</em>, <em>label</em>, <em>threshold=0.4</em>, <em>save=False</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.plotDendroDissimi" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Plots the dendrogram and the dissimilarity matrix for specific rows for the .npy arrays.</div>
+<div class="line">e.g. rows=[3,4,5] will plot the dendrogram and dissimilarity matrix with removed rows 3,4 and 5</div>
+<div class="line">Warning: needs the folder structure from removeCobinationRowsSave()</div>
+</div>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>rows: indicates which rows will be considered (int, tuple)</li>
+<li>label: name of the manipulations in the right order [string array]</li>
+<li>threshold: color threshold for the dendrogram (float)</li>
+<li>save: paramter if figure need to be saved (bool)</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eSEC_analyser.plotDendrogram">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">plotDendrogram</code><span class="sig-paren">(</span><em>rows</em>, <em>labels</em>, <em>threshold=0.4</em>, <em>save=False</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.plotDendrogram" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Plots the dendrogram for specific rows for the .npy arrays.</div>
+<div class="line">Warning: needs the output from removeCobinationRowsSave()</div>
+</div>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>rows: indicates which rows will be considered (int, tuple)</li>
+<li>label: name of the manipulations in the right order [string array]</li>
+<li>threshold: color threshold for the dendrogram (float)</li>
+<li>save: paramter if figure need to be saved (bool)</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eSEC_analyser.plotDendrogramFromMatrix">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">plotDendrogramFromMatrix</code><span class="sig-paren">(</span><em>D_shaped</em>, <em>labels</em>, <em>figsize=(30</em>, <em>16)</em>, <em>threshold=0.4</em>, <em>save=False</em>, <em>lablesize=27</em>, <em>fontsize=40</em>, <em>name_of_plot=''</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.plotDendrogramFromMatrix" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Plots the dendrogram for specific rows for the .npy arrays.</div>
+<div class="line">Warning: needs the output from removeCobinationRowsSave()</div>
+</div>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>D_shaped: dissimilarity matrix of all manipulations from function removeCobinationRowsSave() (numpy array)</li>
+<li>labels: name of the manipulations in the right order [string array]</li>
+<li>figsize: size of plot in case labels are squeezed</li>
+<li>threshold: color threshold for the dendrogram (float)</li>
+<li>save: paramter if figure need to be saved (bool)</li>
+<li>lablesize: fontsize of x- and y-labels</li>
+<li>fontsize: fontsize of x label</li>
+<li>name_of_plot: name of the plot that will be saved (string)</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eSEC_analyser.plotDissi">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">plotDissi</code><span class="sig-paren">(</span><em>rows</em>, <em>label</em>, <em>save=False</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.plotDissi" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Plots the dissimilarity matrix for specific rows for the .npy arrays.</div>
+<div class="line">Warning: needs the output from removeCobinationRowsSave()</div>
+</div>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>rows: indicates which rows will be considered (int, tuple) (None if nothing is removed)</li>
+<li>label: name of the manipulations in the right order [string array]</li>
+<li>save: paramter if figure need to be saved (bool)</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eSEC_analyser.plotDissiFromMatrix">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">plotDissiFromMatrix</code><span class="sig-paren">(</span><em>D_shaped</em>, <em>label</em>, <em>save=False</em>, <em>name_of_plot=''</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.plotDissiFromMatrix" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Plots the dissimilarity matrix for specific rows for the .npy arrays.</div>
+<div class="line">Warning: needs the output from removeCobinationRowsSave()</div>
+</div>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>D_shaped: dissimilarity matrix of all manipulations from function removeCobinationRowsSave() (numpy array)</li>
+<li>labels: name of the manipulations in the right order [string array]</li>
+<li>save: paramter if figure need to be saved (bool)</li>
+<li>name_of_plot: name of the plot that will be saved (string)</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eSEC_analyser.plotRowRanking">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">plotRowRanking</code><span class="sig-paren">(</span><em>esec_dict</em>, <em>savefig=False</em>, <em>e2sec=False</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.plotRowRanking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the ranking of importance from the different rows of all eSEC manipulations in the eSEC dictionary.
+This dictionary can be recived by the function readPDF().</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>esec_dict: dictionary with ESEC matrices (dict)</li>
+<li>savefig: paramter if figure need to be saved (bool)</li>
+<li>e2sec: is true if the input dict consists of e2SEC matrices (bool)</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eSEC_analyser.readPDF">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">readPDF</code><span class="sig-paren">(</span><em>PDFpath</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.readPDF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read PDF in a specific foramt and outputs a dict of the eSEC matrices. 
+In the PDF file there has to be one eSEC matrix per page with the relations 
+on the left side and without titles.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>PDFpath: path of the PDF file (PDF)</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd>python dictionary with the ESEC matrices</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eSEC_analyser.removeCobinationRowsSave">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">removeCobinationRowsSave</code><span class="sig-paren">(</span><em>esec_dict, rows=[3, 2, 5, 7, 9]</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.removeCobinationRowsSave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the rows from the input in every combination and saves it in the folder “array”. 
+First removes single rows and then combinations of tuple, triple, quadruple and quintuple rows. 
+Rows can have a maximum of 5 values.
+If rows == None the Dissimilarity matrix is calculated without removing rows and output is saved as d_shaped.npy.
+example:        rows = [1,2,3]</p>
+<blockquote>
+<div>first step: remove single rows 1, 2, 3
+second step: remove combinations of two 1/2, 1/3, 2/3 
+third step: remove combinations of three 1/2/3</div></blockquote>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>esec_dict: dictionary with the ESEC tables (dict)</li>
+<li>rows: rows that will be removed (array)</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd>folder structure with .npy files or one .npy file if rows == None</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eSEC_analyser.removeRows">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">removeRows</code><span class="sig-paren">(</span><em>esec_dict</em>, <em>row</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.removeRows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the rows assigned in the parameter from all the ESEC tables.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>esec_dict: dictionary with the ESEC tables (dict)</li>
+<li>row: indicated which rows will be deleted (int, tuple)</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd>dictionary with removed rows.</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="codi2.html" class="btn btn-neutral float-right" title="manipulation analyser (work in progress)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to ManipulationLibrary’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tobias Strübing.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
