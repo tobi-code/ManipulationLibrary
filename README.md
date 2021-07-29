@@ -8,7 +8,7 @@ Introduction:
 
 ManipulationLibrary is a module for Python 3 to work with eSEC[1] matrices and extract e²SEC[2] matrices from manipulations. 
 
-You can find examples on how to use this library in the "example" folder in GitHub. The example manipulation is taken from the MANAIC dataset [3].
+You can find examples on how to use this library in the "example" folder in GitHub. The example manipulation is taken from the MANIAC dataset [3].
 
 	Disclaimer: This module is tested on Ubuntu 20.04.1 LTS with Python 3.8.5
 
@@ -20,16 +20,16 @@ If the "filter_cython_new" can't be imported, comment out line 28 instead of lin
 How to use:
 -----------
 
-In order to analyse existing eSEC matrices, the "eSEC_analyser.py" module is used. In the example folder a Jupyter Notebook script is provided which shows how to:
+In order to analyse existing eSEC[1] matrices, the "eSEC_analyser.py" module is used. In the example folder a Jupyter Notebook script is provided which shows how to:
 * import the module
-* read eSEc matricers from PDF
+* read eSEC[1] matricers from PDF
 * plot the importance of rows
-* check if any eSEC matrix is same as another one
+* check if any eSEC[1] matrix is same as another one
 * Remove combinations of relations (rows)
 * plot a dendrogram and dissimilarity matrix for all manipulations
 * plot a confusion matrix, classification accuacy with corresponding bar plot for e²SEC matrices
 
-The module "manipulation_analyser.py" is used to calculate e²SEC matrices using the MANIAC dataset. An example Jupyter Notebook along with point cloud data and corresponding labels is provided in the example folder. From this example manipulation the e²SEC matrices are extracted and saved along with the debug images.
+The module "manipulation_analyser.py" is used to calculate e²SEC[2] matrices using the MANIAC[3] dataset. An example Jupyter Notebook along with point cloud data and corresponding labels is provided in the example folder. From this example manipulation the e²SEC[2] matrices are extracted and saved along with the debug images.
 
 Depends on external libraries:
 ------------------------------

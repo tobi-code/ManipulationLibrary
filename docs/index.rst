@@ -5,32 +5,32 @@
 
 Welcome to ManipulationLibrary's documentation!
 ===============================================
-The e²SEC framework can be used to express human manipulation actions in a simple and concise way. 
+The e²SEC[2] framework can be used to express human manipulation actions in a simple and concise way. 
 Therefore, a manipulation in translated to a 24 x n matrix, which represents spatial relation between objects. 
 
 Introduction:
 -------------
-ManipulationLibrary is a module for Python 3 to work with eSEC`[1]`_ matrices and extract e²SEC`[2]`_ matrices from manipulations. 
-In order to analyse existing eSEC matrices, the "eSEC_analyser.py" module is used. In the example folder a Jupyter Notebook script is provided which shows how to:
+ManipulationLibrary is a module for Python 3 to work with eSEC[1] matrices and extract e²SEC[2] matrices from manipulations. 
+In order to analyse existing eSEC[1] matrices, the "eSEC_analyser.py" module is used. In the example folder a Jupyter Notebook script is provided which shows how to:
 
 * import the module
 
-* read eSEc matricers from PDF
+* read eSEC[1] matricers from PDF
 
 * plot the importance of rows
 
-* check if any eSEC matrix is same as another one
+* check if any eSEC[1] matrix is same as another one
 
 * Remove combinations of relations (rows)
 
 * plot a dendrogram and dissimilarity matrix for all manipulations
 
-* plot a confusion matrix, classification accuacy with corresponding bar plot for e²SEC matrices
+* plot a confusion matrix, classification accuacy with corresponding bar plot for e²SEC[2] matrices
 
-The module "manipulation_analyser.py" is used to calculate e²SEC matrices using the MANIAC dataset. 
+The module "manipulation_analyser.py" is used to calculate e²SEC[2] matrices using the MANIAC[3] dataset. 
 An example Jupyter Notebook along with point cloud data and corresponding labels is provided in the 
-example folder. From this example manipulation the e²SEC matrices are extracted and saved along with 
-the debug images. The example manipulation is taken from the MANAIC dataset `[3]`_.
+example folder. From this example manipulation the e²SEC[2] matrices are extracted and saved along with 
+the debug images. The example manipulation is taken from the MANAIC[3] dataset.
 
 	``Disclaimer: This module is tested on Ubuntu 20.04.1 LTS with Python 3.8.5``
 
@@ -74,9 +74,9 @@ To install these libraries use the following command:
 References
 **********
 
-.. _`[1]`: Fatemeh Ziaeetabar, Tomas Kulvicius, Minija Tamosiunaite, and Florentin Wörgötter (2018). Recognition and prediction of manipulation actions using enriched semantic event chains. Robotics and Autonomous Systems.
-.. _`[2]`: Tobias Strübing, Fatemeh Ziaeetabar, and Florentin Wörgötter (2021). A summarized semantic structure to represent manipulation actions.
-.. _`[3]`: Eren Erdal Aksoy, Minija Tamosiunaite, and Florentin Wörgötter. Model-free incremental learning of the semantics of manipulation actions. Robotics and Autonomous Systems.
+[1] Fatemeh Ziaeetabar, Tomas Kulvicius, Minija Tamosiunaite, and Florentin Wörgötter (2018). Recognition and prediction of manipulation actions using enriched semantic event chains. Robotics and Autonomous Systems.
+[2] Tobias Strübing, Fatemeh Ziaeetabar, and Florentin Wörgötter (2021). A summarized semantic structure to represent manipulation actions.
+[3] Eren Erdal Aksoy, Minija Tamosiunaite, and Florentin Wörgötter. Model-free incremental learning of the semantics of manipulation actions. Robotics and Autonomous Systems.
 
 Code
 ====
