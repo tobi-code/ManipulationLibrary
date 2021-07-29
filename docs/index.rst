@@ -75,7 +75,9 @@ References
 **********
 
 [1] Fatemeh Ziaeetabar, Tomas Kulvicius, Minija Tamosiunaite, and Florentin Wörgötter (2018). Recognition and prediction of manipulation actions using enriched semantic event chains. Robotics and Autonomous Systems.
+
 [2] Tobias Strübing, Fatemeh Ziaeetabar, and Florentin Wörgötter (2021). A summarized semantic structure to represent manipulation actions.
+
 [3] Eren Erdal Aksoy, Minija Tamosiunaite, and Florentin Wörgötter. Model-free incremental learning of the semantics of manipulation actions. Robotics and Autonomous Systems.
 
 Code
