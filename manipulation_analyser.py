@@ -1354,7 +1354,7 @@ def _fillDSR_new_2(hand, ground, previous_array, thresh, table, savename):
 
 def _process(pcd_file, label_file, ground_label, hand_label, 
                 support_hand, translation, roll, frame, fps, ESEC_table, 
-                relations, replace = False, old = [], new = [], ignored_labels = [], cutted_labels = [], thresh = 0.1, debug = False, cython = True, icp = True, savename = ""):
+                relations, replace = False, old = [], new = [], ignored_labels = [], cut_labels = [], thresh = 0.1, debug = False, cython = True, icp = True, savename = ""):
     '''
     Creates raw eSEC table from a point cloud with corresponding label file. 
     
@@ -1374,7 +1374,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         * old: old labels to raplace [int]
         * new: new labels that will replace old labels [int]
         * ignored_labels: labels that will be ignored in this manipulation [int]
-        * cutted_labels: label of the cutted object [int]
+        * cut_labels: label of the cut object [int]
         * threshold that defines distance for touching
         * debug: if True, debug_iamges will be created for each e2SEC column (bool)
         * cython: if True a self created filter will be used (bool)
@@ -1418,13 +1418,13 @@ def _process(pcd_file, label_file, ground_label, hand_label,
 
         #add hand label if not in total_unique_labels else append total_unique_labels by hand label
         if hand_label not in total_unique_labels:
-            if cutted_labels != []:
-                total_unique_labels = np.append(total_unique_labels, cutted_labels)
+            if cut_labels != []:
+                total_unique_labels = np.append(total_unique_labels, cut_labels)
             total_unique_labels = np.append(total_unique_labels, hand_label)
             hand_label_inarray = 0
         else:
-            if cutted_labels != []:
-                total_unique_labels = np.append(total_unique_labels, cutted_labels)
+            if cut_labels != []:
+                total_unique_labels = np.append(total_unique_labels, cut_labels)
             hand_label_inarray = np.where(total_unique_labels == hand_label)[0][0]
 
     #if hand is missing return roation and eSEC table      
@@ -2184,7 +2184,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     return translation, roll, ESEC_table
 
 def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, support_hand, relations,
-                                replace, old, new, ignored_labels, thresh, cutted_labels = [],  debug = False, cython = True, savename = ""):
+                                replace, old, new, ignored_labels, thresh, cut_labels = [],  debug = False, cython = True, savename = ""):
     '''
     Analyses a complete manipulation from the MANIAC dataset. Therefore, it needs the path
     of the folder that contains all the .pcd files (pcl_path) and the label files(label_path). 
@@ -2279,7 +2279,7 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
                                 ESEC_table = table, relations = relations,
                                 replace = replace, old = old, new = new, 
                                 ignored_labels = ignored_labels,
-                                thresh = thresh, cutted_labels = cutted_labels, debug = debug, cython = cython, savename = savename)
+                                thresh = thresh, cut_labels = cut_labels, debug = debug, cython = cython, savename = savename)
         i+=1
     
     e2sec, esec = esec_to_e2sec(table,relations)

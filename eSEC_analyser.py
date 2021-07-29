@@ -1216,10 +1216,10 @@ def _split(rand, chopping, cutting, hiding, pushing, put_on_top, stirring, take_
 
 def classification_e2sec(location_e2sec_matrices):
 	"""
-	Plots the confusion matrix, the classification accuracy for each manipulation and average classification accuracy using cross validation .
+	Plots the confusion matrix, the classification accuracy for each manipulation and average classification accuracy using cross validation from 120 e2SEC matrices using the MANIAC dataset.
 
 	Parameters:
-		* location_e2sec_matrices: folder of all 120 e2SEC matrices
+		* location_e2sec_matrices: folder of all 120 e2SEC matrices saved as .npy file
 	"""
 
 	#define location of e2SEC matrices folder 
@@ -1367,3 +1367,71 @@ def classification_e2sec(location_e2sec_matrices):
 	ax.set_ylabel("Classification accuracy [%]",  fontsize=35)
 	plt.tight_layout()
 	plt.savefig("classification_accuracy.png", dpi = 350)
+
+def cluster_e2sec(location_e2sec_matrices):
+    """
+    Plots and saves the dendrogram of the clustering result from 120 e2SEC matrices using the MANIAC dataset.
+
+    Parameters:
+    	* location_e2sec_matrices: folder of all 120 e2SEC matrices saved as .npy file
+    """
+	#load the e2SEC matrices in a dict
+    loc = location_e2sec_matrices
+    e2sec_matrices_without_filter = {}
+    i = 0
+    for file in sorted(os.listdir(loc)):
+        if file[-3:] == "npy":
+            e2sec_matrices_without_filter[i] = np.load(loc+file)
+        i += 1
+
+	#assign the lables to the e2SEC matrices
+    i = 0
+    labels = []
+    for file in sorted(os.listdir(loc)):
+        if file[-3:] == "npy":
+            if i < 15:
+                labels.append(file[15:-4])
+            if i >= 15 and i < 30:
+                labels.append(file[14:-4])
+            if i >= 30 and i < 45:
+                labels.append(file[13:-4])
+            if i >= 45 and i < 60:
+                labels.append(file[14:-4])
+            if i >= 60 and i < 75:
+                labels.append(file[17:-4])
+            if i >= 75 and i < 90:
+                labels.append(file[15:-4])
+            if i >= 90 and i < 105:
+                labels.append(file[16:-4])
+            if i >= 105:
+                labels.append(file[14:-4])
+        i += 1
+
+	#decode to UTF-8
+    for i in range(len(e2sec_matrices_without_filter)):
+        e2sec_matrices_without_filter[i] = np.char.decode(e2sec_matrices_without_filter[i].astype(np.bytes_), 'UTF-8')
+    
+    #find max column length
+    column_length = []
+    for i in range(len(e2sec_matrices_without_filter)):
+        column_length.append(e2sec_matrices_without_filter[i].shape[1])
+    max_column = np.max(column_length)
+
+    #repeat lact column of every e2SEC matrix until all have same length
+    i = 0
+    while i < len(e2sec_matrices_without_filter):
+        if e2sec_matrices_without_filter[i].shape[1] < max_column:
+            add = np.reshape(e2sec_matrices_without_filter[i][:, e2sec_matrices_without_filter[i].shape[1]-1], (24, 1))
+            e2sec_matrices_without_filter[i] = np.append(e2sec_matrices_without_filter[i], add, 1)
+        if e2sec_matrices_without_filter[i].shape[1] == max_column:
+            i += 1
+	#remove arrays folder if present
+    os.system("rm -r arrays")
+	#calculate dissimilarity and save output in arrays folder
+    removeCobinationRowsSave(e2sec_matrices_without_filter, rows = [])
+	#load dissimilarity 
+    D_shaped = np.load("arrays/nothing_removed/nothing_removed.npy")
+	#plot dendrogram
+    plotDendrogramFromMatrix(D_shaped, labels = labels, figsize = (35,50), threshold = 0.31, save = True, lablesize = 38, fontsize = 45, name_of_plot = loc[:-1])
+    #remove arrays folder
+    os.system("rm -r arrays")
