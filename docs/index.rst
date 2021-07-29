@@ -10,7 +10,7 @@ Therefore, a manipulation in translated to a 24 x n matrix, which represents spa
 
 Introduction:
 -------------
-ManipulationLibrary is a module for Python 3 to work with eSEC matrices and extract e²SEC matrices from manipulations. 
+ManipulationLibrary is a module for Python 3 to work with eSEC[1] matrices and extract e²SEC[2] matrices from manipulations. 
 In order to analyse existing eSEC matrices, the "eSEC_analyser.py" module is used. In the example folder a Jupyter Notebook script is provided which shows how to:
 
 * import the module
@@ -30,7 +30,7 @@ In order to analyse existing eSEC matrices, the "eSEC_analyser.py" module is use
 The module "manipulation_analyser.py" is used to calculate e²SEC matrices using the MANIAC dataset. 
 An example Jupyter Notebook along with point cloud data and corresponding labels is provided in the 
 example folder. From this example manipulation the e²SEC matrices are extracted and saved along with 
-the debug images.
+the debug images. The example manipulation is taken from the MANAIC dataset [3].
 
 	``Disclaimer: This module is tested on Ubuntu 20.04.1 LTS with Python 3.8.5``
 
@@ -70,6 +70,9 @@ Installation of libraries:
 To install these libraries use the following command:
 	``pip3 install tabula-py matplotlib pandas numpy scipy seaborn open3d opencv-python cython progressbar2``
 
+###### [1] Fatemeh Ziaeetabar, Tomas Kulvicius, Minija Tamosiunaite, and Florentin Wörgötter (2018). Recognition and prediction of manipulation actions using enriched semantic event chains. Robotics and Autonomous Systems.
+###### [2] Tobias Strübing, Fatemeh Ziaeetabar, and Florentin Wörgötter (2021). A summarized semantic structure to represent manipulation actions.
+###### [3] Eren Erdal Aksoy, Minija Tamosiunaite, and Florentin Wörgötter. Model-free incremental learning of the semantics of manipulation actions. Robotics and Autonomous Systems.
 Code
 ====
 

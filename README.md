@@ -1,14 +1,14 @@
 # ManipulationLibrary
 
-The e²SEC framework can be used to express human manipulation actions in a simple and concise way. Therefore, a manipulation in translated to a 24 x n matrix, which represents spatial relation between objects. 
+The e²SEC[2] framework can be used to express human manipulation actions in a simple and concise way. Therefore, a manipulation in translated to a 24 x n matrix, which represents spatial relation between objects. 
 
 Introduction:
 -------------
 [![](https://img.shields.io/badge/docs-blue.svg)](https://manipulationlibrary.readthedocs.io/en/latest/)
 
-ManipulationLibrary is a module for Python 3 to work with eSEC matrices and extract e²SEC matrices from manipulations. 
+ManipulationLibrary is a module for Python 3 to work with eSEC[1] matrices and extract e²SEC[2] matrices from manipulations. 
 
-You can find examples on how to use this library in the "example" folder in GitHub.
+You can find examples on how to use this library in the "example" folder in GitHub. The example manipulation is taken from the MANAIC dataset [3].
 
 	Disclaimer: This module is tested on Ubuntu 20.04.1 LTS with Python 3.8.5
 
@@ -64,3 +64,6 @@ To install these libraries use the following command:
 
 See the documentation at https://manipulationlibrary.readthedocs.io/en/latest/ for futher explanation of all functions.
 
+###### [1] Fatemeh Ziaeetabar, Tomas Kulvicius, Minija Tamosiunaite, and Florentin Wörgötter (2018). Recognition and prediction of manipulation actions using enriched semantic event chains. Robotics and Autonomous Systems.
+###### [2] Tobias Strübing, Fatemeh Ziaeetabar, and Florentin Wörgötter (2021). A summarized semantic structure to represent manipulation actions.
+###### [3] Eren Erdal Aksoy, Minija Tamosiunaite, and Florentin Wörgötter. Model-free incremental learning of the semantics of manipulation actions. Robotics and Autonomous Systems.
