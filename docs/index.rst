@@ -5,19 +5,31 @@
 
 Welcome to ManipulationLibrary's documentation!
 ===============================================
-A module for Python 3 to work with eSEC matrices and extract e$^2$SEC matrices from manipulations. 
-n order to analyse existing eSEC matrices, the "eSEC_analyser.py" module is used. In the example folder a Jupyter Notebook script is provided which shows how to:
+The e²SEC framework can be used to express human manipulation actions in a simple and concise way. 
+Therefore, a manipulation in translated to a 24 x n matrix, which represents spatial relation between objects. 
+
+Introduction:
+-------------
+ManipulationLibrary is a module for Python 3 to work with eSEC matrices and extract e²SEC matrices from manipulations. 
+In order to analyse existing eSEC matrices, the "eSEC_analyser.py" module is used. In the example folder a Jupyter Notebook script is provided which shows how to:
+
 * import the module
+
 * read eSEc matricers from PDF
+
 * plot the importance of rows
+
 * check if any eSEC matrix is same as another one
+
 * Remove combinations of relations (rows)
+
 * plot a dendrogram and dissimilarity matrix for all manipulations
-* plot a confusion matrix, classification accuacy with corresponding bar plot for e$^2$SEC matrices
+
+* plot a confusion matrix, classification accuacy with corresponding bar plot for e²SEC matrices
 
 The module "manipulation_analyser.py" is used to calculate e²SEC matrices using the MANIAC dataset. 
 An example Jupyter Notebook along with point cloud data and corresponding labels is provided in the 
-example folder. From this example manipulation the e$^2$SEC matrices are extracted and saved along with 
+example folder. From this example manipulation the e²SEC matrices are extracted and saved along with 
 the debug images.
 
 	``Disclaimer: This module is tested on Ubuntu 20.04.1 LTS with Python 3.8.5``
