@@ -5,30 +5,41 @@
 
 Welcome to ManipulationLibrary's documentation!
 ===============================================
-A module for Python 3 to produce and work with eSEC matrices. 
-The eSEC analyser is used to analyse existing eSEC matrices and is capable of:
+The e²SEC framework can be used to express human manipulation actions in a simple and concise way. 
+Therefore, a manipulation in translated to a 24 x n matrix, which represents spatial relation between objects. 
 
-* read a list of eSEC matrices
+Introduction:
+-------------
+ManipulationLibrary is a module for Python 3 to work with eSEC`[1]`_ matrices and extract e²SEC`[2]`_ matrices from manipulations. 
+In order to analyse existing eSEC matrices, the "eSEC_analyser.py" module is used. In the example folder a Jupyter Notebook script is provided which shows how to:
 
-* find the importance of up to 5 rows
+* import the module
 
-* remove rows 
+* read eSEc matricers from PDF
 
-* calculate dissimilarity matrices and dendrograms
+* plot the importance of rows
 
-* measure the group dissimilarity
+* check if any eSEC matrix is same as another one
 
-The manipulation analyser is used calculate e²SEC matrices using the MANIAC dataset or others.
+* Remove combinations of relations (rows)
 
-You can find examples on how to use this library in the "example" folder in GitHub.
+* plot a dendrogram and dissimilarity matrix for all manipulations
+
+* plot a confusion matrix, classification accuacy with corresponding bar plot for e²SEC matrices
+
+The module "manipulation_analyser.py" is used to calculate e²SEC matrices using the MANIAC dataset. 
+An example Jupyter Notebook along with point cloud data and corresponding labels is provided in the 
+example folder. From this example manipulation the e²SEC matrices are extracted and saved along with 
+the debug images. The example manipulation is taken from the MANAIC dataset `[3]`_.
 
 	``Disclaimer: This module is tested on Ubuntu 20.04.1 LTS with Python 3.8.5``
 
-If you have trouble with the "filter_cython" function you can try to compile it with the
-following command in the "cython_filter" folder: ``python3 setup.py build_ext --inplace``
+If you have trouble with the "filter_cython_new" function compile it on your system
+with the following command in the "cython_filter_new" folder: ``python3 setup.py build_ext --inplace``
 
+If the "filter_cython_new" can't be imported, comment out line 28 instead of line 29 in "manipulation_analyser.py".
 
-Depends on external librabies:
+Depends on external libraries:
 ------------------------------
 
 * tabula
@@ -53,11 +64,19 @@ Depends on external librabies:
 
 * Cython
 
-Installation of librabies:
+Installation of libraries:
 --------------------------
 
-To install these librabies use the following command:
+To install these libraries use the following command:
 	``pip3 install tabula-py matplotlib pandas numpy scipy seaborn open3d opencv-python cython progressbar2``
+
+**********
+References
+**********
+
+.. _`[1]`: Fatemeh Ziaeetabar, Tomas Kulvicius, Minija Tamosiunaite, and Florentin Wörgötter (2018). Recognition and prediction of manipulation actions using enriched semantic event chains. Robotics and Autonomous Systems.
+.. _`[2]`: Tobias Strübing, Fatemeh Ziaeetabar, and Florentin Wörgötter (2021). A summarized semantic structure to represent manipulation actions.
+.. _`[3]`: Eren Erdal Aksoy, Minija Tamosiunaite, and Florentin Wörgötter. Model-free incremental learning of the semantics of manipulation actions. Robotics and Autonomous Systems.
 
 Code
 ====

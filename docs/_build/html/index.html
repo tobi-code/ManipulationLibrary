@@ -86,7 +86,7 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="codi.html">eSEC analyser</a></li>
-<li class="toctree-l1"><a class="reference internal" href="codi2.html">manipulation analyser (work in progress)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codi2.html">manipulation analyser</a></li>
 </ul>
 
             
@@ -156,23 +156,33 @@
             
   <div class="section" id="welcome-to-manipulationlibrary-s-documentation">
 <h1>Welcome to ManipulationLibrary’s documentation!<a class="headerlink" href="#welcome-to-manipulationlibrary-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>A module for Python 3 to produce and work with eSEC matrices.
-The eSEC analyser is used to analyse existing eSEC matrices and is capable of:</p>
+<p>The e²SEC framework can be used to express human manipulation actions in a simple and concise way.
+Therefore, a manipulation in translated to a 24 x n matrix, which represents spatial relation between objects.</p>
+<div class="section" id="introduction">
+<h2>Introduction:<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>ManipulationLibrary is a module for Python 3 to work with eSEC`[1]`_ matrices and extract e²SEC`[2]`_ matrices from manipulations.
+In order to analyse existing eSEC matrices, the “eSEC_analyser.py” module is used. In the example folder a Jupyter Notebook script is provided which shows how to:</p>
 <ul class="simple">
-<li>read a list of eSEC matrices</li>
-<li>find the importance of up to 5 rows</li>
-<li>remove rows</li>
-<li>calculate dissimilarity matrices and dendrograms</li>
-<li>measure the group dissimilarity</li>
+<li>import the module</li>
+<li>read eSEc matricers from PDF</li>
+<li>plot the importance of rows</li>
+<li>check if any eSEC matrix is same as another one</li>
+<li>Remove combinations of relations (rows)</li>
+<li>plot a dendrogram and dissimilarity matrix for all manipulations</li>
+<li>plot a confusion matrix, classification accuacy with corresponding bar plot for e²SEC matrices</li>
 </ul>
-<p>The manipulation analyser is used calculate e²SEC matrices using the MANIAC dataset or others.</p>
-<p>You can find examples on how to use this library in the “example” folder in GitHub.</p>
+<p>The module “manipulation_analyser.py” is used to calculate e²SEC matrices using the MANIAC dataset.
+An example Jupyter Notebook along with point cloud data and corresponding labels is provided in the
+example folder. From this example manipulation the e²SEC matrices are extracted and saved along with
+the debug images. The example manipulation is taken from the MANAIC dataset <a class="reference external" href="ErenErdalAksoy,MinijaTamosiunaite,andFlorentinWörgötter.Model-freeincrementallearningofthesemanticsofmanipulationactions.RoboticsandAutonomousSystems.">[3]</a>.</p>
 <blockquote>
 <div><code class="docutils literal notranslate"><span class="pre">Disclaimer:</span> <span class="pre">This</span> <span class="pre">module</span> <span class="pre">is</span> <span class="pre">tested</span> <span class="pre">on</span> <span class="pre">Ubuntu</span> <span class="pre">20.04.1</span> <span class="pre">LTS</span> <span class="pre">with</span> <span class="pre">Python</span> <span class="pre">3.8.5</span></code></div></blockquote>
-<p>If you have trouble with the “filter_cython” function you can try to compile it with the
-following command in the “cython_filter” folder: <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">setup.py</span> <span class="pre">build_ext</span> <span class="pre">--inplace</span></code></p>
-<div class="section" id="depends-on-external-librabies">
-<h2>Depends on external librabies:<a class="headerlink" href="#depends-on-external-librabies" title="Permalink to this headline">¶</a></h2>
+<p>If you have trouble with the “filter_cython_new” function compile it on your system
+with the following command in the “cython_filter_new” folder: <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">setup.py</span> <span class="pre">build_ext</span> <span class="pre">--inplace</span></code></p>
+<p>If the “filter_cython_new” can’t be imported, comment out line 28 instead of line 29 in “manipulation_analyser.py”.</p>
+</div>
+<div class="section" id="depends-on-external-libraries">
+<h2>Depends on external libraries:<a class="headerlink" href="#depends-on-external-libraries" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>tabula</li>
 <li>progressbar</li>
@@ -187,12 +197,15 @@ following command in the “cython_filter” folder: <code class="docutils liter
 <li>Cython</li>
 </ul>
 </div>
-<div class="section" id="installation-of-librabies">
-<h2>Installation of librabies:<a class="headerlink" href="#installation-of-librabies" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="installation-of-libraries">
+<h2>Installation of libraries:<a class="headerlink" href="#installation-of-libraries" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt>To install these librabies use the following command:</dt>
+<dt>To install these libraries use the following command:</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">tabula-py</span> <span class="pre">matplotlib</span> <span class="pre">pandas</span> <span class="pre">numpy</span> <span class="pre">scipy</span> <span class="pre">seaborn</span> <span class="pre">open3d</span> <span class="pre">opencv-python</span> <span class="pre">cython</span> <span class="pre">progressbar2</span></code></dd>
 </dl>
+<div class="section" id="references">
+<h3>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+</div>
 </div>
 </div>
 <div class="section" id="code">
@@ -200,7 +213,7 @@ following command in the “cython_filter” folder: <code class="docutils liter
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="codi.html">eSEC analyser</a></li>
-<li class="toctree-l1"><a class="reference internal" href="codi2.html">manipulation analyser (work in progress)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codi2.html">manipulation analyser</a></li>
 </ul>
 </div>
 </div>

@@ -39,7 +39,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="manipulation analyser (work in progress)" href="codi2.html" />
+    <link rel="next" title="manipulation analyser" href="codi2.html" />
     <link rel="prev" title="Welcome to ManipulationLibrary’s documentation!" href="index.html" /> 
 </head>
 
@@ -87,7 +87,7 @@
             
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">eSEC analyser</a></li>
-<li class="toctree-l1"><a class="reference internal" href="codi2.html">manipulation analyser (work in progress)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codi2.html">manipulation analyser</a></li>
 </ul>
 
             
@@ -157,7 +157,7 @@
             
   <div class="section" id="module-eSEC_analyser">
 <span id="esec-analyser"></span><h1>eSEC analyser<a class="headerlink" href="#module-eSEC_analyser" title="Permalink to this headline">¶</a></h1>
-<p>Created 2020</p>
+<p>Created 2020-2021</p>
 <p>&#64;author: Tobias Strübing</p>
 <dl class="function">
 <dt id="eSEC_analyser.checkSimilarRows">
@@ -178,11 +178,24 @@
 <dl class="function">
 <dt id="eSEC_analyser.classification_e2sec">
 <code class="descclassname">eSEC_analyser.</code><code class="descname">classification_e2sec</code><span class="sig-paren">(</span><em>location_e2sec_matrices</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.classification_e2sec" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots the confusion matrix, the classification accuracy for each manipulation and average classification accuracy using cross validation .</p>
+<dd><p>Plots the confusion matrix, the classification accuracy for each manipulation and average classification accuracy using cross validation from 120 e2SEC matrices using the MANIAC dataset.</p>
 <dl class="docutils">
 <dt>Parameters:</dt>
 <dd><ul class="first last simple">
-<li>location_e2sec_matrices: folder of all 120 e2SEC matrices</li>
+<li>location_e2sec_matrices: folder of all 120 e2SEC matrices saved as .npy file</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eSEC_analyser.cluster_e2sec">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">cluster_e2sec</code><span class="sig-paren">(</span><em>location_e2sec_matrices</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.cluster_e2sec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots and saves the dendrogram of the clustering result from 120 e2SEC matrices using the MANIAC dataset.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>location_e2sec_matrices: folder of all 120 e2SEC matrices saved as .npy file</li>
 </ul>
 </dd>
 </dl>
@@ -413,6 +426,26 @@ third step: remove combinations of three 1/2/3</div></blockquote>
 </dl>
 </dd></dl>
 
+<dl class="function">
+<dt id="eSEC_analyser.similarity_manipulations">
+<code class="descclassname">eSEC_analyser.</code><code class="descname">similarity_manipulations</code><span class="sig-paren">(</span><em>manipulation_1</em>, <em>manipulation_2</em><span class="sig-paren">)</span><a class="headerlink" href="#eSEC_analyser.similarity_manipulations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the similarity between two e2SEC matrices as percent.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li><dl class="first docutils">
+<dt>manipulation_1: first e2SEC manipulation</dt>
+<dd><ul class="first last">
+<li>manipulation_2: second e2SEC manipulation</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
@@ -421,7 +454,7 @@ third step: remove combinations of three 1/2/3</div></blockquote>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="codi2.html" class="btn btn-neutral float-right" title="manipulation analyser (work in progress)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="codi2.html" class="btn btn-neutral float-right" title="manipulation analyser" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to ManipulationLibrary’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

@@ -1,4 +1,4 @@
-manipulation analyser (work in progress)
+manipulation analyser
 ========================================
 
 .. automodule:: manipulation_analyser
