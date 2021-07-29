@@ -27,7 +27,7 @@ with the following command in the "cython_filter_new" folder: ``python3 setup.py
 
 If the "filter_cython_new" can't be imported, comment out line 28 instead of line 29 in "manipulation_analyser.py".
 
-Depends on external librabies:
+Depends on external libraries:
 ------------------------------
 
 * tabula
@@ -52,10 +52,10 @@ Depends on external librabies:
 
 * Cython
 
-Installation of librabies:
+Installation of libraries:
 --------------------------
 
-To install these librabies use the following command:
+To install these libraries use the following command:
 	``pip3 install tabula-py matplotlib pandas numpy scipy seaborn open3d opencv-python cython progressbar2``
 
 Code

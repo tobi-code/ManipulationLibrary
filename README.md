@@ -30,7 +30,7 @@ In order to analyse existing eSEC matrices, the "eSEC_analyser.py" module is use
 
 The module "manipulation_analyser.py" is used to calculate e²SEC matrices using the MANIAC dataset. An example Jupyter Notebook along with point cloud data and corresponding labels is provided in the example folder. From this example manipulation the e$^2$SEC matrices are extracted and saved along with the debug images.
 
-Depends on external librabies:
+Depends on external libraries:
 ------------------------------
 
 * tabula
@@ -55,10 +55,10 @@ Depends on external librabies:
 
 * Cython
 
-Installation of librabies:
+Installation of libraries:
 --------------------------
 
-To install these librabies use the following command:
+To install these libraries use the following command:
 	``pip3 install tabula matplotlib pandas numpy scipy seaborn open3d opencv-python cython progressbar2``
 
 See the documentation at https://manipulationlibrary.readthedocs.io/en/latest/ for futher explanation of all functions.
