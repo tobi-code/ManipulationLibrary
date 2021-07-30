@@ -74,11 +74,11 @@ To install these libraries use the following command:
 References
 **********
 
-[1] Fatemeh Ziaeetabar, Tomas Kulvicius, Minija Tamosiunaite, and Florentin Wörgötter (2018). Recognition and prediction of manipulation actions using enriched semantic event chains. Robotics and Autonomous Systems.
+[1] Fatemeh Ziaeetabar, Tomas Kulvicius, Minija Tamosiunaite, and Florentin Wörgötter. Recognition and prediction of manipulation actions using enriched semantic event chains. Robotics and Autonomous Systems, 110:173–188, 2018.
 
-[2] Tobias Strübing, Fatemeh Ziaeetabar, and Florentin Wörgötter (2021). A summarized semantic structure to represent manipulation actions.
+[2] Tobias Strübing, Fatemeh Ziaeetabar, and Florentin Wörgötter. A summarized semantic structure to represent manipulation actions. Proceedings of the 16th International Joint Conference on Computer Vision, Imaging and Computer Graphics Theory and Applications - Volume 4: VISAPP. 370–379. 2021
 
-[3] Eren Erdal Aksoy, Minija Tamosiunaite, and Florentin Wörgötter. Model-free incremental learning of the semantics of manipulation actions. Robotics and Autonomous Systems.
+[3] Eren Erdal Aksoy, Minija Tamosiunaite, and Florentin Wörgötter. Model-free incremental learning of the semantics of manipulation actions. Robotics and Autonomous Systems, 71:118–133, 2015.
 
 Code
 ====
