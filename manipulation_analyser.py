@@ -34,7 +34,7 @@ if 'READTHEDOCS' not in os.environ:
 o1 = None
 o2 = None
 o3 = None
-#count variables esnure o1, o2, o3 are only once defined
+#count variables ensure o1, o2, o3 are only once defined
 #count1 is assigned to object1 and so on
 count1, count2, count3 = 0, 0, 0
 
@@ -82,7 +82,7 @@ def esec_to_e2sec(esec_array, relations):
     
     #----------------------------------------------------------------  
     
-    #copy esec matrix and delete first column becuase first column consits of "-" due to the algorithm
+    #copy esec matrix and delete first column because first column consits of "-" due to the algorithm
     e2sec_array = copy.deepcopy(liste_array)     
     e2sec_array = np.delete(e2sec_array, 0, 1)
 
@@ -231,7 +231,7 @@ def _getTranslation(ground_cloud):
     middle = pcd_voxel.get_center()
     pcd_z = np.mean(np.asarray(pcd_voxel.points)[:,2])
 
-    #plane_array descibes the corner points of the new plane
+    #plane_array describes the corner points of the new plane
     plane_array = np.array([[middle[0] + pcd_voxel_box_extend[0]/2, middle[1] + pcd_voxel_box_extend[1]/2, pcd_z], 
                             [middle[0] + pcd_voxel_box_extend[0]/2, middle[1] - pcd_voxel_box_extend[1]/2, pcd_z],
                             [middle[0] - pcd_voxel_box_extend[0]/2, middle[1] - pcd_voxel_box_extend[1]/2, pcd_z],
@@ -317,7 +317,7 @@ def _getGroundiNewNew(pcd_file, label_file, ground_label):
     unique_labels = np.unique(label)
     
     #define index_0 as lower limit of ground cloud(i.e. cloud[lower_limit:upper_limit])
-    #this loop is nessesary to find the lower limit, sometimes the ground_label-1 is not
+    #this loop is necessary to find the lower limit, sometimes the ground_label-1 is not
     #assigned in labels so it finds the next lower label from ground_label
     #i.e. best case gound_point_cloud = raw_point_cloud[ground_label-1:ground_label]
     i = 1
@@ -353,7 +353,6 @@ def _getGroundiNewNew(pcd_file, label_file, ground_label):
     plane_model, inliers = pcd.segment_plane(distance_threshold=0.01,
                                          ransac_n=3,
                                          num_iterations=100)
-    [a, b, c, d] = plane_model
 
     #select inliers as ground cloud and voxel down the ground plane
     filtered_pcd_voxel = pcd.select_by_index(inliers)
@@ -667,21 +666,21 @@ def _fillSSR_8(hand, ground, table):
     #  - - - - - - - - - - - - - -x
     #--------------------------------------------------
 
-    #create AABB around object1 if it is defined and not absecent in the scene
+    #create AABB around object1 if it is defined and not abscent in the scene
     if(o1 != None and table[0][0] != b'A'):
         o1_box = o1.get_axis_aligned_bounding_box()
         points = np.asarray(o1_box.get_box_points())
         o1_max_x, o1_max_z, o1_max_y = np.max(points[:,0]), np.max(points[:,1]), np.max(points[:,2])
         o1_min_x, o1_min_z, o1_min_y = np.min(points[:,0]), np.min(points[:,1]), np.min(points[:,2])
         
-    #create AABB around object2 if it is defined and not absecent in the scene   
+    #create AABB around object2 if it is defined and not abscent in the scene   
     if(o2 != None and table[1][0] != b'A'):
         o2_box = o2.get_axis_aligned_bounding_box()
         points = np.asarray(o2_box.get_box_points())
         o2_max_x, o2_max_z, o2_max_y = np.max(points[:,0]), np.max(points[:,1]), np.max(points[:,2])
         o2_min_x, o2_min_z, o2_min_y = np.min(points[:,0]), np.min(points[:,1]), np.min(points[:,2])
     
-    #create AABB around object2 if it is defined and not absecent in the scene
+    #create AABB around object2 if it is defined and not abscent in the scene
     if(o3 != None and table[2][0] != b'A'):
         o3_box = o3.get_axis_aligned_bounding_box()
         points = np.asarray(o3_box.get_box_points())
@@ -1087,7 +1086,7 @@ def _fillDSR_new_2(hand, ground, previous_array, thresh, table, savename):
     #get global objects 1, 2 and 3
     global o1,o2,o3
     
-    #get varaibles from previous frame
+    #get variables from previous frame
     phand, pground, po1, po2, po3 = previous_array
     
     #creates AABB around object1 if o1 and po1 are defined and if TNR relation is not abscent
@@ -1356,7 +1355,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                 support_hand, translation, roll, frame, fps, ESEC_table, 
                 relations, replace = False, old = [], new = [], ignored_labels = [], cut_labels = [], thresh = 0.1, debug = False, cython = True, icp = True, savename = ""):
     '''
-    Creates raw eSEC table from a point cloud with corresponding label file. 
+    Creates raw eSEC matrix from a point cloud with corresponding label file. 
     
     Parameters:
         * pcd_file: pcd file to process (.pcd)
@@ -1364,11 +1363,11 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         * ground_label: label of the ground (int)
         * hand_label: label of the hand (int)
         * support_hand: label of the support hand (int)
-        * translation: translation of the scene, will be retured from function (start with 0)
-        * roll: roll of the scene, will be retured from function (start with 0)
+        * translation: translation of the scene, will be returned from function (start with 0)
+        * roll: roll of the scene, will be returned from function (start with 0)
         * frame: frame of manipulation, start with zero and count (int)
         * fps: desired fps (int)
-        * ESEC_table: empty chararray for spatial relations
+        * eSEC_table: empty chararray for spatial relations
         * relations: relations to proceed in the computation 1:T/N; 2:T/N, SSR; 3:T/N, SSR, DSR
         * replace: True if labels should be replaces, False otherwise
         * old: old labels to raplace [int]
@@ -1376,7 +1375,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         * ignored_labels: labels that will be ignored in this manipulation [int]
         * cut_labels: label of the cut object [int]
         * threshold that defines distance for touching
-        * debug: if True, debug_iamges will be created for each e2SEC column (bool)
+        * debug: if True, debug_images will be created for each e2SEC column (bool)
         * cython: if True a self created filter will be used (bool)
         * icp: if True, an ICP algorithm will be used to align filtered objects (bool)
         * savename: name of the manipulation (str)
@@ -1384,7 +1383,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     Returns:
         * translation: translation of the scene
         * roll: roll of the scene
-        * table: ESEC table
+        * table: eSEC matrix
     '''
  
     
@@ -1427,7 +1426,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                 total_unique_labels = np.append(total_unique_labels, cut_labels)
             hand_label_inarray = np.where(total_unique_labels == hand_label)[0][0]
 
-    #if hand is missing return roation and eSEC table      
+    #if hand is missing return rotation and eSEC matrix      
     if hand_label not in np.unique(label):
         return translation, roll, ESEC_table
     
@@ -1473,7 +1472,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                 empty_index.append(i)
             i += 1
 
-    #if hand is missing in scene return translation and eSEC table
+    #if hand is missing in scene return translation and eSEC matrix
     if hand_label_inarray in empty_index:
         return translation, roll, ESEC_table
     
@@ -1566,7 +1565,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             #possible o1, o2, o3 candidates must not be hand_label, ground_label, support_hand_label, label 0
             #cloud has to be bigger than zero
             if(i != hand_label_inarray and i != np.where(total_unique_labels == ground_label)[0][0] and i != np.where(total_unique_labels == support_hand)[0][0] and i > 0 and len(filtered_pcd_voxel[i].points) > 0):
-                #checkt if clouds have any points and if hand is in this frame
+                #checks if clouds have any points and if hand is in this frame
                 if(len(filtered_pcd_voxel[i].points) > 0 and len(hand.points) > 0):
                     #if no o1 is defined, define it when distance to hand is smaller than thresh
                     if(count1 == 0 and np.min(hand.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh):
@@ -1602,7 +1601,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             #possible o1, o2, o3 candidates must not be hand_label, ground_label, label 0
             #cloud has to be bigger than zero
             if(i != hand_label_inarray and i != np.where(total_unique_labels == ground_label)[0][0] and i > 0 and len(filtered_pcd_voxel[i].points) > 0):
-                #checkt if clouds have any points and if hand is in this frame
+                #checks if clouds have any points and if hand is in this frame
                 if(len(filtered_pcd_voxel[i].points) > 0 and len(hand.points) > 0):
                     #if no o1 is defined, define it when distance to hand is smaller than thresh
                     if(count1 == 0 and np.min(hand.compute_point_cloud_distance(filtered_pcd_voxel[i])) < thresh):
@@ -1661,7 +1660,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
 
     #---------------------------------------------------------------------------------------------------------
     #without ICP
-    #if objects are recognized assign the point cloud to the varaibles o1, o2, o3 to track them during the manipulation
+    #if objects are recognized assign the point cloud to the variables o1, o2, o3 to track them during the manipulation
     # if count1 == 1:
     #     o1 = pcd[o1_label]
     # if count2 == 1:
@@ -1740,7 +1739,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                 o3 = o3d.geometry.PointCloud()
             
     global count_esec, final_columns
-    #if hand is in the frame continue to proceed else return translation and eSEC table
+    #if hand is in the frame continue to proceed else return translation and eSEC matrix
     if(len(hand.points) > 0):
         #relation == 1 means only TNR
         if (relations == 1):
@@ -1751,15 +1750,15 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             _fillTN_absent(hand, ground, thresh, add)
             compare_array = np.reshape(ESEC_table[:,count_esec], (-1, 1))
             
-            #for the first frame the eSEC table is just this add array
+            #for the first frame the eSEC matrix is just this add array
             if frame == 0:
                 ESEC_table = add
                 
-            #in case the add array is equal to the previous eSEC table row ignore it
+            #in case the add array is equal to the previous eSEC matrix row ignore it
             elif(np.array_equal(add, compare_array)):
                 return translation, roll, ESEC_table
             
-            #otherwise add column to eSEC table
+            #otherwise add column to eSEC matrix
             else:
                 ESEC_table = np.column_stack((ESEC_table,add))
                 #save image of manipulation in this frame
@@ -1778,15 +1777,15 @@ def _process(pcd_file, label_file, ground_label, hand_label,
             _fillSSR_8(hand, ground, add)
             compare_array = np.reshape(ESEC_table[:,count_esec], (-1, 1))
             
-            #for the first frame the eSEC table is just this add array
+            #for the first frame the eSEC matrix is just this add array
             if frame == 0:
                 ESEC_table = add
                 
-            #in case the add array is equal to the previous eSEC table row ignore it
+            #in case the add array is equal to the previous eSEC matrix row ignore it
             elif(np.array_equal(add, compare_array)):
                 return translation, roll, ESEC_table
         
-            #otherwise add column to eSEC table
+            #otherwise add column to eSEC matrix
             else:
                 ESEC_table = np.column_stack((ESEC_table,add))
                 #save image of manipulation in this frame
@@ -1795,7 +1794,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                 
         #relation == 3 means TNR, SSR and DSR
         elif (relations == 3):
-            #dont consider first appearance of manipulation
+            #don't consider first appearance of manipulation
             #save first objects into previous_array
             if (len(hand.points) > 0 and internal_count == 0):
                 previous_array = [hand, ground, copy.deepcopy(o1), copy.deepcopy(o2), copy.deepcopy(o3)]
@@ -1824,7 +1823,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                 previous_array = [hand, ground, copy.deepcopy(o1), copy.deepcopy(o2), copy.deepcopy(o3)]
                 compare_array = np.reshape(ESEC_table[:,count_esec], (-1, 1))
                 
-                #for the first frame the eSEC table is just this add array
+                #for the first frame the eSEC matrix is just this add array
                 if internal_count == 1:
                     final_columns.append(frame)
                     ESEC_table = add
@@ -1999,11 +1998,11 @@ def _process(pcd_file, label_file, ground_label, hand_label,
                         # plt.clf()  
                         # plt.imsave("event_images/"+savename+"/%s.png"%label_file[-21:-16], label)
                     
-                #in case the add array is equal to the previous eSEC table row ignore it    
+                #in case the add array is equal to the previous eSEC matrix row ignore it    
                 elif(np.array_equal(add, compare_array)):
                     return translation, roll, ESEC_table
                 
-                #otherwise add column to eSEC table
+                #otherwise add column to eSEC matrix
                 else:
                     final_columns.append(frame)
                     ESEC_table = np.column_stack((ESEC_table,add))
@@ -2184,12 +2183,12 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     return translation, roll, ESEC_table
 
 def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, support_hand, relations,
-                                replace, old, new, ignored_labels, thresh, cut_labels = [],  debug = False, cython = True, savename = ""):
+                                replace, old, new, ignored_labels, thresh, cut_labels = [],  debug = False, cython = True, icp = False, savename = ""):
     '''
     Analyses a complete manipulation from the MANIAC dataset. Therefore, it needs the path
     of the folder that contains all the .pcd files (pcl_path) and the label files(label_path). 
     The other parameters are listed below.
-    This functions returns and saves the calculated e2SEC matrix.
+    This function returns and saves the calculated e2SEC matrix.
     
     Parameters:
         * pcl_path: path to pcl files (string)
@@ -2198,13 +2197,13 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
         * hand_label: label of the hand (int)
         * support_hand: label of the support hand (int)
         * relations: relations to proceed in the computation 1:T/N; 2:T/N, SSR; 3:T/N, SSR, DSR (int)
-        * replace: True if labels should be replaces, False otherwise (bool)
-        * old: old labels to raplace (int)
+        * replace: True if labels should be replaced, False otherwise (bool)
+        * old: old labels to replace (int)
         * new: new labels that will replace old labels (int)
         * ignored_labels: labels that will be ignored in this manipulation (int)
         * thresh: threshold that defines distance for touching (float)
         * cython: if true a self created filter will be used (bool)
-        * savename: name of the saved e2SEC file
+        * savename: name of the saved e2SEC file (string)
     
     Returns:
         e2SEC matrix in the current folder as "e2sec_matrix.npy"
@@ -2229,7 +2228,7 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
     o1 = None
     o2 = None
     o3 = None
-    #count variables esnure o1, o2, o3 are only once defined
+    #count variables ensure o1, o2, o3 are only once defined
     #count1 is assigned to object1 and so on
     count1, count2, count3 = 0, 0, 0
 
@@ -2279,14 +2278,14 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
                                 ESEC_table = table, relations = relations,
                                 replace = replace, old = old, new = new, 
                                 ignored_labels = ignored_labels,
-                                thresh = thresh, cut_labels = cut_labels, debug = debug, cython = cython, savename = savename)
+                                thresh = thresh, cut_labels = cut_labels, debug = debug, cython = cython, icp = icp, savename = savename)
         i+=1
     
     e2sec, esec = esec_to_e2sec(table,relations)
     #e2sec = _final_cleaning(e2sec)
     # print(final_columns)
     # print("lenght:", len(final_columns))
-    print(table.shape)
+    # print(table.shape)
     np.save("e2sec_%s.npy"%savename.replace("/", "_"),e2sec)
     if debug == True:
         _clean_debug_images(final_columns, savename)

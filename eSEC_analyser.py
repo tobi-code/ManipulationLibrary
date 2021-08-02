@@ -23,15 +23,14 @@ import itertools
 
 def readPDF(PDFpath):
 	'''
-	Read PDF in a specific foramt and outputs a dict of the eSEC matrices. 
-	In the PDF file there has to be one eSEC matrix per page with the relations 
-	on the left side and without titles.
+	Read PDF in a specific format and outputs a dict of the eSEC matrices. 
+	There has to be one eSEC matrix per page with the relations on the left side and without titles in the PDF file.
 	
 	Parameters:
 		* PDFpath: path of the PDF file (PDF)
 		
 	Returns:
-		python dictionary with the ESEC matrices
+		python dictionary with the eSEC matrices
 	'''
 	
 	pdf_path = PDFpath
@@ -54,11 +53,11 @@ def readPDF(PDFpath):
 def plotRowRanking(esec_dict, savefig = False, e2sec = False):
 	"""
 	Plots the ranking of importance from the different rows of all eSEC manipulations in the eSEC dictionary.
-	This dictionary can be recived by the function readPDF().
+	This dictionary can be obtained from function readPDF().
 	
 	Parameters:
-		* esec_dict: dictionary with ESEC matrices (dict)
-		* savefig: paramter if figure need to be saved (bool)
+		* esec_dict: dictionary with eSEC matrices (dict)
+		* savefig: parameter if figure needs to be saved (bool)
 		* e2sec: is true if the input dict consists of e2SEC matrices (bool)
     """
 
@@ -152,11 +151,11 @@ def plotRowRanking(esec_dict, savefig = False, e2sec = False):
 	
 def removeRows(esec_dict, row):
 	'''
-	Removes the rows assigned in the parameter from all the ESEC tables.
+	Removes the rows assigned in the parameter from all the eSEC matrices.
 	
 	Parameters:
-		* esec_dict: dictionary with the ESEC tables (dict)
-		* row: indicated which rows will be deleted (int, tuple)
+		* esec_dict: dictionary with the eSEC matrices (dict)
+		* row: indicates which rows will be deleted (int, tuple)
 	
 	Returns:
 		dictionary with removed rows.
@@ -186,16 +185,18 @@ def removeRows(esec_dict, row):
 def removeCobinationRowsSave(esec_dict, rows = [3, 2, 5, 7, 9]):
 	'''
 	Removes the rows from the input in every combination and saves it in the folder "array". 
-	First removes single rows and then combinations of tuple, triple, quadruple and quintuple rows. 
+	First it removes single rows and then combinations of tuple, triple, quadruple and quintuple rows. 
 	Rows can have a maximum of 5 values.
 	If rows == None the Dissimilarity matrix is calculated without removing rows and output is saved as d_shaped.npy.
 	example:	rows = [1,2,3] 
 				first step: remove single rows 1, 2, 3
+
 				second step: remove combinations of two 1/2, 1/3, 2/3 
+
 				third step: remove combinations of three 1/2/3
 	
 	Parameters:
-		* esec_dict: dictionary with the ESEC tables (dict)
+		* esec_dict: dictionary with the eSEC matrices (dict)
 		* rows: rows that will be removed (array) 
 	
 	Returns:
@@ -261,13 +262,13 @@ def removeCobinationRowsSave(esec_dict, rows = [3, 2, 5, 7, 9]):
 
 def checkSimilarRows(esec_dict, combination, rows = [3, 2, 5, 7, 9]):
 	'''
-	This functions checks if manipulations are the same in case of removes rows. The input parameter combinations defines how much combinations are considered
-	(e.g. 1 for single combinations, 3 for triple combinations). 
+	This function checks if manipulations are the same in case of removed rows. The input parameter combination defines how many combinations are considered
+	(e.g. 1 for single combination, 3 for triple combinations). 
 	
 	Parameters:
-		* esec_dict: dictionary with the ESEC tables (dict)
+		* esec_dict: dictionary with the eSEC matrices (dict)
 		* combination: which type of combination (int)
-		* rows: rows that will be removed (array) (from 0 for row 1 to 9 for row 10)
+		* rows: rows that will be removed (from 0 for row 1 to 9 for row 10) (array) 
 	'''
 	temp = 0
 	value = []
@@ -290,7 +291,7 @@ def checkSimilarRows(esec_dict, combination, rows = [3, 2, 5, 7, 9]):
 		if temp == 0:
 			print('No manipulations are same for %d combinations'%combination)
 		else:
-			print("Same manipulations due to removement of row(s)", value)
+			print("Same manipulations due to removing of row(s)", value)
 	
 	#for combination == 2 only two rows are removed and if two manipulations are same it prints out
 	#the combination of rows where manipulations are same otherwise it prints 'No other equalities'
@@ -308,7 +309,7 @@ def checkSimilarRows(esec_dict, combination, rows = [3, 2, 5, 7, 9]):
 		if temp == 0:
 			print('No manipulations are same for %d combinations'%combination)
 		else:
-			print("Same manipulations due to removement of row(s)", value)
+			print("Same manipulations due to removing of row(s)", value)
 
 	#for combination == 3 only three rows are removed and if two manipulations are same it prints out
 	#the combination of rows where manipulations are same otherwise it prints 'No other equalities'
@@ -327,7 +328,7 @@ def checkSimilarRows(esec_dict, combination, rows = [3, 2, 5, 7, 9]):
 		if temp == 0:
 			print('No manipulations are same for %d combinations'%combination)
 		else:
-			print("Same manipulations due to removement of row(s)", value)
+			print("Same manipulations due to removing of row(s)", value)
 	
 	#for combination == 2 only four rows are removed and if two manipulations are same it prints out
 	#the combination of rows where manipulations are same otherwise it prints 'No other equalities'
@@ -346,7 +347,7 @@ def checkSimilarRows(esec_dict, combination, rows = [3, 2, 5, 7, 9]):
 		if temp == 0:
 			print('No manipulations are same for %d combinations'%combination)
 		else:
-			print("Same manipulations due to removement of row(s)", value)
+			print("Same manipulations due to removing of row(s)", value)
 
 	#for combination == 2 only five rows are removed and if two manipulations are same it prints out
 	#the combination of rows where manipulations are same otherwise it prints 'No other equalities'			
@@ -365,7 +366,7 @@ def checkSimilarRows(esec_dict, combination, rows = [3, 2, 5, 7, 9]):
 		if temp == 0:
 			print('No manipulations are same for %d combinations'%combination)
 		else:
-			print("Same manipulations due to removement of row(s)", value)
+			print("Same manipulations due to removing of row(s)", value)
 		
 def plotDendrogram(rows, labels, threshold = 0.4, save = False):
 	'''
@@ -376,7 +377,7 @@ def plotDendrogram(rows, labels, threshold = 0.4, save = False):
 		* rows: indicates which rows will be considered (int, tuple) 
 		* label: name of the manipulations in the right order [string array]
 		* threshold: color threshold for the dendrogram (float)
-		* save: paramter if figure need to be saved (bool)
+		* save: parameter if figure need to be saved (bool)
 	'''
 
 	if (isinstance(rows, int) and not(isinstance(rows, tuple))):
@@ -421,11 +422,11 @@ def plotDendrogramFromMatrix(D_shaped, labels, figsize = (30,16), threshold = 0.
 	Parameters:
 		* D_shaped: dissimilarity matrix of all manipulations from function removeCobinationRowsSave() (numpy array)
 		* labels: name of the manipulations in the right order [string array]
-		* figsize: size of plot in case labels are squeezed
+		* figsize: size of plot in case labels are squeezed (int,int)
 		* threshold: color threshold for the dendrogram (float)
-		* save: paramter if figure need to be saved (bool)
-		* lablesize: fontsize of x- and y-labels
-		* fontsize: fontsize of x label
+		* save: parameter if figure needs to be saved (bool)
+		* lablesize: fontsize of x- and y-labels (int)
+		* fontsize: fontsize of x label (int)
 		* name_of_plot: name of the plot that will be saved (string)
 	'''
 	
@@ -457,7 +458,7 @@ def plotDissi(rows, label, save = False):
 	Parameters:
 		* rows: indicates which rows will be considered (int, tuple) (None if nothing is removed)
 		* label: name of the manipulations in the right order [string array]
-		* save: paramter if figure need to be saved (bool)
+		* save: parameter if figure needs to be saved (bool)
 	'''
 	#load the dissimilarity matrix
 	if (isinstance(rows, bool)):
@@ -505,7 +506,7 @@ def plotDissiFromMatrix(D_shaped, label, save = False, name_of_plot = ""):
 	Parameters:
 		* D_shaped: dissimilarity matrix of all manipulations from function removeCobinationRowsSave() (numpy array)
 		* labels: name of the manipulations in the right order [string array]
-		* save: paramter if figure need to be saved (bool)
+		* save: parameter if figure needs to be saved (bool)
 		* name_of_plot: name of the plot that will be saved (string)
 	'''
 
@@ -538,7 +539,7 @@ def plotDendroDissimi(rows,  label, threshold = 0.4, save = False):
 		* rows: indicates which rows will be considered (int, tuple) 
 		* label: name of the manipulations in the right order [string array]
 		* threshold: color threshold for the dendrogram (float)
-		* save: paramter if figure need to be saved (bool)
+		* save: parameter if figure needs to be saved (bool)
 	'''
 
 	#load the dissimilarity matrix
@@ -602,7 +603,7 @@ def _plotDendroDissimiFromMatrix(D_shaped,  label, threshold = 0.4, save = False
 		* rows: indicates which rows will be considered (int, tuple) 
 		* label: name of the manipulations in the right order [string array]
 		* threshold: color threshold for the dendrogram (float)
-		* save: paramter if figure need to be saved (bool)
+		* save: parameter if figure needs to be saved (bool)
 	'''
 	#label = ["Hit/Flick", "Poke", "Bore, Rub, Rotate", "Lay", "Push/ Pull", "Stir", "Knead", "Lever", "Cut", "Draw", "Scoop", "Take down", "Push down", "Break", "Uncover(Pick & Place)", "Uncover(Push)", "Put on top", "Put inside", "Push on top", "Put over", "Push over", "Push from x to y", "Push together", "Push apart", "Take & invert", "Shake", "Rotate align", "Pour to ground(v1)", "Pour to ground(v2)", "Pour to cup(v1)", "Pour to cup(v2)", "Pick & place", "Chop", "Scratch", "Squash"]
 	
@@ -696,13 +697,13 @@ def plotAllMatrices(path, label):
 
 def esec_to_e2sec(pdf_path):
     '''
-    Takes an pdf file with eSEC matrices as input and return these matrices as e2SEC matrices dict.
+    Takes an pdf file with eSEC matrices as input and returns these matrices as e2SEC matrices dict.
     
     Parameters:
-        * pdf_path: path of the pdf file which contains eSEC matrices
+        * pdf_path: path of the pdf file which contains eSEC matrices (string)
         
     Returns:
-        dict of e2SEC matrices
+        dict of e2SEC matrices (dict)
     '''
     
     #read PDF file and save in liste_array dict
@@ -724,7 +725,7 @@ def esec_to_e2sec(pdf_path):
     for j in range(len(e2sec_array)):
         
     #----------------------------------------------------------------
-        #find index of sematics to merge
+        #find index of semantics to merge
         replace_Ab_1, replace_Ab_2 = np.where(e2sec_array[j] == "AB") #VAr
         replace_Be_1, replace_Be_2 = np.where(e2sec_array[j] == "BE") #VAr
 
@@ -780,7 +781,7 @@ def esec_to_e2sec(pdf_path):
 
 def getDissimilarityMatrix(eSEC_matrices):
 	'''
-    Takes a dict of eSEC matrices as input to calculate the dissimilarity matrix from paper.
+    Takes a dict of eSEC matrices as input to calculate the dissimilarity matrix from paper [1].
     
     Parameters:
         * eSEC_matrices: dict contains eSEC matrices
@@ -841,7 +842,7 @@ def _calc_D_shaped(table_triples):
 
 def similarity_manipulations(manipulation_1, manipulation_2):
 	'''
-    Calculates the similarity between two e2SEC matrices as percent.
+    Calculates the similarity between two e2SEC matrices in percent.
     
     Parameters:
         * manipulation_1: first e2SEC manipulation
@@ -921,7 +922,7 @@ def _compare_triple_matrics(manipulation_1, manipulation_2):
 
     '''
 	
-	#if the length of the triple matrices dont match repeat last
+	#if the length of the triple matrices don't match repeat last
 	#column of the longer manipulation
 	if (len(manipulation_1) > len(manipulation_2)):
 		new_array = copy.copy(manipulation_2)
@@ -1138,14 +1139,14 @@ def _classify_monte_carlo(input_groups, manipulation, dissi_matrix):
 		* manipulation: test manipulations from _split()
 		* dissi_matrix: empty zeros 8x8 array
 	"""
-	#assign test manipulations to train manipulatios
+	#assign test manipulations to train manipulations
 	for k in range(8):
 		for y in range(5):
 			sim = 0
 			temp_i = 0
 			for i in range(8):
 				for j in range(10):
-					#calculate similatiry beweeen train groups (input_groups[i][j]) and test manipulation (manipulation[k][y])
+					#calculate similarity between train groups (input_groups[i][j]) and test manipulation (manipulation[k][y])
 					sim_temp = similarity_manipulations(input_groups[i][j], manipulation[k][y])
 					#save the biggest similarity from test manipulation (manipulation[k][y]) to a train manipulation (input_groups[i][j])
 					if sim_temp > sim:
@@ -1313,7 +1314,7 @@ def classification_e2sec(location_e2sec_matrices):
 	#divide matrices by 20 because 20 matrices have added in the iteration
 	final_matrices = final_matrices/20
 
-	#sort the x and y columns the confustion matrices to compare them to these from  paper 
+	#sort the x and y columns the confusion matrices to compare them to these from  paper 
 	#"Recognition and prediction of manipulation actions using Enriched Semantic Event Chains"
 	new_sorted_dissi = copy.deepcopy(final_matrices)
 	new_sorted_labels = copy.deepcopy(manipulations)
