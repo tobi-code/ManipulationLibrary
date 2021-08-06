@@ -1336,12 +1336,16 @@ def classification_e2sec(location_e2sec_matrices):
 	#plot confusion matrix and save it as png
 	_plot_confusion_matrix(new_sorted_dissi, new_sorted_labels, cmap = "binary")
 
-	#load SEC and eSEC values from paper 
+	#load measured values with "WebPlotDigitizer" from SEC and eSEC values from paper 
 	#"Recognition and prediction of manipulation actions using Enriched Semantic Event Chains"
-	values_sec = [79,70,94,53,54,93,92,91]
-	errors_sec = [84.294094414429-79.14442233373222, 74.3055063268706-70.22128364218003, 98.07834597525962-93.88313897848509, 57.68005637669001-53.174093306080316, 58.98967125928101-54.17295211483616, 97.05729030408699-92.92867389456285, 96.4135812939999-91.95201194822378, 95.43691934766085-90.99754686430154]
-	values_esec = [89,95,100,75,77,98,100,99]
-	errors_esec = [93.51683642425462-89.05328527126964, 94.88805622299134-90.97906072480025, 0, 80.75553403722337-75.01505113778182, 76.98321670330462-71.1880625381541, 98.08632526696599-95.18874818439073, 0, 99.01573678401843-97.10224248420457]
+	values_sec_cleaned = [79,70,94,53,54,93,92,91]
+	errors_sec_cleaned = [84.294094414429-79.14442233373222, 74.3055063268706-70.22128364218003, 98.07834597525962-93.88313897848509, 57.68005637669001-53.174093306080316, 58.98967125928101-54.17295211483616, 97.05729030408699-92.92867389456285, 96.4135812939999-91.95201194822378, 95.43691934766085-90.99754686430154]
+	values_esec_cleaned = [89,95,100,75,77,98,100,99]
+	errors_esec_cleaned = [93.51683642425462-89.05328527126964, 94.88805622299134-90.97906072480025, 0, 80.75553403722337-75.01505113778182, 76.98321670330462-71.1880625381541, 98.08632526696599-95.18874818439073, 0, 99.01573678401843-97.10224248420457]
+	values_sec = [76.88634192932187, 67.9083094555874, 92.93218720152818, 50.907354345749766, 53.19961795606497, 92.93218720152817, 90.06685768863419, 89.11174785100286]
+	errors_sec = [82.04393505253105-76.88634192932187, 73.35243553008596-67.90830945558739, 97.13467048710602-93.02769818529131, 55.491881566380115-51.00286532951293, 58.261700095511-53.19961795606499, 97.13467048710602-92.93218720152818, 94.46036294173828-90.06685768863419, 93.60076408787012-89.01623686723974]
+	values_esec = [83.9541547277937, 88.15663801337153, 97.134670487106, 67.90830945558739, 65.99808978032475, 94.84240687679082, 93.8872970391595, 95.79751671442216]
+	errors_esec = [88.53868194842408-83.9541547277937, 93.31423113658072-88.0611270296084, 100.38204393505252-97.134670487106, 72.49283667621779-67.9083094555874, 70.20057306590257-65.99808978032475, 98.75835721107927-94.84240687679082, 98.08978032473735-93.98280802292265, 99.71346704871061-95.79751671442216]
 	
 	#load diagonal values from confusion matrix
 	values_e2sec = new_sorted_dissi.diagonal()
@@ -1354,16 +1358,20 @@ def classification_e2sec(location_e2sec_matrices):
 	print("Average classification accuracy e2SEC:",np.mean(values_e2sec),"+-", np.std(values_e2sec))
 
 	#define the details for the bar plot, plot and save figure as png
-	fig, ax = plt.subplots(1,1, figsize = (15,8))
-	width = 0.25
-	ax.bar(labels_numbers+width, values_sec, yerr = errors_sec ,width=width,  capsize = 5, color='r',label = "SEC", edgecolor='k')
-	ax.bar(labels_numbers, values_esec, yerr = errors_esec,width=width,  capsize = 5, color='c', label = "eSEC", edgecolor='k')
-	ax.bar(labels_numbers-width, values_e2sec, yerr = confi_interval_95_sorted_new, capsize = 5, width=width,color='g', label = "e$^2$SEC", edgecolor='k')
-	ax.legend(fontsize = 20)
+	fig, ax = plt.subplots(1,1, figsize = (21,8))
+	width = 0.13
+
+	ax.bar(labels_numbers-2*width, values_e2sec, yerr = confi_interval_95_sorted_new, capsize = 5, width=width,color='g', label = "e$^2$SEC", edgecolor='k')
+	ax.bar(labels_numbers-width, values_esec_cleaned, yerr = errors_esec_cleaned, width=width,  capsize = 5, color='m', label = "eSEC de-noised", edgecolor='k')
+	ax.bar(labels_numbers, values_esec, yerr = errors_esec, width=width,  capsize = 5, color='r', label = "eSEC", edgecolor='k')
+	ax.bar(labels_numbers+width, values_sec_cleaned, yerr = errors_sec_cleaned ,width=width,  capsize = 5, color='c',label = "SEC de-noised", edgecolor='k')
+	ax.bar(labels_numbers+2*width, values_sec, yerr = errors_sec ,width=width,  capsize = 5, color='b',label = "SEC", edgecolor='k')
+
+	plt.legend(bbox_to_anchor=(1, 1), loc='upper left', fontsize = 20)
 	ax.set_xticks(labels_numbers)
 	ax.set_xticklabels(labels,  fontsize=18)
-	ax.set_yticklabels(np.arange(0, 120, step=20), fontsize=25)
-	ax.set_ylim(0,120)
+	ax.set_yticklabels(np.arange(0, 110, step=20), fontsize=25)
+	ax.set_ylim(0,110)
 
 	ax.set_ylabel("Classification accuracy [%]",  fontsize=35)
 	plt.tight_layout()

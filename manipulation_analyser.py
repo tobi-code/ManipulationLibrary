@@ -390,7 +390,7 @@ def _fillTN_absent(hand, ground, thresh, table):
         table[0][0] = 'U'
     elif(len(hand.points) > 0):
         if(len(o1.points) == 0 or absent_o1 == True):
-            table[1][0] = 'A'
+            table[0][0] = 'A'
             absent_o1 = True
         elif(len(o1.points) == 0):
             table[0][0] = 'N'
@@ -411,7 +411,8 @@ def _fillTN_absent(hand, ground, thresh, table):
             table[1][0] = 'T'
         else:
             table[1][0] = 'N'
-        
+
+
     if(o3 == None):
         table[2][0] = 'U'
     elif(len(hand.points) > 0):
@@ -2247,7 +2248,7 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
     count_esec = 0
     ground = 0
     count_ground = 0
-    absent_o1, absent_o2, absent_03 = False, False, False
+    absent_o1, absent_o2, absent_o3 = False, False, False
     final_columns = []
 
     if relations == 1:
