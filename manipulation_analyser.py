@@ -352,7 +352,7 @@ def _getGroundiNewNew(pcd_file, label_file, ground_label):
     #use RANSAC algorithm to extract ground plane, create obb and extract the rotation to return
     plane_model, inliers = pcd.segment_plane(distance_threshold=0.01,
                                          ransac_n=3,
-                                         num_iterations=100)
+                                         num_iterations=19)
 
     #select inliers as ground cloud and voxel down the ground plane
     filtered_pcd_voxel = pcd.select_by_index(inliers)
@@ -1386,8 +1386,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         * roll: roll of the scene
         * table: eSEC matrix
     '''
- 
-    
+
     #resize labels to point cloud size
     my_mat = np.zeros((640, 480))
     label = pd.read_csv(label_file,delim_whitespace=True, dtype =np.float64, header=None)
@@ -1555,7 +1554,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     
     #get global objects 1,2 and 3
     global o1, o2, o3, first_o1, first_o2, first_o3, ao1, ao2, ao3
-    
+
     #get possible combinations of objects, threshold and an empty char 
     list_ = np.arange(1, len(objects))
     combis_two = list(combinations(list_, 2))  
@@ -2184,7 +2183,7 @@ def _process(pcd_file, label_file, ground_label, hand_label,
     return translation, roll, ESEC_table
 
 def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, support_hand, relations,
-                                replace, old, new, ignored_labels, thresh, cut_labels = [],  debug = False, cython = True, icp = False, savename = ""):
+                                replace, old, new, ignored_labels, thresh, cut_labels = [],  debug = False, cython = True, icp = True, savename = ""):
     '''
     Analyses a complete manipulation from the MANIAC dataset. Therefore, it needs the path
     of the folder that contains all the .pcd files (pcl_path) and the label files(label_path). 
