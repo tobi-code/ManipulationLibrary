@@ -34,15 +34,14 @@ The module "manipulation_analyser.py" is used to calculate e²SEC[2] matrices us
 Depends on external libraries:
 ------------------------------
 
-* tabula
-* progressbar
+* tabula-py
+* progressbar2
 * pandas
 * numpy
 * matplotlib
-* itertools
 * scipy
 * seaborn
-* open3d
+* Open3D
 * OpenCV
 * Cython
 
@@ -50,7 +49,7 @@ Installation of libraries:
 --------------------------
 
 To install these libraries use the following command:
-	``pip3 install tabula matplotlib pandas numpy scipy seaborn open3d opencv-python cython progressbar2``
+	``pip3 install tabula-py matplotlib pandas numpy scipy seaborn open3d opencv-python cython progressbar2``
 
 See the documentation at https://manipulationlibrary.readthedocs.io/en/latest/ for futher explanation of all functions.
 

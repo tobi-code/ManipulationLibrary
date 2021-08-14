@@ -42,17 +42,15 @@ If the "filter_cython_new" can't be imported, comment out line 28 instead of lin
 Depends on external libraries:
 ------------------------------
 
-* tabula
+* tabula-py
 
-* progressbar
+* progressbar2
 
 * pandas
 
 * numpy
 
 * matplotlib
-
-* itertools
 
 * scipy
 
