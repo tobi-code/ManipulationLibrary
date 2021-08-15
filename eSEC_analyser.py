@@ -1077,7 +1077,7 @@ def _dissimilarity_array_new(manipulation_1, manipulation_2, liste_array):
 #*************************************************
 def _add_element(dict, key, value):
 	"""
-	Adds an element to dict
+	Adds an element to dict.
 
 	Parameters:
 		* dict: input dict
