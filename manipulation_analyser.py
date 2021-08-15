@@ -1353,7 +1353,7 @@ def _fillDSR_new_2(hand, ground, previous_array, thresh, table, savename):
         table[29][0] = 'Q'
 
 def _process(pcd_file, label_file, ground_label, hand_label, 
-                support_hand, translation, roll, frame, fps, ESEC_table, 
+                support_hand, translation, roll, frame, ESEC_table, 
                 relations, replace = False, old = [], new = [], ignored_labels = [], cut_labels = [], thresh = 0.1, debug = False, cython = True, icp = True, savename = ""):
     '''
     Creates raw eSEC matrix from a point cloud with corresponding label file. 
@@ -1367,7 +1367,6 @@ def _process(pcd_file, label_file, ground_label, hand_label,
         * translation: translation of the scene, will be returned from function (start with 0)
         * roll: roll of the scene, will be returned from function (start with 0)
         * frame: frame of manipulation, start with zero and count (int)
-        * fps: desired fps (int)
         * eSEC_table: empty chararray for spatial relations
         * relations: relations to proceed in the computation 1:T/N; 2:T/N, SSR; 3:T/N, SSR, DSR
         * replace: True if labels should be replaces, False otherwise
@@ -2274,7 +2273,7 @@ def analyse_maniac_manipulation(pcl_path, label_path, ground_label, hand_label, 
             #print(file)
             translation, roll, table = _process(pcl_path+file[0:-7]+"_pc.pcd",
                                label_path+file[0:-7]+"_left-labels.dat",
-                               ground_label = ground_label ,hand_label = hand_label, support_hand = support_hand, translation = translation, roll = roll, frame = i, fps=fps,
+                               ground_label = ground_label ,hand_label = hand_label, support_hand = support_hand, translation = translation, roll = roll, frame = i,
                                 ESEC_table = table, relations = relations,
                                 replace = replace, old = old, new = new, 
                                 ignored_labels = ignored_labels,
